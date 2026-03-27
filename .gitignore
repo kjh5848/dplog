@@ -1,0 +1,61 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Testing
+coverage
+
+# Next.js
+.next/
+out/
+build/
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+.env*.local
+.env
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Spring Boot / Gradle (backend/)
+backend/build/
+backend/.gradle/
+backend/bin/
+backend/out/
+*.class
+*.jar
+
+# Python (ai-worker & scripts)
+ai-worker/__pycache__/
+ai-worker/**/__pycache__/
+ai-worker/.venv/
+ai-worker/*.egg-info/
+ai-worker/.pytest_cache/
+__pycache__/
+*.pyc
+
+# --- D-PLOG Comprehensive Global Rules ---
+.npm-cache/
+.sst
+*.sqlite
+*.db
+node_modules/
+.next/
+build/
+out/
+dist/
+.env*

@@ -1,0 +1,51 @@
+# 개발 환경 설정 (H2 인메모리 DB)
+spring:
+  datasource:
+    url: jdbc:h2:mem:dplog;DB_CLOSE_DELAY=-1;MODE=MySQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# 개발 환경에서는 Actuator 전체 노출
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    kr.co.nomadlab.dplog: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+
+# 개발 환경 외부 API 인증 정보 (레거시에서 이관)
+dplog:
+  nomadscrap:
+    base-url: http://3.34.167.89
+    api-key: 0c810e3de018434fb2a8c31854131cd7
+    use-mock: true  # 내순이 서버 미응답 → 목데이터 사용. 서버 실행 시 false로 변경
+  nsearchad:
+    domain: api.searchad.naver.com
+    customer-id: "3195162"
+    api-key: "0100000000ffcae5bccf4cf8428b07c6866c930cebfaed57a61a9df2c6567d67ac64218d91"
+    secret-key: "AQAAAAD/yuW8z0z4QosHxoZskwzrVPnXBgN7aolMIpyFhC03pw=="

@@ -1,0 +1,806 @@
+import { useEffect, useState } from "react";
+import LayoutDefault from "/src/component/layout/default/Index.jsx";
+import { Button, Card, Col, Container, Form, ListGroup, Modal, Row, Table } from "react-bootstrap";
+import usePendingFunction from "../../../../use/usePendingFunction";
+
+export default function NplaceCampaignBlogWritersPage() {
+
+  const [blogWritersResult, setBlogWritersResult] = useState();
+  const [getBlogWritersTrigger] = usePendingFunction(async () => {
+
+    const dto = await fetch(`/v1/nplace/campaign/blog-writers`, {
+      method: "GET"
+    }).then((response) => response.json());
+    if (dto.code !== 0) {
+      alert(dto.message);
+      return;
+    }
+    setBlogWritersResult(dto.data);
+  });
+
+  useEffect(() => {
+    getBlogWritersTrigger();
+  }, []);
+
+  const applyInitData = {
+    writersType: '',
+    campaignName: '',
+    placeAddress: '',
+    contactInfo: '',
+    linkUrl: '',
+    mainKeyword: ['', '', ''],
+    hashtags: ['', '', '', '', ''],
+    description: '',
+    coType: '',
+    postingType: '',
+    mosaicChoice: '',
+    publicText: '',
+    mapAttach: '',
+    duplicate: '',
+    extraDetails: '',
+    noticeCheck: ''
+  };
+
+  const recruitInitData = {
+    startDate: '',
+    endDate: '',
+    registrationDeadlineDays: 0,
+    dailyOpenCount: 0,
+    imageUrl: ''
+  };
+
+  const [isWritersSelectModalShow, setIsWritersSelectModalShow] = useState(false);
+  const [isCampaignApplyModalShow, setIsCampaignApplyModalShow] = useState(false);
+  const [isCampaignRecruitModalShow, setIsCampaignRecruitModalShow] = useState(false);
+  const [applyFormData, setApplyFormData] = useState(applyInitData);
+  const [recruitFormData, setRecruitFormData] = useState(recruitInitData);
+
+  const handleApplyChange = (e) => {
+    const { name, value } = e.target;
+    setApplyFormData({ ...applyFormData, [name]: value });
+  };
+
+  const handleRecruitChange = (e) => {
+    const { name, value } = e.target;
+    setRecruitFormData({ ...recruitFormData, [name]: value });
+  };
+
+  const handleMainKeywordChange = (index, value) => {
+    const newMainkeyword = [...applyFormData.mainKeyword];
+    newMainkeyword[index] = value;
+    setApplyFormData({ ...applyFormData, mainKeyword: newMainkeyword });
+  };
+
+  const handleHashtagChange = (index, value) => {
+    const newHashtags = [...applyFormData.hashtags];
+    newHashtags[index] = value;
+    setApplyFormData({ ...applyFormData, hashtags: newHashtags });
+  };
+
+  const handleWritersSelectModalShow = () => {
+    setApplyFormData(applyInitData);
+    setRecruitFormData(recruitInitData);
+    setIsWritersSelectModalShow(true);
+  };
+
+  const handleWritersSelectModalClose = () => {
+    setIsWritersSelectModalShow(false);
+  };
+
+  const handleWritersSelectModalNext = () => {
+    if (validateWritersType()) {
+      handleWritersSelectModalClose();
+      handleCampaignApplyModalShow();
+    }
+  };
+
+  const handleCampaignApplyModalShow = () => {
+    setIsCampaignApplyModalShow(true);
+  };
+
+  const handleCampaignApplyModalClose = () => {
+    setIsCampaignApplyModalShow(false);
+  };
+
+  const handleCampaignApplyModalPrev = () => {
+    setIsCampaignApplyModalShow(false);
+    setIsWritersSelectModalShow(true);
+  };
+
+  const handleCampaignApplyModalNext = () => {
+    if (validateApplyForm()) {
+      handleCampaignApplyModalClose();
+      handleCampaignRecruitModalShow();
+    }
+  };
+
+  const handleCampaignRecruitModalShow = () => {
+    setIsCampaignRecruitModalShow(true);
+  };
+
+  const handleCampaignRecruitModalClose = () => {
+    setIsCampaignRecruitModalShow(false);
+  };
+
+  const handleCampaignRecruitModalPrev = () => {
+    setIsCampaignApplyModalShow(true);
+    setIsCampaignRecruitModalShow(false);
+  };
+
+  const validateWritersType = () => {
+    if (!applyFormData.writersType.trim()) {
+      alert('블로그 기자단을 선택해주세요.');
+      return false;
+    }
+    return true;
+  }
+
+  const validateApplyForm = () => {
+    if (!applyFormData.campaignName.trim()) {
+      alert('캠페인 이름을 입력해주세요.');
+      return false;
+    }
+    if (!applyFormData.placeAddress.trim()) {
+      alert('매장 주소를 입력해주세요.');
+      return false;
+    }
+    if (!applyFormData.contactInfo.trim()) {
+      alert('문의 연락처를 입력해주세요.');
+      return false;
+    }
+    if (!applyFormData.linkUrl.trim()) {
+      alert('링크의 URL을 입력해주세요.');
+      return false;
+    }
+    const filledMainkeyword = applyFormData.mainKeyword.filter(keyword => keyword.trim() !== '');
+    if (filledMainkeyword.length < 3) {
+      alert('3개 이상의 메인키워드를 입력해주세요.');
+      return false;
+    }
+    
+    const filledHashtags = applyFormData.hashtags.filter(tag => tag.trim() !== '');
+    if (filledHashtags.length < 5) {
+      alert('5개 이상의 해시태그를 입력해주세요.');
+      return false;
+    }
+  
+    if (!applyFormData.description.trim()) {
+      alert('업체 소개를 입력해주세요.');
+      return false;
+    }
+    if (!applyFormData.coType.trim()) {
+      alert('제휴 유형을 선택해주세요.');
+      return false;
+    }
+    if (!applyFormData.postingType.trim()) {
+      alert('포스팅 유형을 선택해주세요.');
+      return false;
+    }
+    if (!applyFormData.mosaicChoice.trim()) {
+      alert('모자이크 여부를 선택해주세요.');
+      return false;
+    }
+    if (!applyFormData.publicText.trim()) {
+      alert('공정위 문구 여부를 선택해주세요.');
+      return false;
+    }
+    if (!applyFormData.mapAttach.trim()) {
+      alert('지도 첨부 여부를 선택해주세요.');
+      return false;
+    }
+    if (!applyFormData.duplicate.trim()) {
+      alert('중복 참여 여부를 선택해주세요.');
+      return false;
+    }
+    if (!applyFormData.extraDetails.trim()) {
+      alert('강조하고 싶은 내용을 입력해주세요.');
+      return false;
+    }
+  
+    return true;
+  };
+
+  const validateRecruitForm = () => {
+    if (!recruitFormData.startDate.trim() || !recruitFormData.endDate.trim()) {
+      alert('캠페인 모집기간을 입력해주세요.');
+      return false;
+    }
+
+    return true;
+  };
+
+  // const [postBlogWritersRecruitTrigger] = usePendingFunction(async () => {
+  //   if (validateRecruitForm()) {
+  //     const dto = await fetch(`/v1/nplace/campaign/blog-writers/recruit`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json"
+  //       },
+  //       body: JSON.stringify({
+  //         nplaceCampaignBlogWritersRecruit: recruitFormData
+  //       })
+  //     }).then((response) => response.json());
+  //     if (dto.code !== 0) {
+  //       alert(dto.message);
+  //       return;
+  //     }
+  //     alert("모집 정보가 등록되었습니다.");
+  //     handleCampaignRecruitModalClose();
+  //     // getPointApplyTrigger();
+  //   }
+  // });
+
+  const [postBlogWritersTrigger] = usePendingFunction(async () => {
+    if (validateRecruitForm()) {
+      const dto = await fetch(`/v1/nplace/campaign/blog-writers`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          nplaceCampaignBlogWriters: applyFormData,
+          nplaceCampaignBlogWritersRecruit: recruitFormData
+        })
+      }).then((response) => response.json());
+      if (dto.code !== 0) {
+        alert(dto.message);
+        return;
+      }
+      alert("신청 완료되었습니다.");
+      handleCampaignRecruitModalClose();
+      getBlogWritersTrigger();
+    }
+  });
+
+  return (
+    <LayoutDefault>
+      <Card>
+        <Card.Body>
+          <Button variant="primary" className="me-3" onClick={handleWritersSelectModalShow}>캠페인 등록</Button>
+          {/* <Button variant="primary" onClick={handleCampaignRecruitModalShow}>캠페인 모집 정보 등록</Button> */}
+          <hr />
+          <Table hover>
+            <thead>
+            <tr>
+            <th scope="col">기자단 종류</th>
+              <th scope="col">캠페인 이름</th>
+              <th scope="col">시작일자</th>
+              <th scope="col">마감일자</th>
+              <th scope="col">1일 개수</th>
+              <th scope="col">총 개수</th>
+            </tr>
+            </thead>
+            <tbody>
+              {blogWritersResult && blogWritersResult.nplaceCampaignBlogWritersList.length > 0? <>
+                {blogWritersResult.nplaceCampaignBlogWritersList.map((item, index) => (
+                  <tr key={index}>
+                    <td>
+                      {item.writersType}
+                    </td>
+                    <td>
+                      {item.campaignName}
+                    </td>
+                    <td>
+                      {item.startDate}
+                    </td>
+                    <td>
+                      {item.endDate}
+                    </td>
+                    <td>
+                      {item.dailyOpenCount}
+                    </td>
+                    <td>
+                      {item.totalOpenCount}
+                    </td>
+                  </tr>
+                ))}  
+                </>
+                : <>
+                  <tr>
+                    <td colSpan={2} className="text-center">등록된 캠페인이 없습니다.</td>
+                  </tr>
+                </>
+              }
+              
+            </tbody>
+          </Table>
+        </Card.Body>
+      </Card>
+
+      <Modal show={isWritersSelectModalShow} scrollable size={"lg"} backdrop="static" onHide={handleWritersSelectModalClose}>
+      <Modal.Header closeButton>
+          <Modal.Title>캠페인 등록</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Row xs={1} md={2} className="g-4">
+            <Card>
+              <Card.Header>
+                <Form.Check
+                  inline
+                  label="A 블로그 기자단"
+                  name="writersType"
+                  type="radio"
+                  id="writersTypeA"
+                  value="A"
+                  onChange={handleApplyChange}
+                  checked={applyFormData.writersType === "A"}
+                />
+            </Card.Header>
+              <Card.Body>
+                <ListGroup.Item className="border-0">
+                  300글자 전후
+                </ListGroup.Item>
+                <ListGroup.Item className="border-0">
+                  이미지 3~5장
+                </ListGroup.Item>
+              </Card.Body>
+            </Card>
+            <Card>
+              <Card.Header>
+                <Form.Check
+                  inline
+                  label="B 블로그 기자단"
+                  name="writersType"
+                  type="radio"
+                  id="writersTypeB"
+                  value="B"
+                  onChange={handleApplyChange}
+                  checked={applyFormData.writersType === "B"}
+                />
+              </Card.Header>
+              <Card.Body>
+                <ListGroup.Item className="border-0">
+                  600글자 전후
+                </ListGroup.Item>
+                <ListGroup.Item className="border-0">
+                  이미지 5~10장
+                </ListGroup.Item>
+              </Card.Body>
+            </Card>
+          </Row>
+        </Modal.Body>
+
+        <Col className="mt-3 text-center">
+          <Button variant="outline-secondary" onClick={handleWritersSelectModalClose}>취소</Button>
+          <Button variant="primary" className="me-3" onClick={handleWritersSelectModalNext}>다음</Button>
+        </Col>
+
+      </Modal>
+      
+      <Modal show={isCampaignApplyModalShow} scrollable size={"lg"} backdrop="static" onHide={handleCampaignApplyModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>캠페인 등록</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="campaignName">
+            <Form.Label>업체명</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="업체명을 입력해주세요."
+              name="campaignName"
+              value={applyFormData.campaignName}
+              onChange={handleApplyChange}
+            />
+          </Form.Group>
+
+          <Form.Group controlId="placeAddress" className="mt-3">
+            <Form.Label>주소(지도반영)
+              {/* <Form.Text className="text-muted d-block">
+                네이버 플레이스에 표시되는 주소
+              </Form.Text> */}
+            </Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="주소를 입력해주세요"
+              name="placeAddress"
+              value={applyFormData.placeAddress}
+              onChange={handleApplyChange}
+            />
+          </Form.Group>
+
+          <Form.Group controlId="contactInfo" className="mt-3">
+            <Form.Label>업체 전화번호
+            </Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="전화번호를 입력해주세요"
+              name="contactInfo"
+              value={applyFormData.contactInfo}
+              onChange={handleApplyChange}
+            />
+          </Form.Group>
+
+          <Form.Group controlId="linkUrl" className="mt-3">
+            <Form.Label>플레이스주소(URL)
+            </Form.Label>
+            <Form.Control
+              type="url"
+              placeholder="링크의 URL을 입력해주세요"
+              name="linkUrl"
+              value={applyFormData.linkUrl}
+              onChange={handleApplyChange}
+            />
+          </Form.Group>
+
+          <Form.Group controlId="mainKeyword" className="mt-3">
+            <Form.Label>메인 키워드 (3~5개)</Form.Label>
+            <Row className="g-3">
+              {[0, 1, 2, 3, 4].map((index) => (
+                <Col key={index} xs={6} md={3}>
+                  <Form.Control
+                    type="text"
+                    value={applyFormData.mainKeyword[index]}
+                    onChange={(e) => handleMainKeywordChange(index, e.target.value)}
+                  />
+                </Col>
+              ))}
+            </Row>
+            {/* <Form.Control
+              type="text"
+              placeholder="12자 이내"
+              name="mainKeyword"
+              maxLength="12"
+              value={applyFormData.mainKeyword}
+              onChange={handleApplyChange}
+            /> */}
+          </Form.Group>
+
+          <Form.Label className="mt-3">해시태그 입력 (5~10개)</Form.Label>
+          <Row className="g-3">
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((index) => (
+              <Col key={index} xs={6} md={3}>
+                <Form.Control
+                  type="text"
+                  placeholder={index === 0 ? `#해시태그` : ''}
+                  value={applyFormData.hashtags[index]}
+                  onChange={(e) => handleHashtagChange(index, e.target.value)}
+                />
+              </Col>
+            ))}
+          </Row>
+
+          <Form.Group controlId="description" className="mt-3">
+            <Form.Label>업체 소개 (300자 이상)
+              <Form.Text className="text-muted d-block">
+                업체 소개는 리뷰어분들이 본문 작성시 참고하는 부분입니다.<br/>
+                장점, 영업시간, 가격, 후기, 특이사항 등 업체 소개를 구체적으로 입력해주시면<br/>
+                다양하고 풍성한 내용이 작성될 수 있습니다.<br/>
+              </Form.Text>
+            </Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={5}
+              placeholder="캠페인 내용을 등록해주세요"
+              name="description"
+              value={applyFormData.description}
+              onChange={handleApplyChange}
+            />
+          </Form.Group>
+
+          {/* <Form.Group className="mt-3">
+            <Form.Label>제휴 유형 선택</Form.Label>
+            <div>
+              <Form.Check
+                type="radio"
+                label="업체명"
+                name="coType"
+                value="NAME"
+                onChange={handleApplyChange}
+                checked={applyFormData.coType === "NAME"}
+              />
+              <Form.Check
+                type="radio"
+                label="메인 키워드"
+                name="coType"
+                value="KEYWORD"
+                onChange={handleApplyChange}
+                checked={applyFormData.coType === "KEYWORD"}
+              />
+              <Form.Check
+                type="radio"
+                label="메인 키워드 + 업체명"
+                name="coType"
+                value="NAME_KEYWORD"
+                onChange={handleApplyChange}
+                checked={applyFormData.coType === "NAME_KEYWORD"}
+              />
+            </div>
+          </Form.Group> */}
+
+          {/* <Form.Group className="mt-3">
+            <Form.Label>포스팅 유형 선택</Form.Label>
+            <div>
+              <Form.Check
+                type="radio"
+                label="정보성"
+                name="postingType"
+                value="INFORMATION"
+                onChange={handleApplyChange}
+                checked={applyFormData.postingType === "INFORMATION"}
+              />
+              <Form.Check
+                type="radio"
+                label="후기성"
+                name="postingType"
+                value="REVIEW"
+                onChange={handleApplyChange}
+                checked={applyFormData.postingType === "REVIEW"}
+              />
+              <Form.Check
+                type="radio"
+                label="자유로운 글"
+                name="postingType"
+                value="FREE"
+                onChange={handleApplyChange}
+                checked={applyFormData.postingType === "FREE"}
+              />
+            </div>
+          </Form.Group> */}
+
+          {/* <Form.Group className="mt-3">
+            <Form.Label>인물 사진 모자이크 여부</Form.Label>
+            <div>
+              <Form.Check
+                type="radio"
+                label="모자이크 처리함"
+                name="mosaicChoice"
+                value="Y"
+                onChange={handleApplyChange}
+                checked={applyFormData.mosaicChoice === "Y"}
+              />
+              <Form.Check
+                type="radio"
+                label="모자이크 처리 안함"
+                name="mosaicChoice"
+                value="N"
+                onChange={handleApplyChange}
+                checked={applyFormData.mosaicChoice === "N"}
+              />
+            </div>
+          </Form.Group> */}
+
+          {/* <Form.Group className="mt-3">
+            <Form.Label>공정위 문구 여부
+              <Form.Text className="text-muted d-block">
+                예)이 글은 소정의 원고료를 받아 작성하였습니다.
+              </Form.Text>
+            </Form.Label>
+            <Form.Check
+              type="checkbox"
+              label="동의"
+              name="publicText"
+              value="Y"
+              onChange={handleApplyChange}
+              checked={applyFormData.publicText === "Y"}
+            />
+          </Form.Group> */}
+
+          {/* <Form.Group className="mt-3">
+            <Form.Label>지도 첨부 여부</Form.Label>
+            <Form.Check
+              type="radio"
+              label="첨부"
+              name="mapAttach"
+              value="Y"
+              onChange={handleApplyChange}
+              checked={applyFormData.mapAttach === "Y"}
+            />
+            <Form.Check
+              type="radio"
+              label="미첨부"
+              name="mapAttach"
+              value="N"
+              onChange={handleApplyChange}
+              checked={applyFormData.mapAttach === "N"}
+            />
+          </Form.Group> */}
+
+          {/* <Form.Group className="mt-3">
+            <Form.Label>중복 참여 여부</Form.Label>
+            <Form.Check
+              type="radio"
+              label="가능"
+              name="duplicate"
+              value="Y"
+              onChange={handleApplyChange}
+              checked={applyFormData.duplicate === "Y"}
+            />
+            <Form.Check
+              type="radio"
+              label="불가능"
+              name="duplicate"
+              value="N"
+              onChange={handleApplyChange}
+              checked={applyFormData.duplicate === "N"}
+            />
+          </Form.Group> */}
+
+          {/* <Form.Group controlId="extraDetails" className="mt-3">
+            <Form.Label>강조하고 싶은 내용
+              <Form.Text className="text-muted d-block">
+                강조하고 싶은 내용이나 문구를 20자 이내로 남겨주세요.
+              </Form.Text>
+            </Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={2}
+              placeholder="강조하고 싶은 내용을 등록해주세요"
+              name="extraDetails"
+              value={applyFormData.extraDetails}
+              onChange={handleApplyChange}
+            />
+          </Form.Group> */}
+
+          <hr/>
+
+          <Container className="mt-4">
+            <Card>
+              <Card.Body>
+                <Card.Title>필독 사항</Card.Title>
+                <ListGroup variant="flush">
+                  <ListGroup.Item className="border-0">
+                    1. 블로거가 가이드로 통해 포스팅하기 때문에, 내용 및 이미지가 중복될 수 있습니다.
+                  </ListGroup.Item>
+                  <ListGroup.Item className="border-0">
+                    2. 블로거가 포스팅을 진행하면, 내용, 이미지, 수정 및 추가 삭제 불가.<br />
+                    (삭제는 담당자에게 별도 요청)
+                  </ListGroup.Item>
+                  <ListGroup.Item className="border-0">
+                    3. 법적 문제가 발생할 수 있는 이미지, 내용 전달로 인해 문제 발생 시<br />
+                    [모든 책임은 블로그 기자단 신청자에게 있습니다.]
+                  </ListGroup.Item>
+                  {/* <ListGroup.Item className="border-0">
+                    4. 문제의 소지가 되는 글은 배포 불가합니다. <br />
+                    {` [정치, 종교, 여론조작, 핫이슈, 불법 관련]`}
+                  </ListGroup.Item>
+                  <ListGroup.Item className="border-0">
+                    5. 단순 배포 상품이기 때문에 상위 노출을 보장하지 않습니다.
+                  </ListGroup.Item>
+                  <ListGroup.Item className="border-0">
+                    6. 포스팅이 배포된 상태에서는 수정 불가
+                  </ListGroup.Item>
+                  <ListGroup.Item className="border-0">
+                    7. 모든 배포는 <strong>90일 유지 보장</strong>됩니다.
+                  </ListGroup.Item>
+                  <ListGroup.Item className="border-0">
+                    8. 공정위 문구 미작성으로 인해 발생하는 문제의 책임은 광고주(사업주)에게 있으며, 내순위는 통신판매중개자이며 통신판매의 당사자가 아닙니다. 따라서 내순위는 정보에 대해서 책임을 지지않습니다.
+                  </ListGroup.Item> */}
+                </ListGroup>
+                <Form.Check
+                  type="checkbox"
+                  label="동의합니다."
+                  className="mt-3"
+                  name="noticeCheck"
+                  value="Y"
+                  onChange={handleApplyChange}
+                  checked={applyFormData.noticeCheck === "Y"}
+                />
+              </Card.Body>
+            </Card>
+          </Container>
+
+          <Col className="mt-3 text-center">
+            <Button variant="outline-secondary" onClick={handleCampaignApplyModalPrev}>이전</Button>
+            <Button variant="primary" className="me-3" onClick={handleCampaignApplyModalNext}>다음</Button>
+          </Col>
+          
+        </Modal.Body>
+      </Modal>
+
+      <Modal show={isCampaignRecruitModalShow} scrollable size={"lg"} backdrop="static" onHide={handleCampaignRecruitModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>캠페인 모집 정보 등록</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+
+          <Form.Group className="mb-3">
+            <Form.Label>캠페인 모집기간
+              <Form.Text muted>
+                (최소 3일 ~ 7일 권장)
+              </Form.Text>
+            </Form.Label>
+            <Row>
+              <Col sm={4}>
+                <Form.Control
+                  type="date"
+                  name="startDate"
+                  value={recruitFormData.startDate}
+                  onChange={handleRecruitChange}
+                />
+              </Col>
+              <Col sm={1} className="align-content-center text-center">~</Col>
+              <Col sm={4}>
+                <Form.Control
+                  type="date"
+                  name="endDate"
+                  value={recruitFormData.endDate}
+                  onChange={handleRecruitChange}
+                />
+              </Col>
+            </Row>
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>캠페인 진행기간
+              <Form.Text muted>
+                (익일 진행, 주말 및 공휴일 신청X)
+              </Form.Text>
+            </Form.Label>
+          </Form.Group>
+
+          {/* <Form.Group className="mb-3">
+            <Form.Label>콘텐츠 등록 마감일</Form.Label>
+            <Row>
+              <Col sm={1} className="align-content-center pe-0" style={{ width: '105%' }}>
+                <Form.Label>선정 후</Form.Label>
+              </Col>
+              <Col sm={2}>
+                <Form.Control
+                  type="number"
+                  name="registrationDeadlineDays"
+                  value={recruitFormData.registrationDeadlineDays}
+                  onChange={handleRecruitChange}
+                />
+              </Col>
+              <Col className="ps-0 align-content-center">
+                <Form.Label>일</Form.Label>
+              </Col>
+            </Row>
+            <Form.Text className="d-block text-danger">*선정 후 0일로 하셔야 당일 포스팅 등록됩니다.</Form.Text>
+            <Form.Text className="d-block text-danger">*설정 값은 원활한 캠페인 진행을 위해서 관리자에 의해 변경될 수 있습니다.</Form.Text>
+          </Form.Group> */}
+
+          {/* <Form.Group className="mb-3">
+            <Form.Label>콘텐츠 등록 마감일</Form.Label>
+            <Form.Label className="d-block text-danger">선정 후 3시간</Form.Label>
+          </Form.Group> */}
+
+          <Form.Group className="mb-3">
+            <Form.Label>1일 오픈 건수</Form.Label>
+            <Row>
+              <Col sm={2}>
+                <Form.Control
+                  type="number"
+                  name="dailyOpenCount"
+                  value={recruitFormData.dailyOpenCount}
+                  onChange={handleRecruitChange}
+                />
+              </Col>
+              <Col className="ps-0 align-content-center">
+                <Form.Label>건</Form.Label>
+              </Col>
+            </Row>
+            <Form.Text className="d-block text-danger">*1일 오픈 최소 건수는 5건이며, 최대 건수는 50건 입니다. ( 예외의 경우 별도 상담 신청 )</Form.Text>
+            <Form.Text className="d-block text-danger">*캠페인 참여하는 블로그 지수는 준최2 블로그가 70% 이상이며, 네이버 환경에 따라 변경될수 있습니다.</Form.Text>
+            <Form.Text className="d-block text-danger">*캠페인 진행시 참여자의 상황과 주말 및 공휴일의 경우에 따라 목표한 1일 개수가 미달 될수 있습니다.<br/>( 단, 캠페인 마감일자에 맞춰 모든 기자단 총진행 개수는 95% 이상 맞추어 마감 됩니다.)</Form.Text>
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>진행 가능 건 수</Form.Label>
+            <Form.Label className="d-block">1건</Form.Label>
+            <Form.Text className="d-block text-danger">*해당 수치는 캠페인 진행 기간에 맞춰 자동 계산 됩니다.</Form.Text>
+          </Form.Group>
+
+          <Form.Group controlId="imageUrl" className="mt-3">
+            <Form.Label>블로그 기자단 이미지 업로드</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={2}
+              placeholder="추가 이미지 URL을 입력해주세요."
+              name="imageUrl"
+              value={recruitFormData.imageUrl}
+              onChange={handleRecruitChange}
+            />
+            <Form.Text className="d-block text-danger">*구글 드라이브 링크 클릭하여 이미지 업로드 방법에 맞게 업로드 합니다.</Form.Text>
+          </Form.Group>
+
+          <Col className="mt-3 text-center">
+            <Button variant="outline-secondary" onClick={handleCampaignRecruitModalPrev}>이전</Button>
+            <Button variant="primary" className="me-3" onClick={postBlogWritersTrigger}>등록</Button>
+          </Col>
+
+        </Modal.Body>
+      </Modal>
+    </LayoutDefault>
+  );
+}

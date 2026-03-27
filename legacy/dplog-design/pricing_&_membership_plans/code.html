@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pricing &amp; Membership Plans - Restaurant AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#10b77f",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#10221c",
+                        "surface-dark": "#162e26", // Slightly lighter than background-dark for cards
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
+<!-- Navbar -->
+<nav class="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between h-16 items-center">
+<div class="flex items-center">
+<span class="material-icons text-primary text-3xl mr-2">analytics</span>
+<span class="font-bold text-xl tracking-tight">RestoAI</span>
+</div>
+<div class="hidden md:flex space-x-8">
+<a class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors" href="#">Features</a>
+<a class="text-primary font-medium" href="#">Pricing</a>
+<a class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors" href="#">Resources</a>
+</div>
+<div>
+<a class="bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-lg font-medium transition-colors" href="#">Login</a>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow">
+<!-- Hero Section -->
+<div class="relative pt-16 pb-12 sm:pt-24 sm:pb-16 text-center px-4">
+<h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-6">
+                Restaurant Growth on Autopilot
+            </h1>
+<p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-8">
+                Boost revenue with AI diagnosis and automated marketing. 
+                <br/>Simple, affordable, and effective.
+            </p>
+</div>
+<!-- Government Support Banner -->
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+<div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary/20 to-blue-500/20 border border-primary/30 p-6 sm:p-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+<!-- Background decorative elements -->
+<div class="absolute -top-24 -left-24 w-48 h-48 bg-primary/20 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl"></div>
+<div class="relative z-10 flex-1">
+<div class="flex items-center gap-3 mb-2">
+<span class="bg-primary/20 text-primary text-xs font-bold px-2 py-1 rounded uppercase tracking-wider">Government Support</span>
+<span class="text-xs text-gray-500 dark:text-gray-400">Limited Availability</span>
+</div>
+<h3 class="text-2xl font-bold mb-2">Smart Store &amp; Cloud Voucher Matching</h3>
+<p class="text-gray-600 dark:text-gray-300">
+                        Eligible restaurants can receive up to <span class="text-primary font-bold">80% support</span> on usage fees. Check if your business qualifies for government funding today.
+                    </p>
+</div>
+<div class="relative z-10 flex-shrink-0">
+<button class="bg-background-dark hover:bg-black text-white border border-gray-700 px-6 py-3 rounded-lg font-semibold flex items-center gap-2 transition-all shadow-lg hover:shadow-primary/20">
+<span>Check Eligibility</span>
+<span class="material-icons text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Pricing Section -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+<div class="text-center mb-12">
+<span class="text-primary font-bold tracking-wide uppercase text-sm">Transparent Pricing</span>
+<h2 class="text-3xl font-bold mt-2 mb-4">Start for the price of 1 hour of part-time labor</h2>
+<p class="text-gray-500 dark:text-gray-400">No hidden setup fees. Cancel anytime.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+<!-- Basic Plan -->
+<div class="relative p-8 bg-white dark:bg-surface-dark rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm hover:border-primary/50 transition-colors duration-300">
+<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Basic</h3>
+<div class="flex items-baseline my-6">
+<span class="text-4xl font-extrabold text-gray-900 dark:text-white">₩20,000</span>
+<span class="text-gray-500 dark:text-gray-400 ml-2">/month</span>
+</div>
+<p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Essential diagnosis tools for single-location restaurants starting their digital journey.</p>
+<a class="block w-full py-3 px-4 bg-primary/10 hover:bg-primary/20 text-primary text-center font-semibold rounded-lg transition-colors mb-8" href="#">
+                        Start Basic
+                    </a>
+<ul class="space-y-4 text-sm text-gray-600 dark:text-gray-300">
+<li class="flex items-start">
+<span class="material-icons text-primary text-lg mr-2">check_circle</span>
+<span>Daily Sales Analysis</span>
+</li>
+<li class="flex items-start">
+<span class="material-icons text-primary text-lg mr-2">check_circle</span>
+<span>Basic AI Review Summary</span>
+</li>
+<li class="flex items-start">
+<span class="material-icons text-primary text-lg mr-2">check_circle</span>
+<span>KakaoTalk Daily Reports</span>
+</li>
+<li class="flex items-start">
+<span class="material-icons text-gray-400 text-lg mr-2">remove_circle_outline</span>
+<span class="text-gray-400">Marketing Automation</span>
+</li>
+</ul>
+</div>
+<!-- Pro Plan (Highlighted) -->
+<div class="relative p-8 bg-surface-dark rounded-2xl border-2 border-primary shadow-2xl transform md:-translate-y-4 z-10">
+<div class="absolute top-0 right-0 -mt-3 -mr-3">
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-primary text-white shadow-lg">
+                            POPULAR CHOICE
+                        </span>
+</div>
+<h3 class="text-lg font-semibold text-white mb-2">Pro</h3>
+<div class="flex items-baseline my-6">
+<span class="text-5xl font-extrabold text-white">₩50,000</span>
+<span class="text-gray-400 ml-2">/month</span>
+</div>
+<p class="text-sm text-gray-300 mb-2">
+                        Full automation suite. Equivalent to hiring a marketing manager for the price of a coffee a day.
+                    </p>
+<p class="text-xs text-primary font-medium mb-6">
+                        * Save ~95% vs. agency costs
+                    </p>
+<a class="block w-full py-3 px-4 bg-primary hover:bg-primary/90 text-white text-center font-bold rounded-lg transition-colors shadow-lg shadow-primary/25 mb-8" href="#">
+                        Get Started
+                    </a>
+<ul class="space-y-4 text-sm text-white">
+<li class="flex items-start">
+<span class="material-icons text-primary text-lg mr-2">check_circle</span>
+<span>Everything in Basic</span>
+</li>
+<li class="flex items-start">
+<span class="material-icons text-primary text-lg mr-2">check_circle</span>
+<span class="font-semibold">Automated Coupon Campaigns</span>
+</li>
+<li class="flex items-start">
+<span class="material-icons text-primary text-lg mr-2">check_circle</span>
+<span>AI Competitor Analysis</span>
+</li>
+<li class="flex items-start">
+<span class="material-icons text-primary text-lg mr-2">check_circle</span>
+<span>Menu Engineering Suggestions</span>
+</li>
+<li class="flex items-start">
+<span class="material-icons text-primary text-lg mr-2">check_circle</span>
+<span>Priority Email Support</span>
+</li>
+</ul>
+</div>
+<!-- Enterprise Plan -->
+<div class="relative p-8 bg-white dark:bg-surface-dark rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm hover:border-primary/50 transition-colors duration-300">
+<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Enterprise</h3>
+<div class="flex items-baseline my-6">
+<span class="text-4xl font-extrabold text-gray-900 dark:text-white">Custom</span>
+</div>
+<p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Tailored solutions for franchises and multi-location businesses needing advanced API access.</p>
+<a class="block w-full py-3 px-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white text-center font-semibold rounded-lg transition-colors mb-8" href="#">
+                        Contact Sales
+                    </a>
+<ul class="space-y-4 text-sm text-gray-600 dark:text-gray-300">
+<li class="flex items-start">
+<span class="material-icons text-primary text-lg mr-2">check_circle</span>
+<span>Everything in Pro</span>
+</li>
+<li class="flex items-start">
+<span class="material-icons text-primary text-lg mr-2">check_circle</span>
+<span>Multi-store Dashboard</span>
+</li>
+<li class="flex items-start">
+<span class="material-icons text-primary text-lg mr-2">check_circle</span>
+<span>Custom API Integration</span>
+</li>
+<li class="flex items-start">
+<span class="material-icons text-primary text-lg mr-2">check_circle</span>
+<span>Dedicated Success Manager</span>
+</li>
+<li class="flex items-start">
+<span class="material-icons text-primary text-lg mr-2">check_circle</span>
+<span>Headquarters Reporting</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Trust / FAQ Section -->
+<div class="bg-surface-dark py-16">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-12">
+<h2 class="text-2xl font-bold text-white mb-4">Frequently Asked Questions</h2>
+<p class="text-gray-400">We are here to support your restaurant's success, every step of the way.</p>
+</div>
+<div class="space-y-4">
+<!-- FAQ Item 1 -->
+<div class="bg-background-dark rounded-lg p-6 border border-gray-800">
+<h3 class="flex items-center text-lg font-medium text-white mb-2">
+<span class="material-icons text-primary mr-2">help_outline</span>
+                            Can I use the government voucher for the Pro plan?
+                        </h3>
+<p class="text-gray-400 pl-8">
+                            Yes! The Smart Store and Cloud Voucher programs cover 80% of the cost for eligible software solutions, including our Pro plan. Our team will help you with the paperwork.
+                        </p>
+</div>
+<!-- FAQ Item 2 -->
+<div class="bg-background-dark rounded-lg p-6 border border-gray-800">
+<h3 class="flex items-center text-lg font-medium text-white mb-2">
+<span class="material-icons text-primary mr-2">help_outline</span>
+                            Is there a mandatory contract period?
+                        </h3>
+<p class="text-gray-400 pl-8">
+                            No. We operate on a month-to-month basis. We believe you should stay because you see results, not because you're locked into a contract.
+                        </p>
+</div>
+<!-- FAQ Item 3 -->
+<div class="bg-background-dark rounded-lg p-6 border border-gray-800">
+<h3 class="flex items-center text-lg font-medium text-white mb-2">
+<span class="material-icons text-primary mr-2">help_outline</span>
+                            How does the 1-hour labor cost comparison work?
+                        </h3>
+<p class="text-gray-400 pl-8">
+                            The current minimum wage plus mandatory insurance is roughly 12,000-13,000 KRW. Our Basic plan is slightly more than 1 hour of labor cost, and Pro is less than 4 hours, yet it works 24/7.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Testimonial -->
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+<div class="relative h-64 md:h-96 rounded-2xl overflow-hidden shadow-2xl">
+<img alt="Busy restaurant interior with happy customers and staff" class="absolute inset-0 w-full h-full object-cover" data-alt="Modern busy restaurant interior with customers" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDecFNIeQtMvajU0p2DWMlbBrA9xv_mEpPwIfX3UM_wJazTZIYudWkeJrFwZciIl-BmEWicwXc0Q1AlGpxlO3Z-eUeCJSzEbTzE_DFHYN-es_JXixBM3XmNkUE3A0e1w0JZNTLIQQKsF5w_0WPuDdaB2TatdPRdpsWRfEY3YhStliRNKblAogAuFYZ-zvcEvE8bEQ_MfZnO3LLT7SVnJPDpeRIulu20fy_w-qWBFLOxhDkAnnou-Zw8XQlm9m2CHnYOAnUmWTuw8tIS"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-8">
+<div>
+<p class="text-white font-bold text-lg">Owner Kim, Seoul BBQ</p>
+<p class="text-primary text-sm">Pro Plan User</p>
+</div>
+</div>
+</div>
+<div>
+<span class="text-primary text-6xl font-serif">"</span>
+<h3 class="text-2xl md:text-3xl font-bold mb-6 leading-relaxed">
+                        I used to spend 2 hours every night analyzing sales. Now RestoAI does it instantly and sends me marketing suggestions. It's like having a manager that never sleeps.
+                    </h3>
+<div class="flex items-center space-x-4">
+<div class="flex space-x-1">
+<span class="material-icons text-yellow-500 text-sm">star</span>
+<span class="material-icons text-yellow-500 text-sm">star</span>
+<span class="material-icons text-yellow-500 text-sm">star</span>
+<span class="material-icons text-yellow-500 text-sm">star</span>
+<span class="material-icons text-yellow-500 text-sm">star</span>
+</div>
+<span class="text-gray-500 text-sm">Trusted by 2,000+ restaurants</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-background-dark border-t border-gray-800 py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+<div class="mb-4 md:mb-0">
+<div class="flex items-center text-white mb-2">
+<span class="material-icons text-primary mr-2">analytics</span>
+<span class="font-bold text-xl">RestoAI</span>
+</div>
+<p class="text-gray-500 text-sm">AI-Powered Success for Modern Restaurants.</p>
+</div>
+<div class="flex space-x-6">
+<a class="text-gray-400 hover:text-white transition-colors" href="#">Privacy Policy</a>
+<a class="text-gray-400 hover:text-white transition-colors" href="#">Terms of Service</a>
+<a class="text-gray-400 hover:text-white transition-colors" href="#">Support</a>
+</div>
+<div class="mt-4 md:mt-0 text-gray-500 text-sm">
+                © 2023 RestoAI Inc. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>

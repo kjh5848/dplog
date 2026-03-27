@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D-PLOG Observer | SaaS Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet JS & CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background: #09090b; /* Deep Dark */
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .glass-panel {
+            background: rgba(24, 24, 27, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .animate-spin-slow { animation: spin 2s linear infinite; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 4px; }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden relative">
+    {% block content %}{% endblock %}
+    
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
+    
+    <!-- Global Shared State & Scripts -->
+    <script>
+        // Custom Toast UI
+        window.showToast = function(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            let bgClass = "bg-zinc-800/90 border-zinc-700 text-white shadow-[0_4px_20px_rgba(0,0,0,0.5)]";
+            let iconHTML = `<svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"></circle><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16v-4m0-4h.01"></path></svg>`;
+            
+            if (type === 'success') {
+                bgClass = "bg-[#064e3b]/80 border-emerald-500/40 text-emerald-100 shadow-[0_0_20px_rgba(16,185,129,0.2)]";
+                iconHTML = `<svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            } else if (type === 'error') {
+                bgClass = "bg-[#450a0a]/80 border-red-500/40 text-red-100 shadow-[0_0_20px_rgba(239,68,68,0.2)]";
+                iconHTML = `<svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+            } else if (type === 'warning') {
+                bgClass = "bg-[#431407]/80 border-orange-500/40 text-orange-100 shadow-[0_0_20px_rgba(249,115,22,0.2)]";
+                iconHTML = `<svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            }
+
+            toast.className = `flex items-center gap-3 px-5 py-3.5 rounded-2xl border backdrop-blur-xl transform transition-all duration-400 translate-y-12 opacity-0 ${bgClass}`;
+            toast.innerHTML = `
+                ${iconHTML}
+                <span class="text-sm font-semibold tracking-wide drop-shadow-sm">${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Trigger animation
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-12', 'opacity-0');
+            });
+            
+            // Remove after 3.5 seconds
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
+        };
+
+        // Override native browser alert to prevent ugly popups
+        window.alert = function(msg) {
+            showToast(msg, 'warning');
+        };
+
+        let map, marker;
+        let selectedLat = 35.1631139;
+        let selectedLon = 129.1586925;
+        let currentStoreId = null; 
+        let currentPlaceId = null;
+        let chartInstance = null;
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            if(typeof initMap === 'function') initMap();
+            if(typeof loadSidebarStores === 'function') loadSidebarStores();
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

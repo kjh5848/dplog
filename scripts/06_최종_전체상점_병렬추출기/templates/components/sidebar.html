@@ -1,0 +1,56 @@
+<!-- 좌측 사이드바 (상점 무제한 목록) -->
+<aside class="w-full md:w-72 glass-panel border-r border-zinc-800 flex flex-col h-full">
+    <div class="p-6 border-b border-zinc-800">
+        <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500 tracking-tight">D-PLOG OBSERVER</h1>
+        <p class="text-xs text-zinc-400 mt-1">SEO Monitoring Engine</p>
+    </div>
+    
+    <div class="p-4">
+        <button onclick="showRegisterView()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-semibold transition-all">
+            + 신규 상점 등록
+        </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-4 pb-4 space-y-2" id="storeListContainer">
+        <!-- 상점 리스트 동적 렌더링 -->
+        <div class="text-center text-zinc-500 text-sm py-4">저장된 상점이 없습니다.</div>
+    </div>
+    
+    <div class="p-4 border-t border-zinc-800">
+        <button onclick="triggerScheduler()" class="w-full py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded text-sm transition-all border border-zinc-700">
+            🔄 백그라운드 랭킹수집 즉시 가동
+        </button>
+    </div>
+</aside>
+
+<script>
+    async function loadSidebarStores() {
+        const listContainer = document.getElementById('storeListContainer');
+        try {
+            const res = await fetch('/api/store/all');
+            const json = await res.json();
+            if(json.data && json.data.length > 0) {
+                listContainer.innerHTML = '';
+                json.data.forEach(store => {
+                    const div = document.createElement('div');
+                    div.className = "p-3 bg-zinc-900 border border-zinc-800 rounded-lg hover:border-indigo-500 cursor-pointer transition-colors group";
+                    div.onclick = () => loadStoreChart(store.id, store.name, store.place_id);
+                    div.innerHTML = `
+                        <p class="font-semibold text-zinc-200 text-sm group-hover:text-indigo-400 transition-colors">${store.name}</p>
+                        <p class="text-xs text-zinc-500 mt-1 truncate">${store.category || '상점'} | ${store.address ? store.address.split(' ')[0] : ''}</p>
+                    `;
+                    listContainer.appendChild(div);
+                });
+            }
+        } catch (e) { console.error("Sidebar load error", e); }
+    }
+
+    async function triggerScheduler() {
+        showToast("백그라운드 수집을 즉시 요청했습니다. 잠시 대기해주세요.", "info");
+        try {
+            const res = await fetch('/api/scheduler/run-now', { method: 'POST' });
+            const json = await res.json();
+            showToast(json.message, "success");
+        } catch(e) { showToast('스케줄러 트리거에 실패했습니다.', 'error'); }
+    }
+</script>

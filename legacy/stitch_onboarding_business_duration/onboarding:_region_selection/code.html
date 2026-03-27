@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pathfinder - Region Selection</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Noto+Sans+KR:wght@400;500;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b8cee",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "Noto Sans KR", "sans-serif"],
+                        "sans": ["Manrope", "Noto Sans KR", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', 'Noto Sans KR', sans-serif;
+        }
+    </style>
+</head>
+<body>
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden text-[#0d141b] dark:text-white">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-gray-200 dark:border-gray-800 px-10 py-4 bg-white dark:bg-[#1a2632]">
+<div class="flex items-center gap-4 text-[#0d141b] dark:text-white">
+<div class="size-6 text-primary">
+<span class="material-symbols-outlined !text-3xl">explore</span>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">Pathfinder</h2>
+</div>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-[#0d141b] dark:text-white text-sm font-bold leading-normal transition-colors">
+<span class="truncate">Save &amp; Exit</span>
+</button>
+</header>
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-4 md:px-20 lg:px-40 flex flex-1 justify-center py-10">
+<div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+<!-- Progress Bar -->
+<div class="flex flex-col gap-3 px-4 mb-8">
+<div class="flex gap-6 justify-between items-end">
+<p class="text-[#0d141b] dark:text-white text-sm font-medium leading-normal uppercase tracking-wider text-opacity-70">Step 2 of 4</p>
+<p class="text-primary text-sm font-bold leading-normal">25%</p>
+</div>
+<div class="rounded-full bg-gray-200 dark:bg-gray-700 h-2 overflow-hidden">
+<div class="h-full rounded-full bg-primary transition-all duration-500 ease-out" style="width: 25%;"></div>
+</div>
+</div>
+<!-- Page Heading -->
+<div class="flex flex-col gap-4 px-4 mb-8">
+<h1 class="text-[#0d141b] dark:text-white text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">어디서 시작하시나요?</h1>
+<p class="text-[#4c739a] dark:text-gray-400 text-base md:text-lg font-normal leading-normal max-w-2xl">
+                            사업자 등록 예정지 혹은 현재 사업장 소재지를 선택해주세요. 해당 지역의 지원금 및 맞춤형 혜택을 찾아드립니다.
+                            <br class="hidden md:block"/>
+<span class="text-sm opacity-80">(Select the location where you plan to register your business. We will find grants and benefits tailored to that region.)</span>
+</p>
+</div>
+<!-- Region Selection Grid -->
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-4">
+<!-- Seoul -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border-2 border-primary bg-primary/5 dark:bg-primary/10 cursor-pointer transition-all duration-200 relative overflow-hidden aspect-square">
+<div class="absolute top-2 right-2 text-primary">
+<span class="material-symbols-outlined text-xl">check_circle</span>
+</div>
+<div class="w-16 h-16 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center shadow-sm text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined !text-3xl">location_city</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Seoul<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">서울</span></span>
+</button>
+<!-- Busan -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">sailing</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Busan<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">부산</span></span>
+</button>
+<!-- Daegu -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">temple_buddhist</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Daegu<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">대구</span></span>
+</button>
+<!-- Incheon -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">flight_takeoff</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Incheon<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">인천</span></span>
+</button>
+<!-- Gwangju -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">palette</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Gwangju<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">광주</span></span>
+</button>
+<!-- Daejeon -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">science</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Daejeon<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">대전</span></span>
+</button>
+<!-- Ulsan -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">factory</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Ulsan<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">울산</span></span>
+</button>
+<!-- Sejong -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">account_balance</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Sejong<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">세종</span></span>
+</button>
+<!-- Gyeonggi -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">subway</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Gyeonggi<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">경기</span></span>
+</button>
+<!-- Gangwon -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">landscape</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Gangwon<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">강원</span></span>
+</button>
+<!-- Chungbuk -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">nature</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Chungbuk<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">충북</span></span>
+</button>
+<!-- Chungnam -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">agriculture</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Chungnam<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">충남</span></span>
+</button>
+<!-- Jeonbuk -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">rice_bowl</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Jeonbuk<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">전북</span></span>
+</button>
+<!-- Jeonnam -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">water_drop</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Jeonnam<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">전남</span></span>
+</button>
+<!-- Gyeongbuk -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">history_edu</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Gyeongbuk<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">경북</span></span>
+</button>
+<!-- Gyeongnam -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">precision_manufacturing</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Gyeongnam<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">경남</span></span>
+</button>
+<!-- Jeju -->
+<button class="group flex flex-col items-center justify-center gap-3 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a2632] hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-all duration-200 aspect-square">
+<div class="w-16 h-16 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400 group-hover:text-primary transition-colors">
+<span class="material-symbols-outlined !text-3xl">sunny</span>
+</div>
+<span class="text-[#0d141b] dark:text-white text-base font-bold text-center">Jeju<br/><span class="text-sm font-medium text-gray-500 dark:text-gray-400">제주</span></span>
+</button>
+</div>
+<!-- Button Group -->
+<div class="flex justify-end p-4 mt-8 gap-4 border-t border-gray-200 dark:border-gray-800 pt-6">
+<button class="flex min-w-[120px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-white border border-gray-300 dark:bg-[#1a2632] dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-[#0d141b] dark:text-white text-base font-bold leading-normal transition-colors">
+<span class="truncate">Back</span>
+</button>
+<button class="flex min-w-[140px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary hover:bg-blue-600 text-white text-base font-bold leading-normal shadow-lg shadow-blue-500/30 transition-all">
+<span class="truncate">Next Step</span>
+<span class="material-symbols-outlined text-lg ml-2">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

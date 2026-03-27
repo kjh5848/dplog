@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Content Factory: AI Marketing Creator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#10b77f",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#10221c",
+                        "surface-dark": "#162e26",
+                        "surface-darker": "#0d1a15",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for editor */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(16, 183, 127, 0.05); 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(16, 183, 127, 0.2); 
+            border-radius: 99px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(16, 183, 127, 0.4); 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 font-display min-h-screen flex overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-20 lg:w-64 border-r border-gray-200 dark:border-primary/20 flex-shrink-0 flex flex-col bg-white dark:bg-background-dark z-20">
+<div class="h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b border-gray-200 dark:border-primary/20">
+<div class="w-8 h-8 rounded bg-primary flex items-center justify-center">
+<span class="material-icons text-white">restaurant_menu</span>
+</div>
+<span class="hidden lg:block ml-3 font-bold text-lg tracking-tight">RestoAI</span>
+</div>
+<nav class="flex-1 overflow-y-auto py-4 space-y-1 px-2">
+<a class="flex items-center px-2 lg:px-4 py-3 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/10 hover:text-primary transition-colors group" href="#">
+<span class="material-icons-outlined group-hover:text-primary">analytics</span>
+<span class="hidden lg:block ml-3 font-medium">Diagnosis</span>
+</a>
+<a class="flex items-center px-2 lg:px-4 py-3 rounded-lg bg-primary/10 text-primary group" href="#">
+<span class="material-icons">auto_awesome</span>
+<span class="hidden lg:block ml-3 font-medium">Content Factory</span>
+</a>
+<a class="flex items-center px-2 lg:px-4 py-3 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/10 hover:text-primary transition-colors group" href="#">
+<span class="material-icons-outlined group-hover:text-primary">calendar_today</span>
+<span class="hidden lg:block ml-3 font-medium">Schedule</span>
+</a>
+<a class="flex items-center px-2 lg:px-4 py-3 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/10 hover:text-primary transition-colors group" href="#">
+<span class="material-icons-outlined group-hover:text-primary">people</span>
+<span class="hidden lg:block ml-3 font-medium">Customers</span>
+</a>
+</nav>
+<div class="p-4 border-t border-gray-200 dark:border-primary/20">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover border border-primary/30" data-alt="restaurant owner portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTNubAymH36q0txEGCs65uwibradmxrppA0DhjP-IpaJsm49nZXxONSmRBrBi3zAVHo8ypDg3YO_W6DdT8iYykU-gGcE3hOIUajkks2UBkBuW8gOn3bvTN4PCi-7rx-BggRVvawhK8zmh8BdFgtTEEGYUUQDFaRyEOm7AoDjXvvnEVzjl5s4N6GQCjgr2E1rLzOc8JXaLV37fJOrlXgqeHTwnJXJ56Gg2_SjXdXH6IKB3kENC_chjw9AGrQ4Hf1N8awHJOStLNz6Ng"/>
+<div class="hidden lg:block">
+<p class="text-sm font-medium">Chef Marco</p>
+<p class="text-xs text-gray-500 dark:text-gray-400">La Trattoria</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col min-w-0 bg-background-light dark:bg-background-dark relative">
+<!-- Header -->
+<header class="h-16 flex items-center justify-between px-6 border-b border-gray-200 dark:border-primary/20 bg-white/50 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-10">
+<div class="flex items-center">
+<nav aria-label="Breadcrumb" class="flex">
+<ol class="flex items-center space-x-2">
+<li>
+<a class="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300" href="#">
+<span class="material-icons text-sm">home</span>
+</a>
+</li>
+<li>
+<span class="text-gray-300 dark:text-gray-600">/</span>
+</li>
+<li>
+<a class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" href="#">New Campaign</a>
+</li>
+<li>
+<span class="text-gray-300 dark:text-gray-600">/</span>
+</li>
+<li>
+<span aria-current="page" class="text-sm font-medium text-gray-900 dark:text-white">Weekend Special</span>
+</li>
+</ol>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center px-3 py-1.5 bg-primary/10 rounded-full border border-primary/20">
+<span class="material-icons text-primary text-sm mr-2">bolt</span>
+<span class="text-sm font-bold text-primary">45 Credits</span>
+</div>
+<button class="flex items-center text-gray-500 dark:text-gray-400 hover:text-primary transition-colors">
+<span class="material-icons-outlined">save</span>
+</button>
+<button class="bg-primary hover:bg-primary/90 text-white px-5 py-2 rounded-lg font-medium shadow-lg shadow-primary/20 flex items-center transition-all">
+<span>One-Click Publish</span>
+<span class="material-icons text-sm ml-2">send</span>
+</button>
+</div>
+</header>
+<!-- Split Screen Workspace -->
+<div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+<!-- Left: AI Editor -->
+<section class="flex-1 flex flex-col min-w-0 border-r border-gray-200 dark:border-primary/20 bg-white dark:bg-surface-dark/50">
+<!-- Toolbar -->
+<div class="px-6 py-4 border-b border-gray-200 dark:border-primary/10 flex flex-wrap gap-4 items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="relative">
+<select class="appearance-none bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-primary/20 rounded-lg pl-3 pr-10 py-2 text-sm font-medium focus:ring-2 focus:ring-primary focus:border-primary outline-none cursor-pointer">
+<option>Friendly &amp; Casual</option>
+<option>Fine Dining &amp; Elegant</option>
+<option>Urgent &amp; Promotional</option>
+</select>
+<span class="material-icons absolute right-2 top-2.5 text-gray-400 pointer-events-none text-sm">expand_more</span>
+</div>
+<div class="relative">
+<select class="appearance-none bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-primary/20 rounded-lg pl-3 pr-10 py-2 text-sm font-medium focus:ring-2 focus:ring-primary focus:border-primary outline-none cursor-pointer">
+<option>Instagram Post</option>
+<option>Blog Article</option>
+<option>Email Newsletter</option>
+</select>
+<span class="material-icons absolute right-2 top-2.5 text-gray-400 pointer-events-none text-sm">expand_more</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-gray-400 hover:text-primary rounded hover:bg-primary/10 transition-colors" title="Regenerate">
+<span class="material-icons-outlined text-lg">autorenew</span>
+</button>
+<button class="p-2 text-gray-400 hover:text-primary rounded hover:bg-primary/10 transition-colors" title="Shorten">
+<span class="material-icons-outlined text-lg">compress</span>
+</button>
+<button class="p-2 text-gray-400 hover:text-primary rounded hover:bg-primary/10 transition-colors" title="Expand">
+<span class="material-icons-outlined text-lg">expand</span>
+</button>
+</div>
+</div>
+<!-- Input Context -->
+<div class="px-6 py-4 bg-gray-50 dark:bg-background-dark/30 border-b border-gray-200 dark:border-primary/10">
+<label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Focus Item</label>
+<div class="flex gap-2">
+<input class="flex-1 bg-white dark:bg-background-dark border border-gray-200 dark:border-primary/20 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none" type="text" value="Spicy Tuna Roll - 20% Off"/>
+<button class="bg-primary/10 hover:bg-primary/20 text-primary px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            Update
+                        </button>
+</div>
+</div>
+<!-- Editor Area -->
+<div class="flex-1 p-6 overflow-y-auto custom-scrollbar relative">
+<h2 class="text-2xl font-bold mb-4 outline-none" contenteditable="true">Friday Night Heat 🔥</h2>
+<div class="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-300 leading-relaxed outline-none" contenteditable="true">
+<p class="mb-4">
+                            Looking to spice up your weekend? Our signature Spicy Tuna Roll is exactly what you need.
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-medium align-middle select-none cursor-help transform translate-y-[-2px]" title="Based on 15% increase in spicy item sales last Friday">
+<span class="material-icons text-[10px]">insights</span> Verified by Sales Data
+                            </span>
+</p>
+<p class="mb-4">
+                            Made with fresh, locally sourced tuna and our secret chili blend, it delivers the perfect kick. Analysis shows our customers love pairing spicy items with a cold Asahi on Friday nights, so we're running a special combo deal just for you.
+                        </p>
+<p class="mb-4">
+                            Come in tonight and get <strong>20% off</strong> when you order two rolls or more!
+                        </p>
+<p class="text-gray-400 italic">
+                            #SushiLovers #FridayNight #SpicyTuna #WeekendVibes #LocalEats
+                        </p>
+</div>
+<!-- AI Streaming Indicator -->
+<div class="absolute bottom-6 right-6 flex items-center gap-2 bg-background-dark/90 px-3 py-1.5 rounded-full border border-primary/20 shadow-lg backdrop-blur animate-pulse">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-xs font-medium text-primary">AI Writing...</span>
+</div>
+</div>
+</section>
+<!-- Right: Live Preview -->
+<section class="w-full lg:w-[45%] bg-gray-100 dark:bg-surface-darker flex flex-col border-l border-gray-200 dark:border-primary/10">
+<!-- Preview Toolbar -->
+<div class="px-6 py-4 flex justify-center items-center gap-4 border-b border-gray-200 dark:border-primary/10">
+<div class="bg-white dark:bg-background-dark p-1 rounded-lg border border-gray-200 dark:border-primary/20 flex">
+<button class="p-2 rounded hover:bg-gray-100 dark:hover:bg-primary/10 text-primary">
+<span class="material-icons text-sm">smartphone</span>
+</button>
+<button class="p-2 rounded hover:bg-gray-100 dark:hover:bg-primary/10 text-gray-400 hover:text-primary">
+<span class="material-icons text-sm">laptop</span>
+</button>
+</div>
+<span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Instagram Preview</span>
+</div>
+<!-- Phone Mockup Container -->
+<div class="flex-1 overflow-y-auto p-8 flex justify-center items-start">
+<!-- Phone Frame -->
+<div class="w-[340px] bg-white dark:bg-black rounded-[2.5rem] shadow-2xl border-8 border-gray-800 dark:border-gray-800 overflow-hidden relative mx-auto">
+<!-- Notch -->
+<div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-gray-800 rounded-b-xl z-20"></div>
+<!-- Instagram UI Header -->
+<div class="pt-8 pb-2 px-4 flex justify-between items-center bg-white dark:bg-black text-black dark:text-white z-10 relative">
+<div class="flex items-center gap-2">
+<img class="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700" data-alt="restaurant logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5B4-OLbgCaZ8uTbzQYm_3OrtvuUW-Qj8mLCGU9aYNPh4OimSOcBWkBgmRztw70NmRTOgSyHVk0sGIwBKhWu-xDqyhlbeUNAz4P3kzG127lB4OY1bDu5FQq8SHTNNkccGMuvGK0Yp0AwWxWwEhqgRvZDo94nawsqhf16AewrkiY0KZlDx1gRmVx4iKnaH8JjfsW9-NR0yG-I94SIvmlqBNN42i_DHjkcK_k9vIZoOMJK07WNMZW3nCBQDO-OzEv7xPVtqF9-MqOoAF"/>
+<span class="text-xs font-semibold">latrattoria_official</span>
+</div>
+<span class="material-icons text-sm">more_horiz</span>
+</div>
+<!-- Content Image Area -->
+<div class="aspect-square bg-gray-100 dark:bg-gray-900 relative group overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="vibrant sushi plate close up" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7bSQRH4UP7Yty4QwP9pN8eld9vJF3qwajAqmNflvJt3rgWgCSU2yEqO72pcAwMMrbgIlpROr6qWhoXi_AzLbgmAa0S-OCYyc8nYveWbocSZSr3Sp-sDC7NERYneCjUukM512jTz0_ypq8esFpWjmR222YF7-sAd67bptRIHhsC3LIEF54sriJBc_if7R9gAR1OwrfNaqihtqnhbyWcqJk1gEwqhHoOYtUS2WaKNgcEAlVGe_vf36G9ygOMIj9GHcMsjjzwPwYscIS"/>
+<!-- AI Generation Overlay Controls -->
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-3 backdrop-blur-[2px]">
+<button class="bg-primary text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg transform hover:scale-105 transition-transform flex items-center gap-2">
+<span class="material-icons text-sm">auto_awesome</span> Regenerate Image
+                                </button>
+<span class="text-white/80 text-[10px] uppercase tracking-wider font-medium">- 1 Credit</span>
+</div>
+<!-- Overlay Text (Simulated Sticker) -->
+<div class="absolute bottom-4 left-4 bg-gradient-to-r from-primary to-emerald-600 text-white px-3 py-1 rounded text-xs font-bold shadow-lg transform -rotate-2">
+                                Friday Night Heat 🔥
+                            </div>
+</div>
+<!-- Instagram Actions -->
+<div class="px-4 py-3 bg-white dark:bg-black text-black dark:text-white">
+<div class="flex justify-between mb-2">
+<div class="flex gap-3">
+<span class="material-icons-outlined text-xl">favorite_border</span>
+<span class="material-icons-outlined text-xl">chat_bubble_outline</span>
+<span class="material-icons-outlined text-xl">send</span>
+</div>
+<span class="material-icons-outlined text-xl">bookmark_border</span>
+</div>
+<div class="text-xs font-semibold mb-1">243 likes</div>
+<div class="text-xs leading-snug">
+<span class="font-semibold mr-1">latrattoria_official</span>
+                                Looking to spice up your weekend? Our signature Spicy Tuna Roll is exactly what you need. 🌶️🍣
+                                <span class="text-blue-500 cursor-pointer">#SushiLovers #FridayNight</span>
+</div>
+<div class="text-[10px] text-gray-500 mt-2 uppercase">2 hours ago</div>
+</div>
+<!-- Bottom Nav Simulation -->
+<div class="h-12 border-t border-gray-100 dark:border-gray-800 flex justify-around items-center px-4 bg-white dark:bg-black text-black dark:text-white">
+<span class="material-icons text-xl">home</span>
+<span class="material-icons-outlined text-xl">search</span>
+<span class="material-icons-outlined text-xl">add_box</span>
+<span class="material-icons-outlined text-xl">favorite_border</span>
+<div class="w-5 h-5 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Global Floating Help/AI Assistant Button -->
+<div class="fixed bottom-6 right-6 z-50">
+<button class="w-12 h-12 bg-primary hover:bg-primary/90 rounded-full shadow-lg shadow-primary/30 flex items-center justify-center text-white transition-transform hover:scale-110 group relative">
+<span class="material-icons">chat</span>
+<span class="absolute right-0 top-0 flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-red-500 border-2 border-primary"></span>
+</span>
+</button>
+</div>
+</body></html>

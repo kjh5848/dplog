@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Main Dashboard: AI Data Assistant</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with Config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#10b77f",
+                        "primary-dark": "#0d9266",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#10221c", // Darker version of theme
+                        "navy-dark": "#0b1219", // Deep Navy for glassmorphism base
+                        "navy-card": "#131f28", // Slightly lighter for cards
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom Glassmorphism Utilities */
+        .glass-panel {
+            background: rgba(19, 31, 40, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(16, 183, 127, 0.3);
+        }
+
+        /* Custom Scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b1219; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d3e4a; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10b77f; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 min-h-screen overflow-hidden">
+<div class="flex h-screen w-full">
+<!-- LEFT COLUMN: Navigation Sidebar -->
+<aside class="w-20 lg:w-64 flex flex-col justify-between border-r border-slate-200 dark:border-white/10 glass-panel z-20 transition-all duration-300">
+<!-- Logo Area -->
+<div class="h-20 flex items-center justify-center lg:justify-start lg:px-6 border-b border-white/5">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-icons">auto_graph</span>
+</div>
+<span class="hidden lg:block text-xl font-bold tracking-tight text-white">DataChef<span class="text-primary">.ai</span></span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 py-8 px-2 lg:px-4 space-y-2 overflow-y-auto">
+<a class="flex items-center gap-4 px-3 py-3 rounded-lg bg-primary/10 text-primary border border-primary/20 group transition-all" href="#">
+<span class="material-icons">dashboard</span>
+<span class="hidden lg:block font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-3 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all group" href="#">
+<span class="material-icons group-hover:text-primary transition-colors">storefront</span>
+<span class="hidden lg:block font-medium">My Store</span>
+</a>
+<a class="flex items-center gap-4 px-3 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all group" href="#">
+<span class="material-icons group-hover:text-primary transition-colors">insights</span>
+<span class="hidden lg:block font-medium">AI Analysis</span>
+</a>
+<a class="flex items-center gap-4 px-3 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all group" href="#">
+<span class="material-icons group-hover:text-primary transition-colors">campaign</span>
+<span class="hidden lg:block font-medium">Auto-Marketing</span>
+</a>
+<a class="flex items-center gap-4 px-3 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all group" href="#">
+<span class="material-icons group-hover:text-primary transition-colors">reviews</span>
+<span class="hidden lg:block font-medium">Reviews</span>
+<span class="hidden lg:flex ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">3</span>
+</a>
+<div class="pt-8 mt-8 border-t border-white/10 hidden lg:block">
+<p class="px-3 text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2">Settings</p>
+<a class="flex items-center gap-4 px-3 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all group" href="#">
+<span class="material-icons group-hover:text-primary transition-colors">settings</span>
+<span class="font-medium">Configuration</span>
+</a>
+</div>
+</nav>
+<!-- User Profile -->
+<div class="p-4 border-t border-white/5">
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer transition-colors">
+<img alt="Restaurant owner portrait smiling" class="w-10 h-10 rounded-full object-cover border-2 border-primary/30" data-alt="Restaurant owner portrait smiling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4BtHnrv2PoNKgfooNA5PGwWbKcsR90IoQPF0GfVpGbtbAyMgEDrHdxnj2PtFsb2NwBD4WBI_s4vrCwrgxBD9CeYhtBVtnlBORf80n08wSP6yYRL1Eil8VJlWBlTAz42tXUw3d2e1vXqivYuM1pnPnXDvrE3Be5JvUgZMGgPUyNDAufryc5Ap00eeA_tC3aGrlEcimzQFKrKkQeaYoE_0Sn1gqS-x-CB4xgR-uCTkHnQjS7HqhZR7YO-voDqhsu06C6Lz_ELQkrkDr"/>
+<div class="hidden lg:block overflow-hidden">
+<p class="text-sm font-semibold text-white truncate">Chef Michael</p>
+<p class="text-xs text-slate-400 truncate">Pasta &amp; Co. Gangnam</p>
+</div>
+<span class="material-icons text-slate-500 ml-auto hidden lg:block text-sm">more_vert</span>
+</div>
+</div>
+</aside>
+<!-- CENTER COLUMN: Weekly Mission Hub -->
+<main class="flex-1 overflow-y-auto relative z-10">
+<!-- Background Glow Effect -->
+<div class="absolute top-0 left-0 w-full h-96 bg-primary/5 blur-3xl pointer-events-none -z-10"></div>
+<div class="max-w-4xl mx-auto px-6 py-8">
+<!-- Header -->
+<header class="mb-8">
+<h1 class="text-3xl font-bold text-white mb-2">Let's boost your revenue, Chef!</h1>
+<p class="text-slate-400">Complete these AI-recommended tasks to improve your <span class="text-primary font-medium">Naver Place</span> ranking.</p>
+</header>
+<!-- Progress Section -->
+<div class="glass-panel rounded-2xl p-6 mb-8 relative overflow-hidden">
+<div class="flex justify-between items-end mb-4 relative z-10">
+<div>
+<h2 class="text-xl font-bold text-white flex items-center gap-2">
+<span class="material-icons text-primary">verified</span>
+                                Weekly Mission TOP 5
+                            </h2>
+<p class="text-sm text-slate-400 mt-1">3 of 5 missions completed. Finish all for a ranking boost!</p>
+</div>
+<div class="text-right">
+<span class="text-4xl font-bold text-primary">60%</span>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="h-3 w-full bg-slate-700/50 rounded-full overflow-hidden relative z-10">
+<div class="h-full bg-gradient-to-r from-primary/80 to-primary w-3/5 rounded-full shadow-[0_0_15px_rgba(16,183,127,0.5)]"></div>
+</div>
+<!-- Decorative Background element -->
+<div class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-primary/10 to-transparent pointer-events-none"></div>
+</div>
+<!-- Mission List -->
+<div class="space-y-4">
+<!-- Active Mission 1 -->
+<div class="glass-card rounded-xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center group">
+<div class="flex-shrink-0 pt-1 md:pt-0">
+<div class="w-6 h-6 rounded border-2 border-slate-500 group-hover:border-primary cursor-pointer flex items-center justify-center transition-colors">
+<!-- Unchecked state -->
+</div>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<h3 class="text-lg font-semibold text-white">Reply to 3 negative reviews</h3>
+<span class="bg-red-500/10 text-red-400 text-[10px] uppercase font-bold px-2 py-0.5 rounded border border-red-500/20">Urgent</span>
+</div>
+<div class="bg-primary/5 border border-primary/10 rounded-lg p-3 mt-2 flex gap-3">
+<span class="material-icons text-primary text-sm mt-0.5">psychology</span>
+<div>
+<p class="text-xs font-bold text-primary mb-0.5">AI Analysis Insight</p>
+<p class="text-xs text-slate-300">Unanswered negative reviews drop trust scores by 15%. Replying within 24h can recover 40% of lost potential.</p>
+</div>
+</div>
+</div>
+<button class="bg-primary hover:bg-primary-dark text-white text-sm font-medium px-5 py-2.5 rounded-lg shadow-lg shadow-primary/20 transition-all flex items-center gap-2 w-full md:w-auto justify-center">
+<span>Auto-Draft</span>
+<span class="material-icons text-sm">edit_note</span>
+</button>
+</div>
+<!-- Active Mission 2 -->
+<div class="glass-card rounded-xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center group">
+<div class="flex-shrink-0 pt-1 md:pt-0">
+<div class="w-6 h-6 rounded border-2 border-slate-500 group-hover:border-primary cursor-pointer flex items-center justify-center transition-colors"></div>
+</div>
+<div class="flex-1">
+<h3 class="text-lg font-semibold text-white mb-1">Upload 2 new food photos</h3>
+<div class="bg-blue-500/5 border border-blue-500/10 rounded-lg p-3 mt-2 flex gap-3">
+<span class="material-icons text-blue-400 text-sm mt-0.5">trending_up</span>
+<div>
+<p class="text-xs font-bold text-blue-400 mb-0.5">Trend Alert</p>
+<p class="text-xs text-slate-300">Competitors with fresh photos saw a 12% increase in clicks this weekend.</p>
+</div>
+</div>
+</div>
+<button class="bg-white/5 hover:bg-white/10 text-white border border-white/10 text-sm font-medium px-5 py-2.5 rounded-lg transition-all flex items-center gap-2 w-full md:w-auto justify-center">
+<span>Upload</span>
+<span class="material-icons text-sm">upload</span>
+</button>
+</div>
+<!-- Completed Mission 3 -->
+<div class="glass-card bg-primary/5 border-primary/20 rounded-xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center opacity-70">
+<div class="flex-shrink-0 pt-1 md:pt-0">
+<div class="w-6 h-6 rounded bg-primary border-2 border-primary flex items-center justify-center">
+<span class="material-icons text-white text-sm">check</span>
+</div>
+</div>
+<div class="flex-1">
+<h3 class="text-lg font-semibold text-slate-300 line-through">Activate 'Rainy Day' coupon</h3>
+<p class="text-sm text-primary mt-1 flex items-center gap-1">
+<span class="material-icons text-sm">check_circle</span> Completed Today
+                            </p>
+</div>
+</div>
+<!-- Completed Mission 4 -->
+<div class="glass-card bg-primary/5 border-primary/20 rounded-xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center opacity-70">
+<div class="flex-shrink-0 pt-1 md:pt-0">
+<div class="w-6 h-6 rounded bg-primary border-2 border-primary flex items-center justify-center">
+<span class="material-icons text-white text-sm">check</span>
+</div>
+</div>
+<div class="flex-1">
+<h3 class="text-lg font-semibold text-slate-300 line-through">Update Business Hours for Holiday</h3>
+<p class="text-sm text-primary mt-1 flex items-center gap-1">
+<span class="material-icons text-sm">check_circle</span> Completed Yesterday
+                            </p>
+</div>
+</div>
+<!-- Completed Mission 5 -->
+<div class="glass-card bg-primary/5 border-primary/20 rounded-xl p-5 flex flex-col md:flex-row gap-4 items-start md:items-center opacity-70">
+<div class="flex-shrink-0 pt-1 md:pt-0">
+<div class="w-6 h-6 rounded bg-primary border-2 border-primary flex items-center justify-center">
+<span class="material-icons text-white text-sm">check</span>
+</div>
+</div>
+<div class="flex-1">
+<h3 class="text-lg font-semibold text-slate-300 line-through">Review Weekly Sales Report</h3>
+<p class="text-sm text-primary mt-1 flex items-center gap-1">
+<span class="material-icons text-sm">check_circle</span> Completed Yesterday
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- RIGHT COLUMN: Analytics & Stats -->
+<aside class="w-80 lg:w-96 glass-panel border-l border-white/10 hidden xl:flex flex-col overflow-y-auto">
+<div class="p-6 space-y-6">
+<!-- Chart Section -->
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<h2 class="text-lg font-bold text-white">Ranking Analytics</h2>
+<select class="bg-white/5 border border-white/10 text-xs rounded px-2 py-1 text-slate-300 outline-none focus:border-primary">
+<option>Last 7 Days</option>
+<option>Last 30 Days</option>
+</select>
+</div>
+<div class="glass-card rounded-xl p-4">
+<div class="flex justify-between items-start mb-4">
+<div>
+<p class="text-xs text-slate-400 uppercase tracking-wide">Naver Place Rank</p>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-3xl font-bold text-white">#3</span>
+<span class="text-sm text-primary flex items-center font-medium">
+<span class="material-icons text-base">arrow_upward</span> 4 spots
+                                    </span>
+</div>
+</div>
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-icons text-primary">leaderboard</span>
+</div>
+</div>
+<!-- Simplified CSS Chart representation -->
+<div class="h-32 w-full flex items-end justify-between gap-1 mt-2 px-1 relative">
+<!-- Grid lines -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-20">
+<div class="w-full border-t border-dashed border-slate-400"></div>
+<div class="w-full border-t border-dashed border-slate-400"></div>
+<div class="w-full border-t border-dashed border-slate-400"></div>
+</div>
+<!-- Graph Line (Approximated with gradient bars for simplicity without JS canvas) -->
+<div class="w-1/6 bg-primary/20 rounded-t h-[30%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+<div class="w-1/6 bg-primary/20 rounded-t h-[45%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+<div class="w-1/6 bg-primary/30 rounded-t h-[40%] relative group cursor-pointer hover:bg-primary/50 transition-all"></div>
+<div class="w-1/6 bg-primary/40 rounded-t h-[60%] relative group cursor-pointer hover:bg-primary/60 transition-all"></div>
+<div class="w-1/6 bg-primary/60 rounded-t h-[75%] relative group cursor-pointer hover:bg-primary/80 transition-all"></div>
+<div class="w-1/6 bg-primary rounded-t h-[85%] relative group cursor-pointer hover:bg-primary-light transition-all shadow-[0_0_10px_rgba(16,183,127,0.5)]"></div>
+</div>
+<div class="flex justify-between mt-2 text-[10px] text-slate-500 font-mono">
+<span>Mon</span>
+<span>Tue</span>
+<span>Wed</span>
+<span>Thu</span>
+<span>Fri</span>
+<span>Sat</span>
+</div>
+</div>
+</div>
+<!-- Secondary Stats Grid -->
+<div class="grid grid-cols-2 gap-3">
+<div class="glass-card p-4 rounded-xl">
+<p class="text-[10px] text-slate-400 uppercase tracking-wide mb-1">Weekly Rev</p>
+<p class="text-xl font-bold text-white">$12.4k</p>
+<p class="text-xs text-primary mt-1">+5.2%</p>
+</div>
+<div class="glass-card p-4 rounded-xl">
+<p class="text-[10px] text-slate-400 uppercase tracking-wide mb-1">Avg Rating</p>
+<p class="text-xl font-bold text-white">4.8</p>
+<div class="flex text-yellow-500 text-[10px] mt-1">
+<span class="material-icons text-xs">star</span>
+<span class="material-icons text-xs">star</span>
+<span class="material-icons text-xs">star</span>
+<span class="material-icons text-xs">star</span>
+<span class="material-icons text-xs">star_half</span>
+</div>
+</div>
+</div>
+<!-- Visits Card -->
+<div class="glass-card p-4 rounded-xl flex items-center justify-between">
+<div>
+<p class="text-[10px] text-slate-400 uppercase tracking-wide mb-1">Customer Visits</p>
+<p class="text-2xl font-bold text-white">842</p>
+</div>
+<!-- Mini Sparkline visual -->
+<div class="h-10 w-16 flex items-end gap-0.5">
+<div class="w-2 bg-slate-600 h-3 rounded-sm"></div>
+<div class="w-2 bg-slate-600 h-5 rounded-sm"></div>
+<div class="w-2 bg-slate-600 h-4 rounded-sm"></div>
+<div class="w-2 bg-slate-600 h-7 rounded-sm"></div>
+<div class="w-2 bg-primary h-9 rounded-sm"></div>
+</div>
+</div>
+<!-- Strategic Insight -->
+<div class="mt-auto pt-4 border-t border-white/10">
+<div class="bg-gradient-to-br from-primary/20 to-transparent border border-primary/20 rounded-xl p-5 relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-20 h-20 bg-primary/20 rounded-full blur-2xl"></div>
+<div class="flex items-center gap-2 mb-2">
+<span class="material-icons text-primary animate-pulse">lightbulb</span>
+<h3 class="text-sm font-bold text-white">Growth Opportunity</h3>
+</div>
+<p class="text-xs text-slate-200 leading-relaxed mb-3">
+                            Based on your data, launching a <span class="text-primary font-semibold">Happy Hour (4-6 PM)</span> could increase weekday revenue by an estimated <span class="font-bold text-white">18%</span>.
+                        </p>
+<button class="w-full bg-white/10 hover:bg-white/20 text-white text-xs font-medium py-2 rounded-lg border border-white/10 transition-colors">
+                            View Prediction Details
+                        </button>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</body></html>

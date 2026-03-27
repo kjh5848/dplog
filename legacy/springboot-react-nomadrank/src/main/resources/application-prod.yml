@@ -1,0 +1,100 @@
+server:
+  port: 18080
+  compression:
+    enabled: true
+  servlet:
+    session:
+      timeout: 2600000
+      cookie:
+        max-age: 2600000
+        same-site: none
+        secure: true
+        
+spring:
+  thymeleaf:
+    cache: false
+  datasource:
+    url: jdbc:mysql://ls-0cbb43695eaa282956e09c33337f9faea2710533.cuq285lht182.ap-northeast-2.rds.amazonaws.com:3306/nesoone_2
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: dbmasteruser
+    password: Shakem!!76
+  data:
+    web:
+      pageable:
+        max-page-size: 2147483647
+  jpa:
+    defer-datasource-initialization: true
+    open-in-view: false # 트랜잭션 범위 밖에서 영속성 컨텍스트를 유지할지 여부
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: validate # create-drop, update, validate, none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+    #    show-sql: true
+    properties:
+      hibernate:
+        #        format_sql: true
+        #        use_sql_comments: true
+        default_batch_fetch_size: 500
+
+logging:
+  level:
+    root: info
+#    org.springframework.jdbc.core.JdbcTemplate: trace
+
+
+#springdoc:
+#  swagger-ui:
+#    enabled: true
+#    path: /docs
+#    url: /springdoc/openapi3.json
+#    tags-sorter: alpha
+#    operations-sorter: alpha
+#  api-docs:
+#    enabled: true
+#    path: /docs/json
+
+nomadscrap-server:
+  domain: nomadscrap.duckdns.org
+  ip: 43.200.224.162
+  api-key: 0c810e3de018434fb2a8c31854131cd7
+
+nsearchad:
+  domain: "api.searchad.naver.com"
+  customer-id: "3195162"
+  api-key: "0100000000ffcae5bccf4cf8428b07c6866c930cebfaed57a61a9df2c6567d67ac64218d91"
+  secret-key: "AQAAAAD/yuW8z0z4QosHxoZskwzrVPnXBgN7aolMIpyFhC03pw=="
+
+pumpingstore-server:
+  ip: 3.36.175.82
+  api-key: 6f25356bcde24071b19a950a4600f2ea
+
+#google-credentials:
+#  path: /app/credentials/credentials.json
+#  path: /credentials/credentials.json
+
+# 카카오 OAuth 2.0 설정 (운영환경)
+kakao:
+  rest-api-key: ${KAKAO_REST_API_KEY:your_kakao_rest_api_key}
+  client-secret: ${KAKAO_CLIENT_SECRET:}
+  redirect-uri: ${KAKAO_REDIRECT_URI:https://yourdomain.com/kakao/callback}
+  channel-public-id: ${KAKAO_CHANNEL_PUBLIC_ID:}
+  authorize-uri: https://kauth.kakao.com/oauth/authorize
+  # 운영에서도 동일한 필수 스코프를 요구합니다.
+  required-scopes: profile_nickname,profile_image,account_email,name,gender,age_range,birthday,birthyear,phone_number,plusfriends,talk_message
+
+# 멤버십 기본 정책 (운영)
+membership:
+  free-trial-days: ${MEMBERSHIP_FREE_TRIAL_DAYS:-1}
+
+payment:
+  recurring:
+    test-mode:
+      enabled: ${PAYMENT_TEST_SCHEDULE_ENABLED:false}
+      minute-interval: ${PAYMENT_TEST_SCHEDULE_MINUTE_INTERVAL:0}
+    backup-scheduler:
+      enabled: ${PAYMENT_BACKUP_SCHEDULER_ENABLED:false}
+  timezone:
+    default: Asia/Seoul
+    default-billing-time: "09:00"

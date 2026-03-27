@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- 좌측 사이드바 (상점 무제한 목록) -->
+    {% include "components/sidebar.html" %}
+
+    <!-- 우측 메인 대시보드 영역 -->
+    <main class="flex-1 h-full overflow-y-auto bg-[#09090b] p-6 relative" id="mainView">
+        <!-- [뷰 A] 상점 등록 (지도 + URL) 모달형 뷰 -->
+        {% include "components/register_section.html" %}
+        
+        <!-- [뷰 B] 차트 및 황금키워드 모바일 체크 뷰 -->
+        {% include "components/dashboard_section.html" %}
+    </main>
+{% endblock %}

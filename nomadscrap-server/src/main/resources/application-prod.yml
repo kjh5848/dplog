@@ -1,0 +1,59 @@
+server:
+  port: 80
+  compression:
+    enabled: true
+
+spring:
+  thymeleaf:
+    cache: false
+  datasource:
+    url: jdbc:mariadb://rpa.cj6omyy0cdlc.ap-northeast-2.rds.amazonaws.com:3306/scrap
+    driverClassName: org.mariadb.jdbc.Driver
+    username: nomadlab
+    password: Shakem!90707
+  data:
+    web:
+      pageable:
+        max-page-size: 2147483647
+  jpa:
+    defer-datasource-initialization: true
+    open-in-view: false # 트랜잭션 범위 밖에서 영속성 컨텍스트를 유지할지 여부
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: validate # create-drop, update, validate, none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+    #    show-sql: true
+    properties:
+      hibernate:
+        #        format_sql: true
+        #        use_sql_comments: true
+        default_batch_fetch_size: 500
+
+logging:
+  level:
+    org.springframework.jdbc.core.JdbcTemplate: trace
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /docs
+    url: /springdoc/openapi3.json
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    enabled: true
+    path: /docs/json
+
+scrap-mall-vpn: 3.39.224.52
+
+proxy-server:
+  ip: 121.144.229.17
+  api-key-list:
+    - "0c810e3de018434fb2a8c31854131cd7"
+    - "bd0d3dfb1a464fe6afeeee51a292e2f2"
+
+ndatalab:
+  client-id: ndk9hMDzQF9IOM_1jPTl
+  client-secret: rGX0rFf8en

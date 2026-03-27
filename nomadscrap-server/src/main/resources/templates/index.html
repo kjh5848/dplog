@@ -1,0 +1,267 @@
+<!DOCTYPE html >
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+      .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+      }
+
+      .gubun {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          grid-column-gap: 10px;
+      }
+
+      .box {
+          border: 1px solid #000;
+          padding: 10px;
+      }
+
+      .card {
+          border: 1px solid #000;
+          padding: 10px;
+          margin-top: 10px;
+      }
+
+      .search-box {
+          display: flex;
+          justify-content: center;
+      }
+
+      .search {
+          margin-right: 20px;
+          width: 115px;
+      }
+  </style>
+  <title>순위체크</title>
+</head>
+<body>
+<div class="header">
+  <h1>순위체크</h1>
+  <div><input id="apiKey" type="password" placeholder="apiKey" style="width: 200px"></div>
+</div>
+<div class="gubun">
+  <div class="box">
+    <h1>네이버 쇼핑</h1>
+    <div>
+      <div>
+        <label>
+          <input type="radio" name="nstoreFilterType" value="COMPANY_NAME" checked>
+          스토어 검색
+        </label>
+        <label>
+          <input type="radio" name="nstoreFilterType" value="MID">
+          mid 검색
+        </label>
+      </div>
+      <div style="margin-top: 10px">
+        <label>
+          필터값
+          <input id="nstoreFilterValue" type="text" placeholder="스토어">
+        </label>
+      </div>
+      <div style="margin-top: 10px">
+        <label>
+          키워드
+          <input id="nstoreKeyword" type="text" placeholder="키워드">
+        </label>
+      </div>
+      <br/>
+      <div class="search-box">
+        <button id="nstoreSearch" class="search">검색</button>
+      </div>
+      <hr>
+      <div id="nstoreResult">
+        <!--        <div class="card">-->
+        <!--          <div>스토어 : ㅁㄴㅇㄹ</div>-->
+        <!--          <div>랭크 : 12</div>-->
+        <!--          <div>상품제목 : ㅁㄴㅇ</div>-->
+        <!--        </div>-->
+      </div>
+    </div>
+  </div>
+  <div class="box">
+    <h1>네이버 플레이스</h1>
+    <div>
+      <div>
+        <label>
+          키워드
+          <input type="text" placeholder="키워드">
+        </label>
+      </div>
+      <div>
+        <label>
+          스토어
+          <input type="text" placeholder="스토어 이름">
+        </label>
+      </div>
+      <div>
+        <button>검색</button>
+      </div>
+      <hr>
+    </div>
+  </div>
+  <div class="box">
+    <h1>카카오 쇼핑하기</h1>
+    <div>
+      <div>
+        <label>
+          키워드
+          <input type="text" placeholder="키워드">
+        </label>
+      </div>
+      <div>
+        <label>
+          스토어
+          <input type="text" placeholder="스토어 이름">
+        </label>
+      </div>
+      <div>
+        <button>검색</button>
+      </div>
+      <hr>
+    </div>
+  </div>
+  <div class="box">
+    <h1>카카오 선물하기</h1>
+    <div>
+      <div>
+        <label>
+          키워드
+          <input type="text" placeholder="키워드">
+        </label>
+      </div>
+      <div>
+        <label>
+          스토어
+          <input type="text" placeholder="스토어 이름">
+        </label>
+      </div>
+      <div>
+        <button>검색</button>
+      </div>
+      <hr>
+    </div>
+  </div>
+</div>
+</body>
+<script>
+    window.onload = () => {
+        const apiKey = localStorage.getItem('apiKey');
+        if (apiKey != null) {
+            document.querySelector('#apiKey').value = apiKey;
+        }
+        document.getElementById('nstoreFilterValue').placeholder = '스토어명을 입력하세요.';
+    }
+
+    document.querySelectorAll('input[name="nstoreFilterType"]').forEach(element => element.addEventListener('change', (e) => {
+        const companyNameOrId = document.getElementById('nstoreFilterValue');
+        console.log(e.target.value);
+        if (e.target.value === 'companyName') {
+            companyNameOrId.placeholder = '스토어명을 입력하세요.';
+        } else {
+            companyNameOrId.placeholder = 'mid를 입력하세요.';
+        }
+    }));
+
+    document.querySelector('#apiKey').addEventListener('change', (event) => {
+        localStorage.setItem('apiKey', event.target.value);
+    });
+
+    const getIdOrLowMallList = (nstoreRankSearchProduct) => {
+        const lowMallList = nstoreRankSearchProduct.lowMallList;
+        if (lowMallList == null) {
+            return `<div>mid : ${nstoreRankSearchProduct.id}</div>`
+        }
+        return `<div>mid : ${nstoreRankSearchProduct.id}</div>`
+            + lowMallList.map((lowMall) => {
+                return `<div><small>${lowMall.name} : ${lowMall.price}</small></div>`;
+            }).join('');
+    };
+
+    const doOnNstoreSearchSuccess = (dto) => {
+        console.log(dto);
+        const nstoreResult = document.querySelector('#nstoreResult');
+        if (dto.data.nstoreSearchProductList.length === 0) {
+            nstoreResult.innerHTML = '검색결과가 없습니다.';
+            return;
+        }
+        nstoreResult.innerHTML = '';
+        dto.data.nstoreSearchProductList.forEach((nstoreSearchProduct) => {
+            nstoreResult.insertAdjacentHTML('beforeend', `
+                <div class="card">
+                    <div style="font-weight: bold">스토어 : ${nstoreSearchProduct.mallName}</div>
+                    <div style="font-weight: bold">순위 : ${nstoreSearchProduct.rankInfo.pageIndex}페이지 ${nstoreSearchProduct.rankInfo.pageRank}위 (${nstoreSearchProduct.rankInfo.rank}위)</div>
+                    <div>상품제목 : ${nstoreSearchProduct.productTitle}</div>
+                    <div class="box" style="margin-top: 10px">${getIdOrLowMallList(nstoreSearchProduct)}</div>
+                </div>
+            `);
+        });
+    }
+
+    const fetchScrapApi = (url, callback) => {
+        fetch(url)
+            .then((response) => {
+                if (!response.ok) {
+                    const err = new Error("HTTP status code: " + response.status);
+                    err.response = response;
+                    err.status = response.status;
+                    throw err;
+                }
+                return response;
+            })
+            .then(response => response.json())
+            .then(callback)
+            .catch((error) => {
+                if (error.response == null) {
+                    console.log(error);
+                    return;
+                }
+                error.response.json().then((dto) => {
+                    nstoreResult.innerHTML = '';
+                    if (dto == null || dto.code == null) {
+                        alert(`서버와 통신중 오류가 발생했습니다.`);
+                        return;
+                    }
+                    if (dto.code === -3) {
+                        let message = '';
+                        Object.keys(dto.data).forEach((key) => {
+                            message += `${key} : ${dto.data[key]}\n`;
+                        });
+                        alert(message);
+                        return;
+                    }
+                    alert(dto.message);
+                });
+            });
+    }
+
+    document.querySelector('#nstoreFilterValue').addEventListener('keyup', (event) => {
+        if (event.keyCode === 13) {
+            document.querySelector('#nstoreKeyword').focus();
+
+        }
+    });
+
+    document.querySelector('#nstoreKeyword').addEventListener('keyup', (event) => {
+        if (event.keyCode === 13) {
+            document.querySelector('#nstoreSearch').click();
+        }
+    });
+
+    document.querySelector('#nstoreSearch').addEventListener('click', () => {
+        document.querySelector('#nstoreFilterValue').focus();
+        nstoreResult.innerHTML = '로딩중...';
+        const apiKey = document.querySelector('#apiKey').value;
+        const filterType = document.querySelector('input[name="nstoreFilterType"]:checked').value;
+        const filterValue = document.querySelector('#nstoreFilterValue').value;
+        const keyword = document.querySelector('#nstoreKeyword').value;
+        const url = `/v1/rank/nstore/realtime?apiKey=${apiKey}&keyword=${keyword}&filterValue=${filterValue}&filterType=${filterType}&compare=true&ad=false`;
+        fetchScrapApi(url, doOnNstoreSearchSuccess);
+    });
+</script>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pathfinder - AI Business Plan Chat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b8cee",
+                        "primary-hover": "#1e70bf",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2632",
+                        "text-main-light": "#0d141b",
+                        "text-main-dark": "#e7edf3",
+                        "text-secondary-light": "#4c739a",
+                        "text-secondary-dark": "#94a3b8",
+                        "border-light": "#e7edf3",
+                        "border-dark": "#2d3748",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "Noto Sans", "sans-serif"],
+                        "body": ["Manrope", "Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #475569;
+        }
+        .typing-dot {
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .highlight-pulse {
+            animation: highlight 2s ease-out;
+        }
+
+        @keyframes highlight {
+            0% { background-color: rgba(43, 140, 238, 0.2); }
+            100% { background-color: transparent; }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main-light dark:text-text-main-dark overflow-hidden h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="h-16 flex items-center justify-between border-b border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-6 shrink-0 z-20">
+<div class="flex items-center gap-4">
+<div class="size-8 text-primary flex items-center justify-center bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-2xl">explore</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight">Pathfinder</h1>
+<div class="h-6 w-px bg-border-light dark:bg-border-dark mx-2 hidden md:block"></div>
+<div class="hidden md:flex items-center gap-2 text-sm text-text-secondary-light dark:text-text-secondary-dark">
+<span class="material-symbols-outlined text-lg">folder_open</span>
+<span class="font-medium">Project: My Cafe Business Plan</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-text-secondary-light hover:bg-background-light dark:text-text-secondary-dark dark:hover:bg-background-dark transition-colors">
+<span class="material-symbols-outlined text-lg">save</span>
+                Save Draft
+            </button>
+<button class="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-bold shadow-sm transition-colors">
+<span>Exit Interview</span>
+<span class="material-symbols-outlined text-lg">logout</span>
+</button>
+<div class="w-9 h-9 rounded-full bg-cover bg-center border border-border-light dark:border-border-dark ml-2" data-alt="User profile photo avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBp52CAPDB06EiCbL3e9NIZ5JKsRhOSEFik-oVSu7aDK03VcvAbgLNwCP5epucaGVGfN5712ubo_fUW1YFZDoDTqVPENwACvFn7ktQ3FzlUNYlFo2H_9a5eGY8kltu--62YeAJpqJ8qpBK4NNwA7l2zcJR9y7YY24O0kOMixROILQNXDwd1clsmI7sbLWrk1l8PEpIOyuso_I58k7GrIOwrzAKHNFurUMWeqz25qAcMKWXIeQ5MfXrrf9d-eX7nY02gd5fQo1U0YrI');"></div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex flex-1 overflow-hidden relative">
+<!-- Left Panel: Chat Interface -->
+<section class="flex flex-col w-full md:w-[55%] lg:w-[45%] xl:w-[40%] bg-surface-light dark:bg-surface-dark border-r border-border-light dark:border-border-dark h-full relative z-10 shadow-lg md:shadow-none">
+<!-- Progress Header -->
+<div class="px-6 py-4 border-b border-border-light dark:border-border-dark bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-sm sticky top-0 z-10">
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<span class="text-xs font-semibold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark">Progress</span>
+<span class="text-sm font-bold text-primary">47% Complete</span>
+</div>
+<div class="w-full bg-border-light dark:bg-border-dark rounded-full h-2 overflow-hidden">
+<div class="bg-primary h-2 rounded-full transition-all duration-500 ease-out" style="width: 47%"></div>
+</div>
+<p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-1">
+                        Currently, <span class="font-bold text-text-main-light dark:text-text-main-dark">7 out of 15</span> items have been completed!
+                    </p>
+</div>
+</div>
+<!-- Chat History -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 flex flex-col gap-6">
+<!-- Date Separator -->
+<div class="flex justify-center">
+<span class="text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark bg-background-light dark:bg-background-dark px-3 py-1 rounded-full">Today, 10:23 AM</span>
+</div>
+<!-- AI Message 1 -->
+<div class="flex items-start gap-4 max-w-[90%]">
+<div class="size-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/40 dark:to-indigo-900/40 border border-blue-200 dark:border-blue-800 flex items-center justify-center shrink-0 shadow-sm text-primary">
+<span class="material-symbols-outlined">smart_toy</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark ml-1">Pathfinder AI</span>
+<div class="bg-background-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-2xl rounded-tl-none p-4 shadow-sm">
+<p class="text-sm leading-relaxed text-text-main-light dark:text-text-main-dark">
+                                Hello! Let's continue working on your business plan. We were discussing your product strategy.
+                            </p>
+</div>
+</div>
+</div>
+<!-- AI Message 2 -->
+<div class="flex items-start gap-4 max-w-[90%]">
+<div class="size-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/40 dark:to-indigo-900/40 border border-blue-200 dark:border-blue-800 flex items-center justify-center shrink-0 shadow-sm text-primary">
+<span class="material-symbols-outlined">smart_toy</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark ml-1">Pathfinder AI</span>
+<div class="bg-background-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-2xl rounded-tl-none p-4 shadow-sm">
+<p class="text-sm leading-relaxed text-text-main-light dark:text-text-main-dark">
+                                이 카페만의 시그니처 메뉴는 무엇인가요? 독특한 재료나 제조 방식이 있다면 자세히 알려주세요.
+                                <br/><span class="text-text-secondary-light dark:text-text-secondary-dark text-xs mt-2 block">(What is the signature menu of this cafe? Please tell me in detail if there are unique ingredients or manufacturing methods.)</span>
+</p>
+</div>
+</div>
+</div>
+<!-- User Message -->
+<div class="flex items-start gap-4 max-w-[90%] self-end flex-row-reverse">
+<div class="size-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 shadow-sm text-primary overflow-hidden">
+<img alt="User" class="w-full h-full object-cover" data-alt="User avatar small" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjzyfJ6T-aGYrSl7YncfCd1eEQokJoPfbRjTg6TBNgrWg8A1FMRekwofhGCDfOz0mi7GM7jNsPiDL6B0PcxMazIBz-vOh3p7ML5K-tsxGfyWsH7zru_yCgK68idp6QKDpOsXYsMjAhiTN4MNPs9u_S2kdWB8MGvDeuFNGjzqMX9fEQV9b_kH7CRpPWkG7tonEZ_XAYB7rp7EXVm7WghqKryYF8aa7eKQzGmKHkkkyDW50ng8Ooxw4HoZDPKZUgCUNsWVPKMNx8h_E"/>
+</div>
+<div class="flex flex-col gap-1 items-end">
+<span class="text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark mr-1">You</span>
+<div class="bg-primary text-white rounded-2xl rounded-tr-none p-4 shadow-md">
+<p class="text-sm leading-relaxed">
+                                We make a special latte with local honey and oat milk. We source the honey from a farm just 10 miles away.
+                            </p>
+</div>
+</div>
+</div>
+<!-- Typing Indicator -->
+<div class="flex items-start gap-4 max-w-[90%]">
+<div class="size-8 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/40 dark:to-indigo-900/40 border border-blue-200 dark:border-blue-800 flex items-center justify-center shrink-0 shadow-sm text-primary opacity-70">
+<span class="material-symbols-outlined text-lg">smart_toy</span>
+</div>
+<div class="bg-background-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-2xl rounded-tl-none px-4 py-3 shadow-sm flex items-center gap-1">
+<div class="w-1.5 h-1.5 bg-text-secondary-light dark:text-text-secondary-dark rounded-full typing-dot"></div>
+<div class="w-1.5 h-1.5 bg-text-secondary-light dark:text-text-secondary-dark rounded-full typing-dot"></div>
+<div class="w-1.5 h-1.5 bg-text-secondary-light dark:text-text-secondary-dark rounded-full typing-dot"></div>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="p-6 pt-2 bg-surface-light dark:bg-surface-dark">
+<!-- Suggestion Chips -->
+<div class="flex gap-2 mb-4 overflow-x-auto pb-2 custom-scrollbar">
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background-light hover:bg-border-light dark:bg-background-dark dark:hover:bg-border-dark border border-border-light dark:border-border-dark text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark transition-colors whitespace-nowrap">
+<span class="material-symbols-outlined text-sm">lightbulb</span>
+                        Give me an example
+                    </button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background-light hover:bg-border-light dark:bg-background-dark dark:hover:bg-border-dark border border-border-light dark:border-border-dark text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark transition-colors whitespace-nowrap">
+<span class="material-symbols-outlined text-sm">school</span>
+                        Explain terminology
+                    </button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background-light hover:bg-border-light dark:bg-background-dark dark:hover:bg-border-dark border border-border-light dark:border-border-dark text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark transition-colors whitespace-nowrap">
+<span class="material-symbols-outlined text-sm">skip_next</span>
+                        Skip question
+                    </button>
+</div>
+<!-- Input Field -->
+<div class="relative flex items-end gap-2 bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-xl p-2 shadow-sm focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+<button class="p-2 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors rounded-lg">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<textarea class="flex-1 bg-transparent border-none focus:ring-0 p-2 text-sm text-text-main-light dark:text-text-main-dark placeholder-text-secondary-light/50 resize-none max-h-32 custom-scrollbar" placeholder="Type your answer here..." rows="1"></textarea>
+<button class="p-2 text-text-secondary-light dark:text-text-secondary-dark hover:text-primary transition-colors rounded-lg">
+<span class="material-symbols-outlined">mic</span>
+</button>
+<button class="p-2 bg-primary hover:bg-primary-hover text-white rounded-lg shadow-sm transition-colors">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Right Panel: Real-time Plan Visualization -->
+<section class="hidden md:flex flex-col flex-1 bg-background-light dark:bg-background-dark p-6 overflow-hidden h-full">
+<div class="flex items-center justify-between mb-4 px-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-2xl">description</span>
+<h2 class="text-lg font-bold text-text-main-light dark:text-text-main-dark">Real-time Business Plan</h2>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-xs text-text-secondary-light dark:text-text-secondary-dark">Last saved just now</span>
+<button class="p-1.5 rounded-md hover:bg-border-light dark:hover:bg-border-dark transition-colors text-text-secondary-light dark:text-text-secondary-dark">
+<span class="material-symbols-outlined text-lg">edit_document</span>
+</button>
+<button class="p-1.5 rounded-md hover:bg-border-light dark:hover:bg-border-dark transition-colors text-text-secondary-light dark:text-text-secondary-dark">
+<span class="material-symbols-outlined text-lg">download</span>
+</button>
+</div>
+</div>
+<!-- Document Paper -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl shadow-lg border border-border-light dark:border-border-dark flex-1 overflow-y-auto custom-scrollbar relative mx-auto w-full max-w-[800px]">
+<!-- Document Content -->
+<div class="p-12 min-h-full">
+<!-- Cover Header (Simulated) -->
+<div class="border-b-2 border-primary mb-8 pb-4">
+<h1 class="text-3xl font-extrabold text-text-main-light dark:text-text-main-dark mb-2">My Cafe Business Plan</h1>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-sm">Drafted on October 24, 2023</p>
+</div>
+<!-- Section 1: Completed -->
+<div class="mb-10 opacity-60 hover:opacity-100 transition-opacity">
+<h3 class="text-sm font-bold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-green-500 text-lg">check_circle</span>
+                            1. Executive Summary
+                        </h3>
+<p class="text-sm leading-relaxed text-text-main-light dark:text-text-main-dark mb-4">
+                            The proposed venture is a specialty coffee shop aiming to provide high-quality beverages in a community-focused environment. By leveraging strategic location and premium sourcing, we intend to capture 15% of the local market share within the first year.
+                        </p>
+</div>
+<!-- Section 2: Active / In Progress -->
+<div class="mb-10 relative">
+<!-- Active Indicator -->
+<div class="absolute -left-8 top-1">
+<span class="material-symbols-outlined text-primary text-xl animate-pulse">edit_note</span>
+</div>
+<h3 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                            2. Product Strategy &amp; Differentiation
+                        </h3>
+<div class="bg-primary/5 dark:bg-primary/10 p-6 rounded-lg border border-primary/20 highlight-pulse">
+<h4 class="text-sm font-bold text-text-main-light dark:text-text-main-dark mb-2">Core Product Offerings</h4>
+<p class="text-sm leading-relaxed text-text-main-light dark:text-text-main-dark mb-4">
+                                Our primary product line focuses on espresso-based beverages. A key differentiator is our commitment to <span class="border-b border-dashed border-text-secondary-light cursor-help relative group">Hyper-local Sourcing<span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-surface-dark text-white text-xs rounded shadow-lg hidden group-hover:block z-10 pointer-events-none">Procuring ingredients from within a close geographical radius to ensure freshness and support local economy.</span></span>.
+                            </p>
+<h4 class="text-sm font-bold text-text-main-light dark:text-text-main-dark mb-2">Signature Items</h4>
+<p class="text-sm leading-relaxed text-text-main-light dark:text-text-main-dark">
+                                The flagship menu item is the <strong>"Honey-Oat Latte"</strong>, featuring a proprietary blend of <span class="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200 px-1 rounded">locally sourced artisanal honey</span> and premium oat milk. This offering directly addresses the growing consumer demand for plant-based alternatives while emphasizing regional partnerships with apiaries within a 10-mile radius.
+                            </p>
+</div>
+</div>
+<!-- Section 3: Pending -->
+<div class="mb-10 opacity-40">
+<h3 class="text-sm font-bold uppercase tracking-wider text-text-secondary-light dark:text-text-secondary-dark mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">radio_button_unchecked</span>
+                            3. Market Analysis
+                        </h3>
+<div class="h-4 bg-border-light dark:bg-border-dark rounded w-3/4 mb-2"></div>
+<div class="h-4 bg-border-light dark:bg-border-dark rounded w-full mb-2"></div>
+<div class="h-4 bg-border-light dark:bg-border-dark rounded w-5/6"></div>
+</div>
+</div>
+</div>
+<!-- Context Sidebar Toggle (Floating) -->
+<button class="absolute bottom-8 right-8 bg-surface-light dark:bg-surface-dark text-text-main-light dark:text-text-main-dark p-3 rounded-full shadow-lg border border-border-light dark:border-border-dark hover:bg-background-light dark:hover:bg-background-dark transition-transform hover:scale-105 flex items-center gap-2 group z-20">
+<div class="bg-primary/10 p-1 rounded-full text-primary">
+<span class="material-symbols-outlined text-xl">paid</span>
+</div>
+<span class="text-sm font-medium pr-1 group-hover:inline-block hidden whitespace-nowrap">View 3 Grants</span>
+<span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white dark:border-surface-dark"></span>
+</button>
+</section>
+</main>
+</body></html>

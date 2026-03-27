@@ -1,0 +1,56 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+    show-sql: true
+  sql:
+    init:
+      mode: always
+  thymeleaf:
+    cache: false
+
+logging:
+  level:
+    org.hibernate.SQL: warn
+
+portone:
+  v2:
+    api-url: https://sandbox.portone.io
+    api-secret: test-secret
+    store-id: test-store
+    channel-key: test-channel
+    webhook-secret: test-webhook
+  billing:
+    encryption-key: 12345678901234567890123456789012
+    max-retry-count: 3
+    retry-interval-hours: 24
+
+kakao:
+  rest-api-key: test-kakao-rest-key
+  client-secret: test-kakao-secret
+  redirect-uri: https://localhost/test/callback
+  channel-public-id: test-channel
+  authorize-uri: https://kauth.kakao.com/oauth/authorize
+  required-scopes: profile_nickname,account_email
+  state-validation:
+    enabled: false
+
+nsearchad:
+  domain: sandbox-nsearchad.local
+  customer-id: "0000000"
+  api-key: test-nsearchad-key
+  secret-key: test-nsearchad-secret
+
+nomadscrap-server:
+  domain: nomadscrap.duckdns.org
+  ip: 43.200.224.162
+  api-key: 0c810e3de018434fb2a8c31854131cd7

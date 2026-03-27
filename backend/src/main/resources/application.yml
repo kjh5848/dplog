@@ -1,0 +1,66 @@
+# D-PLOG 백엔드 공통 설정
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: dplog
+
+  profiles:
+    active: ${SPRING_PROFILE:dev}
+
+  # Virtual Threads 활성화 (Spring Boot 4.0)
+  threads:
+    virtual:
+      enabled: true
+
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  # Jackson 설정
+  jackson:
+    default-property-inclusion: non_null
+
+# Actuator 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# D-PLOG 커스텀 프로퍼티
+dplog:
+  # 내순이 (순위 수집 서비스)
+  nomadscrap:
+    base-url: ${NOMADSCRAP_IP:http://localhost:9090}
+    api-key: ${NOMADSCRAP_API_KEY:}
+    use-mock: ${NOMADSCRAP_USE_MOCK:false}
+
+  # 네이버 검색광고
+  nsearchad:
+    domain: ${NSEARCHAD_DOMAIN:api.naver.com}
+    customer-id: ${NSEARCHAD_CUSTOMER_ID:}
+    api-key: ${NSEARCHAD_API_KEY:}
+    secret-key: ${NSEARCHAD_SECRET_KEY:}
+
+  # AI 워커 서버
+  ai-worker:
+    url: ${AI_WORKER_URL:http://localhost:8001}
+    api-key: ${AI_WORKER_API_KEY:}
+
+  # JWT 설정
+  jwt:
+    secret: ${JWT_SECRET:dev-secret-key-change-in-production}
+    expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+    refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
+
+  # 카카오 OIDC 설정
+  kakao:
+    client-id: ${KAKAO_CLIENT_ID:480278b0282c7a22b0afc202c72051f8}
+    redirect-uri: ${KAKAO_REDIRECT_URI:http://localhost:3000/kakao/callback}

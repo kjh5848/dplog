@@ -1,0 +1,19 @@
+[project]
+name = "dplog-ai-worker"
+version = "0.1.0"
+description = "D-PLOG AI Worker Server (FastAPI + Bedrock)"
+requires-python = ">=3.12"
+
+[project.dependencies]
+fastapi = ">=0.115.0"
+uvicorn = { version = ">=0.34.0", extras = ["standard"] }
+boto3 = ">=1.35.0"
+pydantic = ">=2.10.0"
+pydantic-settings = ">=2.7.0"
+httpx = ">=0.28.0"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+]

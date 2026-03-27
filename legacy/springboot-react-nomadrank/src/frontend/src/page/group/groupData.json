@@ -1,0 +1,20 @@
+[
+  {
+    "id" : 1,
+    "serviceSortName" : "NPLACE_RANK_TRACK",
+    "serviceSortValue" : "N플레이스 순위추적",
+    "groupName" : "테스트",
+    "memo" : "메모",
+    "count" : 0,
+    "createDate" : "2023-01-01"
+  },
+  {
+    "id" : 2,
+    "serviceSortName" : "NPLACE_RANK_TRACK",
+    "serviceSortValue" : "N플레이스 순위추적",
+    "groupName" : "테스트2",
+    "memo" : "메모2",
+    "count" : 10,
+    "createDate" : "2023-01-01"
+  }
+]

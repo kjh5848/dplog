@@ -1,0 +1,132 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&display=swap");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons+Outlined");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap");
+@import "tailwindcss";
+@source "./**/*.{ts,tsx}";
+@source "../features/**/*.{ts,tsx}";
+@source "../shared/**/*.{ts,tsx,css}";
+
+@import "../shared/styles/gemini.css";
+
+@theme {
+  --color-brand-primary: #050505;
+  --color-brand-secondary: #3b82f6;
+  --color-brand-accent: #f97316;
+
+  --color-surface-base: #0a0a0a;
+  --color-surface-glass: rgba(255, 255, 255, 0.05);
+
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a1a1aa;
+
+  --font-display: "Noto Serif KR", serif;
+  --font-body: "Noto Sans KR", system-ui, sans-serif;
+
+  --radius-card: 1.5rem;
+  --radius-btn: 9999px;
+
+  --color-brand-inuri-beige: #f5f0e6;
+  --color-brand-inuri-yellow: #ffd400;
+  --color-brand-inuri-brown: #4a3728;
+
+  --color-primary: #3b82f6;
+}
+
+:root {
+  --background: var(--color-brand-primary);
+  --foreground: var(--color-text-primary);
+}
+
+.landing-v8 {
+  letter-spacing: -0.02em;
+  line-height: 1.6;
+}
+
+.btn-primary {
+  @apply px-8 py-4 bg-white text-black text-lg font-bold rounded-full hover:scale-105 transition-all duration-300 flex items-center gap-2 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)] overflow-hidden cursor-pointer;
+}
+
+.btn-glass {
+  @apply px-8 py-4 bg-white/5 text-white text-lg font-medium rounded-full hover:bg-white/10 hover:border-white/30 transition-all border border-white/10 backdrop-blur-md cursor-pointer;
+}
+
+.card-glass {
+  @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl;
+}
+
+/* Aurora Background */
+:root {
+  --white: #fff;
+  --black: #000;
+  --transparent: transparent;
+  --blue-500: #3b82f6;
+  --blue-400: #60a5fa;
+  --blue-300: #93c5fd;
+  --indigo-300: #a5b4fc;
+  --violet-200: #ddd6fe;
+}
+
+@keyframes aurora {
+  from {
+    background-position:
+      50% 50%,
+      50% 50%;
+  }
+  to {
+    background-position:
+      350% 50%,
+      350% 50%;
+  }
+}
+
+@theme {
+  --animate-aurora: aurora 60s linear infinite;
+}
+
+/* Aurora Specific Utilities */
+@layer base {
+  :root {
+    --aurora-white-gradient: repeating-linear-gradient(
+      100deg,
+      var(--white) 0%,
+      var(--white) 7%,
+      var(--transparent) 10%,
+      var(--transparent) 12%,
+      var(--white) 16%
+    );
+    --aurora-dark-gradient: repeating-linear-gradient(
+      100deg,
+      var(--black) 0%,
+      var(--black) 7%,
+      var(--transparent) 10%,
+      var(--transparent) 12%,
+      var(--black) 16%
+    );
+    --aurora-colors: repeating-linear-gradient(
+      100deg,
+      var(--blue-500) 10%,
+      var(--indigo-300) 15%,
+      var(--blue-300) 20%,
+      var(--violet-200) 25%,
+      var(--blue-400) 30%
+    );
+  }
+}
+
+.bg-aurora-img {
+  background-image: var(--aurora-white-gradient), var(--aurora-colors);
+}
+
+.dark .bg-aurora-img {
+  background-image: var(--aurora-dark-gradient), var(--aurora-colors);
+}
+
+.aurora-mask {
+  mask-image: radial-gradient(
+    ellipse at 100% 0%,
+    black 10%,
+    var(--transparent) 70%
+  );
+}

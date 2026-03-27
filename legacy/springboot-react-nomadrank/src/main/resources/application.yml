@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    active: dev
+    # active: prod
+
+encryption:
+  active-key: v1
+  keys:
+    v1:
+      password: fXJyrRsfa4xkETWj
+      saltHex: e4c9b12f7a05d83e

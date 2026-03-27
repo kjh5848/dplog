@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Diagnosis &amp; Onboarding Step 1</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#10b77f",
+                        "primary-hover": "#0e9f6e", 
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#10221c",
+                        "surface-dark": "#162e26", // Slightly lighter than background-dark for cards
+                        "alert": "#F97316", // Sunset Orange
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem", 
+                        "lg": "0.5rem", 
+                        "xl": "0.75rem", 
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom styles for progress bar transition */
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 min-h-screen flex flex-col antialiased">
+<!-- Top Navigation / Logo Area -->
+<header class="w-full py-6 px-8 flex justify-between items-center">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-icons-round text-xl">insights</span>
+</div>
+<span class="font-bold text-lg tracking-tight dark:text-white">RestoAI</span>
+</div>
+<button class="text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white transition-colors">
+            Exit Diagnosis
+        </button>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 relative overflow-hidden">
+<!-- Abstract Background Pattern -->
+<div class="absolute inset-0 pointer-events-none z-0 opacity-40 dark:opacity-20">
+<div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px]"></div>
+</div>
+<!-- Wizard Container -->
+<div class="w-full max-w-2xl relative z-10">
+<!-- Progress Stepper -->
+<div class="mb-10">
+<div class="flex justify-between text-sm font-medium mb-3 px-1">
+<span class="text-primary">Step 1: Business Profile</span>
+<span class="text-slate-400 dark:text-slate-500">Step 2: Connect Data</span>
+<span class="text-slate-400 dark:text-slate-500">Step 3: AI Analysis</span>
+</div>
+<div class="h-2 w-full bg-slate-200 dark:bg-surface-dark rounded-full overflow-hidden">
+<div class="h-full bg-primary w-1/3 rounded-full relative">
+<div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white/30 to-transparent"></div>
+</div>
+</div>
+</div>
+<!-- Card -->
+<div class="bg-white dark:bg-surface-dark rounded-xl shadow-xl border border-slate-100 dark:border-white/5 p-8 md:p-10">
+<!-- Header -->
+<div class="text-center mb-10">
+<h1 class="text-3xl font-bold mb-3 dark:text-white">Let's analyze your restaurant's health</h1>
+<p class="text-slate-500 dark:text-slate-400 text-lg">Enter your business details below to generate your free AI revenue report.</p>
+</div>
+<!-- Form -->
+<form class="space-y-6">
+<!-- Restaurant Name Input -->
+<div class="space-y-2 group">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="restaurant-name">
+                            Restaurant Name
+                        </label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-icons-round text-slate-400 group-focus-within:text-primary transition-colors">storefront</span>
+</div>
+<input class="block w-full pl-12 pr-4 py-4 rounded-lg bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-lg" id="restaurant-name" placeholder="e.g. The Italian Table" type="text" value="La Trattoria Downtown"/>
+<!-- Success indicator -->
+<div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+<span class="material-icons-round text-primary text-xl">check_circle</span>
+</div>
+</div>
+</div>
+<!-- Live Alert Widget (Dynamic) -->
+<div class="bg-alert/10 border border-alert/20 rounded-lg p-4 flex items-start gap-4 animate-pulse">
+<div class="bg-alert/20 p-2 rounded-full flex-shrink-0">
+<span class="material-icons-round text-alert">warning</span>
+</div>
+<div>
+<h4 class="text-alert font-semibold text-sm mb-1">Initial Scan Alert</h4>
+<p class="text-slate-600 dark:text-slate-300 text-sm">We detected 3 negative reviews posted in the last 48 hours. This may be impacting your local ranking.</p>
+</div>
+</div>
+<!-- Location Input -->
+<div class="space-y-2 group">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="location">
+                            Business Address or City
+                        </label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-icons-round text-slate-400 group-focus-within:text-primary transition-colors">location_on</span>
+</div>
+<input class="block w-full pl-12 pr-4 py-4 rounded-lg bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-400 focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-lg" id="location" placeholder="e.g. 123 Main St, New York, NY" type="text"/>
+</div>
+</div>
+<!-- Additional Details Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+<div class="space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="cuisine">Cuisine Type</label>
+<select class="block w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:ring-primary focus:border-primary" id="cuisine">
+<option>Italian</option>
+<option>American</option>
+<option>Japanese</option>
+<option>Mexican</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="role">Your Role</label>
+<select class="block w-full px-4 py-3 rounded-lg bg-slate-50 dark:bg-background-dark border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:ring-primary focus:border-primary" id="role">
+<option>Owner</option>
+<option>General Manager</option>
+<option>Marketing Manager</option>
+</select>
+</div>
+</div>
+<!-- Action Button -->
+<div class="pt-6">
+<button class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-4 px-6 rounded-lg shadow-lg shadow-primary/20 hover:shadow-primary/40 transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 group" type="button">
+<span>Analyze &amp; Continue</span>
+<span class="material-icons-round group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+<!-- Trust Footer -->
+<div class="text-center pt-2">
+<p class="text-xs text-slate-400 dark:text-slate-500 flex items-center justify-center gap-2">
+<span class="material-icons-round text-base">lock</span>
+                            Your data is encrypted and secure. Trusted by 500+ restaurants.
+                        </p>
+</div>
+</form>
+</div>
+<!-- Map Preview (Visual Aid) -->
+<div class="mt-8 relative h-32 w-full rounded-xl overflow-hidden opacity-60 grayscale hover:grayscale-0 transition-all duration-500 border border-slate-200 dark:border-white/10 hidden md:block">
+<img alt="Map view of city streets with pins" class="w-full h-full object-cover" data-location="New York City" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfCsoWu8VR_eiuukCGeI08cLQ3rPbDZs5y9i9x7z0clXfjcvH2_0OGVK1RiRM9vbfiYcyd8-QGzHCuNd5_b0RUQhcHp1-o_eLSbN3xmcD28z4otQJFpiy3KAt60v9x1Q72GMnq3LBmubaB-HxW8edpOi-L1Uqy0XXjwOfJ76YFyTgdmjVF-SvkA5ktdUmD7vpYuablCRdJZJb76n1Y0DqrAaK1NnZ-uKG19ZlETvSQPZd5ZR3T2ucxJiMgiGioZ3oEj32ziieoJYtU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background-light dark:from-background-dark via-transparent to-transparent"></div>
+<div class="absolute bottom-3 left-4 flex items-center gap-2 text-xs font-medium bg-white/90 dark:bg-black/80 backdrop-blur px-3 py-1 rounded-full shadow-sm">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    Live Data Connection Active
+                </div>
+</div>
+</div>
+</main>
+<!-- Simple Footer -->
+<footer class="w-full py-6 text-center text-sm text-slate-400 dark:text-slate-600">
+        © 2023 RestoAI Inc. All rights reserved.
+    </footer>
+</body></html>

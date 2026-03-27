@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pathfinder Onboarding - Business Duration</title>
+<!-- Google Fonts: Manrope -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2b8cee",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white overflow-x-hidden min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<div class="w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+<div class="px-4 md:px-10 py-3 flex items-center justify-between max-w-[1200px] mx-auto w-full">
+<div class="flex items-center gap-4 text-[#0d141b] dark:text-white">
+<div class="size-8 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">explore</span>
+</div>
+<h2 class="text-xl font-bold leading-tight tracking-[-0.015em]">Pathfinder</h2>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-sm font-medium">Save &amp; Exit</button>
+</div>
+</div>
+</div>
+<!-- Main Content Area -->
+<div class="layout-container flex grow flex-col items-center justify-center py-10 px-4 sm:px-6">
+<div class="layout-content-container flex flex-col max-w-[800px] w-full flex-1">
+<!-- ProgressBar -->
+<div class="flex flex-col gap-3 pb-8 w-full max-w-md mx-auto">
+<div class="flex gap-6 justify-between items-end">
+<p class="text-slate-900 dark:text-white text-base font-medium leading-normal">Onboarding Progress</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Step 1 of 4</p>
+</div>
+<div class="rounded-full bg-slate-200 dark:bg-slate-700 h-2 overflow-hidden">
+<div class="h-full rounded-full bg-primary" style="width: 25%;"></div>
+</div>
+</div>
+<!-- HeadlineText -->
+<div class="text-center pb-8">
+<h1 class="text-slate-900 dark:text-white tracking-tight text-3xl md:text-4xl font-bold leading-tight pb-3">
+                    창업하신 지 얼마나 되셨나요?
+                </h1>
+<!-- BodyText -->
+<p class="text-slate-500 dark:text-slate-400 text-base md:text-lg font-normal leading-normal">
+                    맞춤형 정부 지원사업과 로드맵을 추천해 드립니다.
+                </p>
+</div>
+<!-- ImageGrid / Selection Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 p-4 w-full">
+<!-- Option 1: Prospective -->
+<label class="group relative flex flex-col items-center justify-center p-6 gap-4 bg-white dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-primary/50 cursor-pointer shadow-sm hover:shadow-lg transition-all duration-200 h-full">
+<input class="peer sr-only" name="business_duration" type="radio" value="prospective"/>
+<div class="absolute inset-0 border-2 border-primary rounded-xl opacity-0 peer-checked:opacity-100 pointer-events-none"></div>
+<div class="absolute inset-0 bg-primary/5 rounded-xl opacity-0 peer-checked:opacity-100 pointer-events-none"></div>
+<div class="size-16 rounded-full bg-blue-50 dark:bg-slate-700 flex items-center justify-center mb-2 group-hover:bg-blue-100 dark:group-hover:bg-slate-600 transition-colors">
+<span class="material-symbols-outlined text-3xl text-primary">emoji_objects</span>
+</div>
+<div class="text-center z-10">
+<p class="text-slate-900 dark:text-white text-lg font-bold leading-normal mb-1">예비 창업자</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">사업자 등록 전</p>
+</div>
+</label>
+<!-- Option 2: Early Stage -->
+<label class="group relative flex flex-col items-center justify-center p-6 gap-4 bg-white dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-primary/50 cursor-pointer shadow-sm hover:shadow-lg transition-all duration-200 h-full">
+<input checked="" class="peer sr-only" name="business_duration" type="radio" value="early"/>
+<div class="absolute inset-0 border-2 border-primary rounded-xl opacity-0 peer-checked:opacity-100 pointer-events-none"></div>
+<div class="absolute inset-0 bg-primary/5 rounded-xl opacity-0 peer-checked:opacity-100 pointer-events-none"></div>
+<div class="size-16 rounded-full bg-blue-50 dark:bg-slate-700 flex items-center justify-center mb-2 group-hover:bg-blue-100 dark:group-hover:bg-slate-600 transition-colors">
+<span class="material-symbols-outlined text-3xl text-primary">rocket_launch</span>
+</div>
+<div class="text-center z-10">
+<p class="text-slate-900 dark:text-white text-lg font-bold leading-normal mb-1">초기 창업자</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">1년 미만</p>
+</div>
+</label>
+<!-- Option 3: Growth Stage -->
+<label class="group relative flex flex-col items-center justify-center p-6 gap-4 bg-white dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-primary/50 cursor-pointer shadow-sm hover:shadow-lg transition-all duration-200 h-full">
+<input class="peer sr-only" name="business_duration" type="radio" value="growth"/>
+<div class="absolute inset-0 border-2 border-primary rounded-xl opacity-0 peer-checked:opacity-100 pointer-events-none"></div>
+<div class="absolute inset-0 bg-primary/5 rounded-xl opacity-0 peer-checked:opacity-100 pointer-events-none"></div>
+<div class="size-16 rounded-full bg-blue-50 dark:bg-slate-700 flex items-center justify-center mb-2 group-hover:bg-blue-100 dark:group-hover:bg-slate-600 transition-colors">
+<span class="material-symbols-outlined text-3xl text-primary">trending_up</span>
+</div>
+<div class="text-center z-10">
+<p class="text-slate-900 dark:text-white text-lg font-bold leading-normal mb-1">도약기 창업자</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">3년 미만</p>
+</div>
+</label>
+</div>
+<!-- Footer / Navigation -->
+<div class="flex items-center justify-between w-full mt-10 px-4">
+<button class="flex items-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-bold py-3 px-6 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-xl">arrow_back</span>
+<span>이전</span>
+</button>
+<button class="flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 text-white text-base font-bold py-3 px-10 rounded-lg shadow-md transition-all hover:shadow-lg min-w-[140px]">
+<span>다음으로</span>
+<span class="material-symbols-outlined text-xl">arrow_forward</span>
+</button>
+</div>
+<!-- Helper Link -->
+<div class="flex justify-center mt-8">
+<a class="text-slate-400 dark:text-slate-500 text-sm flex items-center gap-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-base">help</span>
+<span>왜 이 정보가 필요한가요?</span>
+</a>
+</div>
+</div>
+</div>
+</body></html>

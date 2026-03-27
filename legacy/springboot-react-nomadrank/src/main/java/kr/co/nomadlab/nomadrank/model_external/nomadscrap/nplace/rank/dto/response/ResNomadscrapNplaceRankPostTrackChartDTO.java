@@ -1,0 +1,68 @@
+package kr.co.nomadlab.nomadrank.model_external.nomadscrap.nplace.rank.dto.response;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ResNomadscrapNplaceRankPostTrackChartDTO {
+
+    private Integer code;
+    private String message;
+    private DTOData data;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DTOData {
+
+        private Map<String, NplaceRankTrackInfo> nplaceRankTrackInfoMap;
+
+        @Data
+        @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class NplaceRankTrackInfo {
+
+            private Long id;
+            private String keyword;
+            private String province;
+            private String shopId;
+            private Integer rankChange;
+            private List<NplaceRankTrack> nplaceRankTrackList;
+            private JsonNode json;
+
+            @Data
+            @Builder
+            @NoArgsConstructor
+            @AllArgsConstructor
+            public static class NplaceRankTrack {
+
+                private Integer rank;
+                private Integer prevRank;
+                private String visitorReviewCount;
+                private String blogReviewCount;
+                private String saveCount;
+                private String scoreInfo;
+                private String ampm;
+                private Boolean isValid;
+                private LocalDateTime chartDate;
+                private LocalDateTime createDate;
+
+            }
+
+        }
+
+    }
+
+}

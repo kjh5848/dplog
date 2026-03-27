@@ -1,0 +1,189 @@
+server:
+  # 기본을 HTTPS 8443으로. 필요 시 PORT로 오버라이드
+  port: ${PORT:8081}
+  compression:
+    enabled: true
+  servlet:
+    session:
+      timeout: 2600000
+      cookie:
+        max-age: 2600000
+        same-site: lax # 크로스도메인 허용
+        secure: false # 기본은 HTTP 가정. SSL 쓰면 true 고려
+
+  # 간단한 개발용 SSL (PEM) — Spring Boot 3.x에서 지원
+  ssl:
+    # 기본 true로 하여 실행 시 바로 HTTPS
+    enabled: ${SSL_ENABLED:false}
+    # 프로젝트 루트의 PEM 파일 사용 (cert.pem/key.pem)
+    # 절대경로나 classpath로도 지정 가능
+    certificate: ${SSL_CERT_PATH:cert.pem}
+    certificate-private-key: ${SSL_CERT_KEY_PATH:key.pem}
+    # self-signed 경고는 개발에서 정상 동작
+
+# spring:
+#   thymeleaf:
+#     cache: falseﬁ
+#   datasource:
+#     url: jdbc:h2:mem.nomadrank.comySQL;DB_CLOSE_DELAY=-1
+#     driverClassName: org.h2.Driver
+#     username: sa
+#     password:
+#   h2:
+#     console:
+#       enabled: true
+#       path: /h2
+#   sql:
+#     init:
+#       encoding: UTF-8
+#       #   schema-locations: classpath:h2/schema.sql
+#       dataLocations: classpath:h2/data.sql
+#       mode: always
+
+spring:
+  thymeleaf:
+    cache: false
+  datasource:
+    url: jdbc:mysql://rpa.cj6omyy0cdlc.ap-northeast-2.rds.amazonaws.com:3306/nesoone_dev_v2
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: nomadlab
+    password: Shakem!90707
+    # 정적 파일 제거
+  web:
+    resources:
+      static-locations: none
+  data:
+    web:
+      pageable:
+        max-page-size: 2147483647
+  sql:
+    init:
+      mode: always
+      data-locations:
+      - classpath:data.sql
+
+  jpa:
+    defer-datasource-initialization: true
+    open-in-view: false # 트랜잭션 범위 밖에서 영속성 컨텍스트를 유지할지 여부
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    # database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create # create-drop, update, validate, none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+    show-sql: true
+    properties:
+      hibernate:
+        # format_sql: true
+        # use_sql_comments: true
+        default_batch_fetch_size: 500
+
+#logging:
+#  level:
+#    org.springframework.jdbc.core.JdbcTemplate: trace
+
+#springdoc:
+#  swagger-ui:
+#    enabled: true
+#    path: /docs
+#    url: /springdoc/openapi3.json
+#    tags-sorter: alpha
+#    operations-sorter: alpha
+#  api-docs:
+#    enabled: true
+#    path: /docs/json
+
+nomadscrap-server:
+  domain: nomadscrap.duckdns.org
+  ip: 3.34.167.89
+  api-key: 0c810e3de018434fb2a8c31854131cd7
+
+nsearchad:
+  domain: "api.searchad.naver.com"
+  customer-id: "3195162"
+  api-key: "0100000000ffcae5bccf4cf8428b07c6866c930cebfaed57a61a9df2c6567d67ac64218d91"
+  secret-key: "AQAAAAD/yuW8z0z4QosHxoZskwzrVPnXBgN7aolMIpyFhC03pw=="
+
+pumpingstore-server:
+  ip: 3.36.175.82
+  api-key: 6f25356bcde24071b19a950a4600f2ea
+
+# google-credentials:
+#   path: /credentials/credentials.json
+#google-credentials:
+# path: /app/credentials/credentials.json
+
+# 포트원 V2 API 설정 (개발환경)
+portone:
+  v2:
+    store-id: store-30cafa46-ac7b-4330-8a03-22393b797ac0
+    api-secret: EiPxSoPxRE9ngxBOGLzlIcQYpCnICk5yYiR3MbRaIJwuCjMEU1XYy9dTnGgomOXup9jPeEge7b3SMCXa
+    channel-key: channel-key-dcee5c49-8927-4c5a-b9df-83dabb01afe1
+    api-url: https://api.portone.io
+    webhook-secret: whsec_DHhL9cw446sBm8AEh058I9YTFepGPfoCED5kPLy4l7E=
+  billing:
+    encryption-key: "12345678901234567890123456789012"
+    max-retry-count: 3
+    retry-interval-hours: 24
+
+# 카카오 OAuth 2.0 설정 (개발환경)
+kakao:
+  rest-api-key: 480278b0282c7a22b0afc202c72051f8
+  client-secret: fd7aaae5c707f72afab475168f619a82
+  redirect-uri: http://localhost:3000/kakao/callback
+  channel-public-id: _JNWxin
+  authorize-uri: https://kauth.kakao.com/oauth/authorize
+  required-scopes: profile_nickname,profile_image,account_email,name,gender,age_range,birthday,birthyear,phone_number,plusfriends,talk_message
+
+# 멤버십 기본 정책
+membership:
+  free-trial-days: -1
+
+# KG이니시스 PG 설정 (웹결제, API, Lite 키 포함)
+pg:
+  inicis:
+    mid: INIBillTst
+    signkey: SU5JTEIURV9UUkIQTEVERVNFs0VZU1RS
+    api:
+      key: rKnPjRn5m6J9Mzz
+      iv: W2KLNKra6Wxc1P==
+    lite-key: b09LVzhuTGZVaEY1WmJoQnZzdXpRdzO9
+    # hashkey: (필요 시 추가)
+
+payment:
+  scheduler:
+    reservation:
+      # inspect-start-days:
+      #   예약 검사 시작 기준일을 의미한다.
+      #   “다음 결제일로부터 며칠 전부터 예약 누락을 확인할 것인가?”를 결정한다.
+      #   예: 1 → 다음 결제일 D-1일부터 검사 시작.
+      inspect-start-days: 1
+
+      # inspect-end-days:
+      #   예약 검사 종료 기준일을 의미한다.
+      #   “다음 결제일로부터 며칠 후까지 검사할 것인가?”를 결정한다.
+      #   예: 5 → 다음 결제일 이후 D+5일까지 예약 누락/지연을 감시.
+      #   start ≤ end 범위 내에서 스케줄러가 구독 상태를 훑는다.
+      inspect-end-days: 5
+
+      # max-retry-attempts:
+      #   PortOne 예약 생성이 실패했을 때 재시도할 최대 횟수.
+      #   네트워크 오류, 일시적 PortOne 장애, BillingKey 반영 지연 등에서 사용된다.
+      #   예: 3 → 실패하면 최대 3회까지 재시도 큐에 넣어 복구 시도.
+      max-retry-attempts: 3
+
+      # retry-interval-minutes:
+      #   예약 생성 실패 후 다음 재시도까지 기다리는 시간(분 단위).
+      #   예: 60 → 1시간 간격으로 재시도.
+      #   스케줄러는 이 값에 따라 재시도 타이밍을 관리한다.
+      retry-interval-minutes: 60
+  recurring:
+    test-mode:
+      enabled: ${PAYMENT_TEST_SCHEDULE_ENABLED:false}
+      minute-interval: ${PAYMENT_TEST_SCHEDULE_MINUTE_INTERVAL:0}
+    backup-scheduler:
+      enabled: ${PAYMENT_BACKUP_SCHEDULER_ENABLED:false}
+  timezone:
+    default: Asia/Seoul
+    default-billing-time: "09:00"

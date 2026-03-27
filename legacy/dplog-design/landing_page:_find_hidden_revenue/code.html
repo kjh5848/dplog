@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Landing Page: Find Hidden Revenue</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#10b77f",
+                        "primary-hover": "#0e9f6e",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#0F172A", // Overriding to match the specific request for Deep Navy
+                        "surface-dark": "#1E293B",
+                        "border-dark": "#334155",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.375rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #334155 1px, transparent 1px), linear-gradient(to bottom, #334155 1px, transparent 1px)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 20px rgba(16, 183, 127, 0.3);
+        }
+
+        .hero-grid {
+            background-size: 40px 40px;
+            mask-image: radial-gradient(circle at center, black, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
+        }
+
+        /* Subtle node animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        .animate-float-delayed {
+            animation: float 8s ease-in-out infinite 2s;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display selection:bg-primary selection:text-white">
+<!-- Navbar -->
+<nav class="fixed top-0 w-full z-50 border-b border-white/5 bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+<!-- Logo -->
+<div class="flex-shrink-0 flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center text-white font-bold">R</div>
+<span class="font-semibold text-lg tracking-tight text-white">RevEngine</span>
+</div>
+<!-- Desktop Menu -->
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-sm font-medium text-slate-400 hover:text-primary transition-colors" href="#">Features</a>
+<a class="text-sm font-medium text-slate-400 hover:text-primary transition-colors" href="#">Case Studies</a>
+<a class="text-sm font-medium text-slate-400 hover:text-primary transition-colors" href="#">Pricing</a>
+</div>
+<!-- CTAs -->
+<div class="flex items-center gap-4">
+<a class="hidden md:block text-sm font-medium text-slate-300 hover:text-white transition-colors" href="#">Log In</a>
+<a class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary-hover transition-all shadow-[0_0_15px_rgba(16,183,127,0.3)]" href="#">
+                        Get Started
+                    </a>
+</div>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<main class="relative pt-32 pb-16 sm:pt-40 sm:pb-24 overflow-hidden">
+<!-- Abstract Background -->
+<div class="absolute inset-0 z-0 pointer-events-none">
+<div class="absolute inset-0 bg-grid-pattern opacity-[0.03] hero-grid"></div>
+<!-- Glowing Orbs -->
+<div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px] -translate-x-1/2 -translate-y-1/2"></div>
+<div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-[96px] translate-x-1/2 translate-y-1/2"></div>
+</div>
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+<!-- Badge -->
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur-sm animate-float">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+<span class="text-xs font-medium text-primary tracking-wide uppercase">AI Engine v2.0 Live</span>
+</div>
+<h1 class="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white mb-6">
+                Stop Leaving Money <br class="hidden sm:block"/>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-emerald-400 to-teal-300 glow-text">on the Table.</span>
+</h1>
+<p class="max-w-2xl text-lg sm:text-xl text-slate-400 mb-12 leading-relaxed">
+                Our AI analyzes your menu, reviews, and local competitors to unlock hidden revenue streams in seconds.
+            </p>
+<!-- Search Interface -->
+<div class="w-full max-w-2xl relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary to-emerald-600 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+<div class="relative flex items-center bg-surface-dark border border-white/10 rounded-xl p-2 shadow-2xl">
+<div class="pl-4 text-slate-500">
+<span class="material-icons">search</span>
+</div>
+<input class="w-full bg-transparent border-none text-white placeholder-slate-500 focus:ring-0 text-lg py-3 px-4" placeholder="Enter restaurant name to find hidden revenue..." type="text"/>
+<button class="hidden sm:flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg hover:shadow-primary/25">
+<span>Analyze</span>
+<span class="material-icons text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- Mobile button outside -->
+<button class="sm:hidden mt-4 w-full flex justify-center items-center gap-2 bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-lg font-medium transition-all shadow-lg">
+<span>Analyze Revenue</span>
+</button>
+</div>
+<!-- Trust Signals -->
+<div class="mt-16 pt-8 border-t border-white/5 w-full max-w-4xl">
+<p class="text-sm text-slate-500 mb-6 uppercase tracking-wider font-medium">Trusted by owners on</p>
+<div class="flex flex-wrap justify-center gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
+<!-- Logo Placeholders using divs/text as requested no images modified -->
+<div class="flex items-center gap-2 text-xl font-bold text-white"><span class="material-icons">restaurant_menu</span> UberEats</div>
+<div class="flex items-center gap-2 text-xl font-bold text-white"><span class="material-icons">local_dining</span> DoorDash</div>
+<div class="flex items-center gap-2 text-xl font-bold text-white"><span class="material-icons">storefront</span> GrubHub</div>
+<div class="flex items-center gap-2 text-xl font-bold text-white"><span class="material-icons">fastfood</span> Toast</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Before/After Visualization Section -->
+<section class="py-24 bg-background-dark relative border-t border-white/5">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid lg:grid-cols-2 gap-16 items-center">
+<!-- Text Content -->
+<div class="order-2 lg:order-1">
+<h2 class="text-3xl font-bold text-white mb-6">See the growth before it happens.</h2>
+<p class="text-slate-400 text-lg mb-8 leading-relaxed">
+                        Don't guess what works. Our prediction engine simulates marketing changes and menu optimizations to show you exactly how much revenue you're missing out on.
+                    </p>
+<div class="space-y-6">
+<div class="flex gap-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-lg bg-surface-dark border border-white/10 flex items-center justify-center text-primary">
+<span class="material-icons">trending_up</span>
+</div>
+<div>
+<h3 class="text-white font-semibold mb-1">Revenue Forecasting</h3>
+<p class="text-sm text-slate-500">AI-driven projections based on 50+ local variables.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-lg bg-surface-dark border border-white/10 flex items-center justify-center text-primary">
+<span class="material-icons">visibility</span>
+</div>
+<div>
+<h3 class="text-white font-semibold mb-1">Competitor X-Ray</h3>
+<p class="text-sm text-slate-500">See exactly why the shop across the street ranks higher.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Visualization Widget -->
+<div class="order-1 lg:order-2">
+<div class="glass-panel rounded-2xl p-6 sm:p-8 relative">
+<!-- Decorative glow behind card -->
+<div class="absolute -inset-4 bg-primary/10 rounded-3xl blur-2xl -z-10"></div>
+<div class="flex justify-between items-end mb-8">
+<div>
+<h3 class="text-slate-400 text-sm font-medium uppercase tracking-wide">Monthly Revenue Potential</h3>
+<div class="flex items-baseline gap-3 mt-2">
+<span class="text-4xl font-bold text-white">$62,450</span>
+<span class="text-sm font-medium text-primary bg-primary/10 px-2 py-1 rounded flex items-center gap-1">
+<span class="material-icons text-xs">arrow_upward</span> +38%
+                                    </span>
+</div>
+</div>
+<div class="text-right">
+<span class="block text-slate-500 text-xs mb-1">Current</span>
+<span class="text-xl font-semibold text-slate-300">$45,200</span>
+</div>
+</div>
+<!-- Bar Chart Visualization -->
+<div class="space-y-6">
+<!-- Bar 1: Current -->
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="text-slate-400">Current Performance</span>
+<span class="text-slate-400">Rank #12</span>
+</div>
+<div class="h-3 w-full bg-surface-dark rounded-full overflow-hidden border border-white/5">
+<div class="h-full bg-slate-600 rounded-full" style="width: 65%"></div>
+</div>
+</div>
+<!-- Bar 2: AI Optimized -->
+<div>
+<div class="flex justify-between text-sm mb-2">
+<span class="text-white font-medium">With RevEngine AI</span>
+<span class="text-primary font-bold">Rank #3</span>
+</div>
+<div class="h-3 w-full bg-surface-dark rounded-full overflow-hidden border border-white/5 relative">
+<div class="absolute inset-0 bg-primary/20 animate-pulse"></div>
+<div class="h-full bg-primary rounded-full relative shadow-[0_0_10px_rgba(16,183,127,0.5)]" style="width: 92%"></div>
+</div>
+</div>
+</div>
+<!-- Floating Insight Card -->
+<div class="mt-8 p-4 bg-background-dark/50 border border-white/5 rounded-lg flex gap-3 items-start animate-float-delayed">
+<span class="material-icons text-primary text-xl mt-0.5">auto_awesome</span>
+<div>
+<p class="text-sm text-white font-medium">Opportunity Detected</p>
+<p class="text-xs text-slate-400 mt-1">Increasing "Vegan Burger" visibility on DoorDash could add ~$2.4k/mo revenue.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Grid Features -->
+<section class="py-24 bg-background-dark relative">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center max-w-3xl mx-auto mb-16">
+<h2 class="text-3xl font-bold text-white mb-4">Complete Revenue Autopilot</h2>
+<p class="text-slate-400">From diagnosis to execution, we handle the boring stuff so you can focus on the food.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Large Feature Card -->
+<div class="md:col-span-2 glass-panel p-8 rounded-2xl group hover:border-primary/30 transition-colors">
+<div class="h-full flex flex-col justify-between">
+<div class="mb-8">
+<div class="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center text-primary mb-6">
+<span class="material-icons">chat_bubble</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-2">Automated Review Response</h3>
+<p class="text-slate-400 max-w-md">Turn 4-star reviews into loyal customers. Our AI drafts personalized, on-brand responses to every review across Google, Yelp, and TripAdvisor instantly.</p>
+</div>
+<div class="bg-surface-dark rounded-xl p-4 border border-white/5 relative overflow-hidden">
+<!-- Abstract UI representation of chat -->
+<div class="space-y-3">
+<div class="flex gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-600"></div>
+<div class="bg-slate-700 rounded-lg rounded-tl-none p-3 text-xs text-slate-300 w-3/4">
+                                        Food was great but service was a bit slow on Friday night.
+                                    </div>
+</div>
+<div class="flex gap-3 flex-row-reverse">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary text-[10px]">AI</div>
+<div class="bg-primary/10 border border-primary/20 rounded-lg rounded-tr-none p-3 text-xs text-primary-100 w-3/4">
+                                        Thanks for the feedback! We're glad you loved the food. We're actively training our Friday staff to improve speed...
+                                    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Tall Feature Card -->
+<div class="glass-panel p-8 rounded-2xl group hover:border-primary/30 transition-colors">
+<div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center text-purple-400 mb-6">
+<span class="material-icons">restaurant</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-2">Menu Engineering</h3>
+<p class="text-slate-400 mb-6 text-sm">Identify high-margin items that are hidden on your menu and automatically promote them.</p>
+<div class="relative h-48 w-full bg-surface-dark rounded-xl overflow-hidden border border-white/5">
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark to-transparent z-10"></div>
+<img alt="Food item" class="w-full h-full object-cover opacity-60" data-alt="Close up of a vibrant salad bowl representing a high margin menu item" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdQIwspJdJtgyoyxY8-kM0O5neGZtVh2T3TosqvB1_OY9e6bk7Q3bt0OMNN8lc6WMF8S3vFPBw2EwhEzGW1AlMeW3GPpYh0gaKHkJSFS8IQB7gIvyIrWqYPO9EfpOeDfgF_I1HSFY0FXJ-2AeuaojHl-hGTwwZ-NMRahe5C-ag1W9K-WnclrQr-D8tdQS6HG7zwB49C-AdzAOLyKTLjhZnBSREo5sH1o9FgR3B_AMbTpFcy-KQIuA6J435ZCg81_i_RZzv0GCW16Hc"/>
+<div class="absolute bottom-4 left-4 z-20">
+<span class="bg-green-500 text-black text-[10px] font-bold px-2 py-1 rounded uppercase">High Margin</span>
+</div>
+</div>
+</div>
+<!-- Feature Card -->
+<div class="glass-panel p-8 rounded-2xl group hover:border-primary/30 transition-colors">
+<div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center text-blue-400 mb-6">
+<span class="material-icons">campaign</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-2">Smart Marketing</h3>
+<p class="text-slate-400 text-sm">Launch ads automatically when your kitchen is quiet.</p>
+</div>
+<!-- Feature Card -->
+<div class="md:col-span-2 glass-panel p-8 rounded-2xl group hover:border-primary/30 transition-colors flex flex-col sm:flex-row gap-8 items-center">
+<div class="flex-1">
+<div class="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center text-orange-400 mb-6">
+<span class="material-icons">insights</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-2">Local SEO Dominance</h3>
+<p class="text-slate-400">Our system automatically optimizes your Google Business Profile with keywords that hungry locals are actually searching for.</p>
+</div>
+<div class="flex-1 w-full">
+<div class="bg-surface-dark rounded-xl p-4 border border-white/5 w-full">
+<div class="flex items-center justify-between mb-4 pb-4 border-b border-white/5">
+<span class="text-xs text-slate-500 uppercase">Keyword</span>
+<span class="text-xs text-slate-500 uppercase">Rank</span>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-sm text-slate-300">"Best pizza near me"</span>
+<span class="text-sm text-primary font-bold">#1</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-sm text-slate-300">"Italian takeout"</span>
+<span class="text-sm text-primary font-bold">#2</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-sm text-slate-300">"Family dinner"</span>
+<span class="text-sm text-primary font-bold">#1</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer CTA -->
+<section class="py-24 relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/5"></div>
+<div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+<h2 class="text-4xl font-bold text-white mb-6">Ready to find your hidden revenue?</h2>
+<p class="text-slate-400 mb-10 text-lg">Join 2,000+ restaurant owners who are growing their business on autopilot.</p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center">
+<button class="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-lg font-medium transition-all shadow-lg hover:shadow-primary/25 text-lg">
+                    Get Your Free Analysis
+                </button>
+<button class="bg-transparent border border-white/20 hover:bg-white/5 text-white px-8 py-4 rounded-lg font-medium transition-all text-lg">
+                    View Demo
+                </button>
+</div>
+</div>
+</section>
+<footer class="bg-background-dark border-t border-white/5 py-12">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center text-white text-xs font-bold">R</div>
+<span class="font-semibold text-white">RevEngine</span>
+</div>
+<div class="text-slate-500 text-sm">
+                © 2023 RevEngine AI. All rights reserved.
+            </div>
+<div class="flex gap-6">
+<a class="text-slate-500 hover:text-white transition-colors" href="#"><span class="sr-only">Twitter</span><span class="material-icons text-lg">share</span></a>
+<a class="text-slate-500 hover:text-white transition-colors" href="#"><span class="sr-only">LinkedIn</span><span class="material-icons text-lg">business</span></a>
+</div>
+</div>
+</footer>
+</body></html>

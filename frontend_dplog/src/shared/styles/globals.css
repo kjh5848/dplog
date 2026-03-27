@@ -1,0 +1,192 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&display=swap");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons+Outlined");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap");
+
+@import "tailwindcss";
+@source "./**/*.{ts,tsx}";
+@source "../features/**/*.{ts,tsx}";
+@source "../shared/**/*.{ts,tsx,css}";
+
+@import "./gemini.css";
+
+@theme {
+  --color-brand-primary: #000000;
+  --color-brand-accent: #3b82f6; /* Modern Blue */
+  --color-brand-alert: #ef4444; /* Soft Red */
+  --color-brand-success: #10b981; /* Soft Green */
+
+  --color-surface-base: #f8fafc; /* Very light slate */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+
+  --color-surface-base-dark: #0f172a;
+  --color-text-primary-dark: #f8fafc;
+  --color-text-secondary-dark: #94a3b8;
+
+  /* Fonts (Toss Design - Pretendard Base) */
+  --font-display: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-body: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+
+  /* Modern / Glass Overrides */
+  --radius-card: 1.5rem; 
+  --radius-btn: 9999px;
+  
+  /* Toss Color Tokens */
+  --color-toss-title: #191F28;
+  --color-toss-body: #333D4B;
+  --color-toss-subtext: #4E5968;
+  --color-toss-muted: #8B95A1;
+  --color-toss-blue: #3182F6;
+  --color-toss-blue-hover: #1B64DA;
+
+  --animate-aurora: aurora 60s linear infinite;
+
+  @keyframes aurora {
+    from {
+      background-position: 50% 50%, 50% 50%;
+    }
+    to {
+      background-position: 350% 50%, 350% 50%;
+    }
+  }
+}
+
+:root {
+  --background: var(--color-surface-base);
+  --foreground: var(--color-text-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--color-surface-base-dark);
+    --foreground: var(--color-text-primary-dark);
+  }
+}
+
+/* Toss Specific Global Settings */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+html::-webkit-scrollbar {
+  width: 6px;
+}
+
+html::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+body, html {
+  word-break: keep-all;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-family: var(--font-sans); /* 강제 적용 */
+}
+
+.landing-v8 {
+  letter-spacing: -0.02em;
+  line-height: 1.6;
+}
+
+/* Base Modern Components */
+.btn-primary {
+  @apply px-6 py-3 bg-blue-600 text-white text-base font-semibold rounded-full hover:bg-blue-700 hover:shadow-[0_8px_16px_rgba(59,130,246,0.3)] transition-all duration-300 flex items-center gap-2 cursor-pointer;
+}
+
+.btn-glass {
+  @apply px-6 py-3 bg-white/10 dark:bg-black/10 backdrop-blur-md text-black dark:text-white text-base font-medium rounded-full border border-black/10 dark:border-white/10 hover:bg-white/20 dark:hover:bg-black/20 transition-all cursor-pointer;
+}
+
+.card-glass {
+  @apply bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border border-black/5 dark:border-white/5 rounded-[1.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)];
+}
+
+/* Toss Cards */
+.card-toss {
+  @apply bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] border border-slate-100 rounded-[24px] dark:bg-slate-900 dark:border-slate-800;
+}
+
+.card-toss-glass {
+  @apply bg-white/70 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.03)] rounded-[24px] dark:bg-slate-900/70 dark:border-slate-800/60;
+}
+
+/* Typography Utilities Extracted */
+.text-display-epic {
+  @apply text-6xl lg:text-8xl font-black leading-none tracking-tight;
+  font-variant-numeric: tabular-nums;
+}
+
+.text-label-brutal {
+  @apply text-sm font-semibold tracking-widest text-neutral-400 mb-2 uppercase;
+}
+
+/* Toss Typography Utilities */
+@layer utilities {
+  .word-break-keep {
+    word-break: keep-all;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+  }
+  
+  .text-korean {
+    word-break: keep-all;
+    word-wrap: break-word;
+    line-break: auto;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+}
+
+/* Toss Animations & Interactions */
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-slide-in-up {
+  animation: slideInFromBottom 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.enhanced-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.enhanced-hover:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
