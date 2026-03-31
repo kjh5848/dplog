@@ -141,6 +141,22 @@ def add_target_store(place_id: str, name: str, category: str = "", address: str 
         conn.close()
     return store_id
 
+def delete_target_store(store_id: int) -> bool:
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("PRAGMA foreign_keys = ON") # Ensure foreign key constraints are met
+        cursor.execute("DELETE FROM target_stores WHERE id = ?", (store_id,))
+        if cursor.rowcount > 0:
+            conn.commit()
+            return True
+        return False
+    except Exception as e:
+        print(f"Store delete error: {e}")
+        return False
+    finally:
+        conn.close()
+
 def get_target_store(store_id: int):
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
