@@ -2,7 +2,7 @@ package kr.co.nomadlab.nomadrank.config;
 
 import jakarta.servlet.http.HttpServletResponse;
 import kr.co.nomadlab.nomadrank.config.security.SecurityConstants;
-import kr.co.nomadlab.nomadrank.config.security.SecurityJwtConfig;
+import kr.co.nomadlab.nomadrank.config.security.SecurityJwtConfig
 import kr.co.nomadlab.nomadrank.config.security.SecurityTokenProvider;
 import kr.co.nomadlab.nomadrank.domain.auth.dto.response.ResAuthInfoDTOApiV1;
 import org.springframework.context.annotation.Bean;

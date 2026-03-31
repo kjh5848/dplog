@@ -24,6 +24,33 @@
         </div>
     </div>
 
+    <!-- [신규 영역] 하이브리드 통합검색 지배력(Search Dominance) 리포트 뷰 -->
+    <div id="dominancePanel" class="hidden glass-panel p-6 rounded-xl border border-indigo-500/30 bg-[linear-gradient(45deg,rgba(79,70,229,0.05),transparent)] shadow-[0_0_15px_rgba(79,70,229,0.1)]">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h3 class="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500" id="domTitle">🔍 통합검색 지배력 인텔리전스</h3>
+                <p class="text-xs text-zinc-400 mt-1" id="domSubtitle">키워드 노출 현황 및 TOP 5 경쟁사의 스마트블록 장악 현황을 분석합니다.</p>
+            </div>
+            <button onclick="document.getElementById('dominancePanel').classList.add('hidden')" class="text-zinc-500 hover:text-white transition-colors">닫기 ✕</button>
+        </div>
+        
+        <div class="overflow-x-auto mt-4 border border-indigo-500/20 rounded-xl bg-zinc-900/50">
+            <table class="w-full text-left text-sm text-zinc-300">
+                <thead class="text-xs text-indigo-300/80 uppercase bg-zinc-800/80 border-b border-indigo-500/20">
+                    <tr>
+                        <th scope="col" class="px-4 py-3 w-40 text-left font-semibold tracking-wider">경쟁상대 (Top 5)</th>
+                        <th scope="col" class="px-4 py-3 text-center w-32 font-semibold tracking-wider">시장 장악력(%)</th>
+                        <th scope="col" class="px-4 py-3 w-40 text-center font-semibold tracking-wider">장악 구좌 수</th>
+                        <th scope="col" class="px-4 py-3 font-semibold tracking-wider">노출중인 통합검색 섹션 (스마트블록 · 파워링크)</th>
+                    </tr>
+                </thead>
+                <tbody id="dominanceTableBody" class="divide-y divide-zinc-700/50">
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-4 flex gap-x-6 text-xs text-zinc-400" id="domContextLine"></div>
+    </div>
+
     <!-- 동선 기반 키워드 발굴기 -->
     <div class="glass-panel p-6 rounded-xl border border-orange-500/30 shadow-[0_0_15px_rgba(249,115,22,0.1)]">
         <div class="flex items-center justify-between mb-4">
@@ -68,13 +95,36 @@
                 </tbody>
             </table>
         </div>
+        </div>
+    </div>
+
+    <!-- 메타데이터 원본 모달 -->
+    <div id="metadataModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+        <div class="bg-zinc-900 border border-zinc-700/50 rounded-xl p-6 max-w-2xl w-full max-h-[80vh] flex flex-col shadow-2xl">
+            <div class="flex items-center justify-between mb-4 border-b border-zinc-800 pb-3">
+                <h3 class="text-lg font-bold text-zinc-100 flex items-center gap-2">
+                    <span class="text-indigo-400">📄</span> 초기 스크랩 지원 메타데이터 포맷
+                </h3>
+                <button onclick="closeMetadataModal()" class="text-zinc-500 hover:text-white text-xl leading-none">&times;</button>
+            </div>
+            <div class="flex-1 overflow-auto bg-black p-4 rounded-lg border border-zinc-800">
+                <pre id="metadataJsonViewer" class="text-xs text-green-400 font-mono whitespace-pre-wrap"></pre>
+            </div>
+        </div>
     </div>
 </section>
 
 <script>
+    let currentStoreId = null;
+    let currentPlaceId = null;
+    let currentStoreName = null;
+    let currentDeepScrapedData = null;
+
     async function loadStoreChart(storeId, storeName, placeId) {
         currentStoreId = storeId;
         currentPlaceId = placeId;
+        currentStoreName = storeName;
+        currentDeepScrapedData = null;
         
         document.getElementById('registerView').classList.add('hidden');
         document.getElementById('chartView').classList.remove('hidden');
@@ -83,24 +133,30 @@
         // 상점 기초 메타정보 비동기 렌더링
         const metaDiv = document.getElementById('chartStoreMeta');
         metaDiv.innerHTML = `<span class="animate-pulse text-indigo-400">네이버 로컬 데이터 동기화 중...</span>`;
-        if (placeId) {
-            fetch('/api/store/deep-scrape', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ place_id: placeId })
-            }).then(res => res.json()).then(json => {
+        if (storeId) {
+            fetch(`/api/store/${storeId}`)
+            .then(res => res.json()).then(json => {
                 if(json.status === 'success') {
                     const d = json.data;
+                    currentDeepScrapedData = d;
                     metaDiv.innerHTML = `
-                        <div class="flex flex-wrap items-center gap-3">
-                            <span class="bg-indigo-900/50 text-indigo-300 px-2 py-1 rounded border border-indigo-700/50 text-xs font-medium">카테고리: ${d.category}</span>
-                            <span class="bg-zinc-800 text-zinc-300 px-2 py-1 rounded border border-zinc-700/50 text-xs flex items-center gap-1">⭐ 리뷰 ${d.review_count || 0}</span>
-                            <span class="bg-zinc-800 text-zinc-300 px-2 py-1 rounded border border-zinc-700/50 text-xs flex items-center gap-1">저장 ❤️ ${d.save_count || 0}</span>
-                            ${d.official_keywords && d.official_keywords.length > 0 ? 
-                                `<div class="flex gap-1 ml-2 border-l border-zinc-700 pl-3">
-                                    ${d.official_keywords.slice(0, 4).map(k => `<span class="text-xs bg-orange-900/30 text-orange-400 px-1.5 py-0.5 rounded">#${k}</span>`).join('')}
-                                </div>` : ''
-                            }
+                        <div class="flex flex-wrap items-center justify-between w-full">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="bg-indigo-900/50 text-indigo-300 px-2 py-1 rounded border border-indigo-700/50 text-xs font-medium">카테고리: ${d.category || '-'}</span>
+                                <span class="bg-zinc-800 text-zinc-300 px-2 py-1 rounded border border-zinc-700/50 text-xs flex items-center gap-1">👤 방문자 리뷰 ${d.visitor_reviews ? d.visitor_reviews.toLocaleString() : 0}</span>
+                                <span class="bg-zinc-800 text-zinc-300 px-2 py-1 rounded border border-zinc-700/50 text-xs flex items-center gap-1">📝 블로그 리뷰 ${d.blog_reviews ? d.blog_reviews.toLocaleString() : 0}</span>
+                                <span class="bg-zinc-800 text-zinc-300 px-2 py-1 rounded border border-zinc-700/50 text-xs flex items-center gap-1">❤️ 저장 ${d.saves ? d.saves.toLocaleString() : 0}</span>
+                                <span class="bg-zinc-800 text-zinc-300 px-2 py-1 rounded border border-zinc-700/50 text-xs flex items-center gap-1">⭐ 평점 ${d.rating || "없음"}</span>
+                                ${d.official_keywords && d.official_keywords.length > 0 ? 
+                                    `<div class="flex gap-1 ml-2 border-l border-zinc-700 pl-3">
+                                        ${d.official_keywords.slice(0, 4).map(k => `<span class="text-xs bg-orange-900/30 text-orange-400 px-1.5 py-0.5 rounded">#${k}</span>`).join('')}
+                                    </div>` : ''
+                                }
+                            </div>
+                            <div class="flex gap-2 shrink-0">
+                                <button onclick="openMetadataModal()" class="px-3 py-1 bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-700 hover:border-zinc-500 rounded text-xs transition">원본 JSON 보기</button>
+                                <button onclick="deleteCurrentStore()" class="px-3 py-1 bg-red-900/30 text-red-400 hover:text-red-300 border border-red-700/50 hover:border-red-500 rounded text-xs transition shadow-sm">상점 삭제</button>
+                            </div>
                         </div>
                     `;
                 } else {
@@ -140,28 +196,42 @@
         badgeList.innerHTML = '';
 
         for(let kw in historyDict) {
-            // [UI 랜더링 로직] 키워드 뱃지 (수집 대기 여부 표시)
+            // [UI 랜더링 로직] 키워드 뱃지 (수집 대기 여부 표시 및 삭제 버튼 연동)
             let badge = document.createElement('span');
-            badge.className = 'text-xs px-2 py-1 rounded border flex items-center gap-2 transition-all';
+            badge.className = 'text-xs px-2 py-1 rounded border flex items-center gap-2 transition-all relative pr-6';
             const hasData = historyDict[kw].length > 0;
             
             if (hasData) {
-                badge.className += ' bg-zinc-800 border-zinc-600 text-zinc-300';
+                badge.className += ' bg-zinc-800 border-zinc-600 text-zinc-300 hover:bg-indigo-600/30 hover:border-indigo-500 hover:text-white cursor-pointer';
                 badge.innerHTML = `<span>${kw}</span>`;
+                badge.title = "클릭하여 통합검색 지배력 분석 리포트 보기";
             } else {
                 badge.className += ' bg-indigo-900/20 border-indigo-700/50 text-indigo-300';
-                badge.innerHTML = `<span>${kw}</span><span class="flex h-2 w-2 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span></span> <span class="text-[10px] text-indigo-400/80">수집 대기중</span>`;
+                badge.innerHTML = `<span>${kw}</span><span class="flex h-2 w-2 relative shrink-0"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span></span> <span class="text-[10px] text-indigo-400/80">수집 대기중</span>`;
             }
+            
+            badge.onclick = () => { if (hasData) loadSearchDominance(currentStoreId, kw, document.getElementById('chartStoreTitle').innerText.replace(" 랭킹 추이", "").trim()); };
+
+            // x 버튼을 뱃지 우측에 달기
+            let delBtn = document.createElement('button');
+            delBtn.className = 'absolute right-1 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-red-400 px-1';
+            delBtn.innerHTML = '&times;';
+            delBtn.onclick = (e) => {
+                e.stopPropagation();
+                deleteKeyword(kw);
+            };
+            badge.appendChild(delBtn);
+
             badgeList.appendChild(badge);
 
             let organicPoints = timeLabels.map(t => {
-                let record = historyDict[kw].find(r => r.scraped_at === t && r.is_ad === 0);
-                if(record && record.rank > 0) return record.rank; 
+                let record = historyDict[kw].find(r => r.scraped_at === t && r.is_ad === false);
+                if(record) return record.rank > 0 ? record.rank : 310; // 0위면 이탈(310)로 표시
                 return null;
             });
             
             let adPoints = timeLabels.map(t => {
-                let record = historyDict[kw].find(r => r.scraped_at === t && r.is_ad === 1);
+                let record = historyDict[kw].find(r => r.scraped_at === t && r.is_ad === true);
                 if(record && record.rank > 0) return record.rank; 
                 return null;
             });
@@ -210,9 +280,15 @@
                     y: {
                         reverse: true,
                         min: 1,
-                        max: 300,
+                        max: 310,
                         title: { display: true, text: '네이버 노출 순위', color: '#71717a' },
-                        grid: { color: '#27272a' }
+                        grid: { color: '#27272a' },
+                        ticks: {
+                            callback: function(value) {
+                                if (value === 310) return '이탈';
+                                return value;
+                            }
+                        }
                     },
                     x: {
                         grid: { color: '#27272a' }
@@ -223,6 +299,9 @@
                     tooltip: {
                         callbacks: {
                             label: function(context) {
+                                if (context.raw === 310) {
+                                    return `${context.dataset.label}: ❌ 순위 이탈 (미노출)`;
+                                }
                                 return `${context.dataset.label}: ${context.raw}위`;
                             }
                         }
@@ -230,6 +309,57 @@
                 }
             }
         });
+    }
+
+    async function deleteCurrentStore() {
+        if (!currentStoreId) return;
+        if (!confirm("정말로 이 상점을 삭제하시겠습니까? 관련된 모든 키워드와 랭킹 수집 데이터가 삭제됩니다.")) return;
+        
+        try {
+            const res = await fetch(`/api/store/${currentStoreId}`, {
+                method: 'DELETE'
+            });
+            const json = await res.json();
+            if (json.status === 'success') {
+                showToast("상점이 성공적으로 삭제되었습니다.", "success");
+                document.getElementById('chartView').classList.add('hidden');
+                document.getElementById('registerView').classList.remove('hidden');
+                if (typeof loadSidebarStores === 'function') loadSidebarStores();
+            } else {
+                showToast(json.message, "error");
+            }
+        } catch(e) { console.error(e); showToast("삭제 중 오류가 발생했습니다.", "error"); }
+    }
+
+    async function deleteKeyword(keyword) {
+        if (!currentStoreId) return;
+        if (!confirm(`'${keyword}' 키워드를 추적 리스트에서 삭제할까요? 관련 히스토리가 모두 지워집니다.`)) return;
+        try {
+            const res = await fetch(`/api/store/${currentStoreId}/keywords/${encodeURIComponent(keyword)}`, {
+                method: 'DELETE'
+            });
+            const json = await res.json();
+            if (json.status === 'success') {
+                showToast(json.message, "success");
+                loadStoreChart(currentStoreId, currentStoreName, currentPlaceId);
+            } else {
+                showToast(json.message, "error");
+            }
+        } catch(e) { console.error(e); showToast("키워드 삭제 중 오류가 발생했습니다.", "error"); }
+    }
+
+    function openMetadataModal() {
+        const viewer = document.getElementById('metadataJsonViewer');
+        if(currentDeepScrapedData) {
+            viewer.textContent = JSON.stringify(currentDeepScrapedData, null, 2);
+        } else {
+            viewer.textContent = "데이터가 없습니다. 잠시 후 다시 시도해 주세요.";
+        }
+        document.getElementById('metadataModal').classList.remove('hidden');
+    }
+
+    function closeMetadataModal() {
+        document.getElementById('metadataModal').classList.add('hidden');
     }
 
     async function addKeywordFromChartView() {
@@ -394,5 +524,118 @@
             
             tbody.appendChild(tr);
         });
+    }
+
+    async function loadSearchDominance(storeId, keyword, storeName) {
+        showToast(`'${keyword}'의 통합검색 지배력 스냅샷을 불러옵니다...`);
+        try {
+            const res = await fetch(`/api/store/${storeId}/snapshot/${keyword}`);
+            const json = await res.json();
+            if(json.status !== 'success') {
+                showToast("스냅샷 분석 데이터가 아직 없습니다.", "warning");
+                return;
+            }
+            
+            const payload = json.data.payload;
+            const scrapedAt = json.data.scraped_at;
+            let placeData = [];
+            let searchData = [];
+            
+            if(Array.isArray(payload)) {
+                 placeData = payload; // 구버전 호환
+            } else {
+                 placeData = payload.place_rankings || [];
+                 searchData = payload.search_blocks || [];
+            }
+            
+            // 본인 축약명
+            const targetShort = storeName.split(' ')[0];
+            
+            // Top 5 경쟁사 발췌
+            let contenders = [targetShort];
+            for(let r of placeData) {
+                let shortName = r['상호명'].split(' ')[0];
+                if(!contenders.includes(shortName)) contenders.push(shortName);
+                if(contenders.length >= 6) break;
+            }
+            
+            // 지배력 매핑 (텍스트 기반)
+            let dominanceMap = {};
+            contenders.forEach(c => dominanceMap[c] = []);
+            
+            let totalBlocks = searchData.length;
+            
+            searchData.forEach(block => {
+                let textBlob = block['파싱텍스트'] || "";
+                contenders.forEach(c => {
+                    if(textBlob.includes(c)) {
+                        dominanceMap[c].push(block);
+                    }
+                });
+            });
+            
+            // 화면 렌더링
+            const panel = document.getElementById('dominancePanel');
+            const tbody = document.getElementById('dominanceTableBody');
+            
+            document.getElementById('domTitle').innerText = `🔍 통합검색 지배력 리포트 (키워드: ${keyword})`;
+            
+            tbody.innerHTML = '';
+            
+            contenders.forEach(c => {
+                let myBlocks = dominanceMap[c];
+                let isMe = c === targetShort;
+                
+                let percent = totalBlocks > 0 ? ((myBlocks.length / totalBlocks) * 100).toFixed(1) : 0;
+                let bgClass = isMe ? "bg-indigo-900/30" : "hover:bg-zinc-800/80";
+                
+                let blockHtmlLines = myBlocks.map(b => {
+                    let adBadge = b['광고여부'] === 'Y' ? '<span class="px-1.5 py-0.5 rounded text-[10px] bg-red-500/20 text-red-400 border border-red-500/30">광고</span>' : '';
+                    return `<span class="inline-block bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-300 mr-1 mb-1 shadow-sm">${b['지면명']} ${adBadge}</span>`;
+                }).join('');
+                
+                if (myBlocks.length === 0) blockHtmlLines = "<span class='text-zinc-600 italic text-xs'>장악한 검색 구좌 없음</span>";
+                
+                let tr = document.createElement('tr');
+                tr.className = `${bgClass} transition-colors border-b border-zinc-800/30`;
+                tr.innerHTML = `
+                    <td class="px-4 py-4 text-left font-bold ${isMe ? 'text-indigo-400' : 'text-zinc-200'}">
+                        ${isMe ? '🎯 ' : ''}${c}
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                        <div class="flex flex-col items-center">
+                            <span class="text-lg font-mono font-bold ${percent > 10 ? 'text-teal-400' : 'text-zinc-500'}">${percent}%</span>
+                            <div class="w-20 bg-zinc-800 rounded-full h-1 mt-1 overflow-hidden">
+                                <div class="bg-gradient-to-r from-teal-400 to-indigo-500 h-1" style="width: ${percent}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-4 text-center text-zinc-300 font-mono text-sm">
+                        ${myBlocks.length > 0 ? `<span class="bg-indigo-500/20 text-indigo-400 font-bold px-2 py-1 rounded">${myBlocks.length}건</span>` : '-'}
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex flex-wrap gap-1 leading-relaxed">
+                            ${blockHtmlLines}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            // 컨텍스트 메시지
+            document.getElementById('domContextLine').innerHTML = `
+                <div>🕒 측정일시: <span class="text-indigo-300 font-mono">${scrapedAt}</span></div>
+                <div>📡 스캔된 통합검색 지면 총 갯수: <span class="text-white font-bold">${totalBlocks}</span>개 구좌</div>
+            `;
+            
+            panel.classList.remove('hidden');
+            
+            // 모달 안으로 자동 스크롤
+            panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+        } catch (e) {
+            console.error(e);
+            showToast("데이터를 불러오는 중 오류가 발생했습니다.", "error");
+        }
     }
 </script>

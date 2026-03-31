@@ -38,8 +38,8 @@ async def scrape_place_details(place_id: str):
     네이버 플레이스 단일 상점의 상세 정보(카테고리, 리뷰 수, 텍스트)를 딥 스크래핑합니다.
     """
     place_id_clean = await extract_place_id(place_id)
-    home_url = f"https://m.place.naver.com/restaurant/{place_id_clean}/home"
-    review_url = f"https://m.place.naver.com/restaurant/{place_id_clean}/review/visitor"
+    home_url = f"https://m.place.naver.com/place/{place_id_clean}/home"
+    review_url = f"https://m.place.naver.com/place/{place_id_clean}/review/visitor"
 
     result = {
         "place_id": place_id_clean,
@@ -107,10 +107,8 @@ async def scrape_place_details(place_id: str):
                 if save_match: result['saves'] = int(save_match.group(1).replace(",", ""))
 
                 
-                # 평점 (Rating) 추출 (네이버 DOM 변경에 유연하게 대처)
-                rating_match = re.search(r'별점.*?([0-9]{1}\.[0-9]{1,2})', html)
-                if rating_match:
-                    result["rating"] = float(rating_match.group(1))
+                # 평점 (Rating) - F&B의 경우 네이버에서 별점 제도를 폐지하여 추출 제거
+                pass
 
                 # 주소 (Address) 추출
                 addr_match = re.search(r'주소</span>.*?<span class="[^"]*">([^<]+)</span>', html, re.DOTALL)

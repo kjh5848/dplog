@@ -15,8 +15,25 @@ TODAY_STR = datetime.now().strftime("%Y-%m-%d")
 OUTPUT_DIR = os.path.dirname(os.path.abspath(__file__))
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-async def fetch_complete_list(keyword, context, sem, search_num):
+import random
+
+# 랜덤 기종 에이전트 풀 장착 (아이폰 최신형, 구형, 갤럭시 S23, Z플립 혼합)
+USER_AGENTS = [
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 15_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.5 Mobile/15E148 Safari/604.1",
+    "Mozilla/5.0 (Linux; Android 13; SM-S918N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36",
+    "Mozilla/5.0 (Linux; Android 13; SM-F731N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36",
+]
+
+async def fetch_complete_list(keyword, browser, sem, search_num):
     async with sem:
+        # 매 요청마다 완전히 새로운 격리된 브라우저 환경(Context)과 무작위 스마트폰 기종 할당
+        context = await browser.new_context(
+            user_agent=random.choice(USER_AGENTS),
+            viewport={'width': 390, 'height': 844},
+            is_mobile=True, has_touch=True
+        )
         try:
             page = await context.new_page()
             await page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
@@ -104,7 +121,10 @@ async def fetch_complete_list(keyword, context, sem, search_num):
         except Exception as e:
             return True, keyword, []
         finally:
-            await page.close()
+            try:
+                await page.close()
+            except: pass
+            await context.close()
 
 async def run_full_extraction():
     print(f"🚀 [{CONCURRENCY} 스레드] 키워드별 상점 전체 목록 수집 스크립트 가동")
@@ -127,16 +147,11 @@ async def run_full_extraction():
             headless=True,
             args=['--disable-blink-features=AutomationControlled', '--no-sandbox']
         )
-        context = await browser.new_context(
-            user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15",
-            viewport={'width': 390, 'height': 844},
-            is_mobile=True, has_touch=True
-        )
         
         start_time = time.time()
         for i in range(0, len(keywords), CONCURRENCY):
             chunk = keywords[i:i+CONCURRENCY]
-            tasks = [fetch_complete_list(kw, context, sem, i+idx+1) for idx, kw in enumerate(chunk)]
+            tasks = [fetch_complete_list(kw, browser, sem, i+idx+1) for idx, kw in enumerate(chunk)]
             
             results = await asyncio.gather(*tasks)
             

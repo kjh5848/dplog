@@ -418,7 +418,7 @@ public class KakaoOAuthService {
                         missing.add(scope);
                 }
                 case "account_email" -> {
-                    boolean need = hasAcc && Boolean.TRUE.equals(acc.getEmailNeedsAgreement());
+                    boolean need = hasAcc && Boolean.TRUE.equals(   acc.getEmailNeedsAgreement());
                     boolean empty = user.getEmail() == null || user.getEmail().isBlank();
                     if (need || empty)
                         missing.add(scope);

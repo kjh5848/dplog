@@ -54,7 +54,7 @@
                     <span class="font-semibold text-white truncate block text-sm" id="resStoreReviews">-</span>
                 </div>
                 <div class="bg-zinc-900/50 p-4 rounded-lg border border-zinc-800">
-                    <span class="text-xs text-zinc-500 block mb-1">평점 (Regex)</span>
+                    <span class="text-xs text-zinc-500 block mb-1">평점</span>
                     <span class="font-semibold text-indigo-400 text-lg block" id="resStoreRating">-</span>
                 </div>
             </div>
@@ -218,7 +218,7 @@
                 document.getElementById('resStoreName').innerText = json.store_data.name || "-";
                 document.getElementById('resStoreCat').innerText = json.store_data.category || "-";
                 document.getElementById('resStoreReviews').innerText = `방문자: ${json.store_data.visitor_reviews} / 블로그: ${json.store_data.blog_reviews}`;
-                document.getElementById('resStoreRating').innerText = json.store_data.rating ? json.store_data.rating : "N/A";
+                document.getElementById('resStoreRating').innerText = json.store_data.rating ? json.store_data.rating : "없음";
                 
                 const officialKwContainer = document.getElementById('resStoreOfficialKeywords');
                 if (json.store_data.official_keywords && json.store_data.official_keywords.length > 0) {
