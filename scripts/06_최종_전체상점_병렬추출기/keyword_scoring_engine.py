@@ -7,15 +7,22 @@ async def check_mobile_exposure(kw_strings: list[str], target_store_name: str) -
     """네이버 모바일 통합 검색에서 각 키워드별 target_store_name 등장 횟수를 비동기로 조사합니다."""
     exposure_stats = {}
     
-    # 세마포어로 동시 요청 수를 15로 제한 (네이버 안티봇 방지)
-    sem = asyncio.Semaphore(15)
+    import random
     
-    async def fetch_and_count(client: httpx.AsyncClient, kw: str):
+    # 세마포어로 동시 요청 수를 5로 감소 (네이버 WAF DDoS 방어 작동 회피)
+    sem = asyncio.Semaphore(5)
+    
+    async def fetch_and_count(client: httpx.AsyncClient, kw: str, index: int):
         url = f"https://m.search.naver.com/search.naver?query={kw}"
         headers = {
             "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1"
         }
         async with sem:
+            # HTTP 요청에도 Stagger Jitter (지연 발사) 적용. 
+            # 15개가 동시에 쏟아지면 방화벽이 차단하므로 무작위 지연을 줍니다.
+            delay = random.uniform(0.1, 10.0)
+            await asyncio.sleep(delay)
+            
             try:
                 resp = await client.get(url, headers=headers, timeout=10.0)
                 if resp.status_code == 200:
@@ -36,7 +43,7 @@ async def check_mobile_exposure(kw_strings: list[str], target_store_name: str) -
                 exposure_stats[kw] = {"is_exposed": False, "exposure_count": 0}
 
     async with httpx.AsyncClient() as client:
-        tasks = [fetch_and_count(client, kw) for kw in kw_strings]
+        tasks = [fetch_and_count(client, kw, i) for i, kw in enumerate(kw_strings)]
         await asyncio.gather(*tasks)
         
     return exposure_stats
@@ -81,8 +88,28 @@ async def check_place_ranking(
         target_lat, target_lon = 37.497952, 127.027619
 
     print(f"[실험 가동] 🔥 대표님 요청: {len(kw_strings)}개 전체 키워드에 대한 Playwright 랭킹 집적 스크랩핑 시작!")
-    # 코어 엔진 가동 (약 3~4분 소요 예상)
-    all_results = await run_engine(keywords_list=kw_strings, concurrency=8, target_lat=target_lat, target_lon=target_lon)
+    
+    CHUNK_SIZE = 15
+    COOLDOWN_SECONDS = 60 # 단일 IP 과열 방지를 위한 쿨다운 (로컬 엣지 아키텍처)
+    all_results = []
+    
+    for i in range(0, len(kw_strings), CHUNK_SIZE):
+        chunk = kw_strings[i : i + CHUNK_SIZE]
+        print(f"📦 [청크 {i//CHUNK_SIZE + 1} / {(len(kw_strings) - 1)//CHUNK_SIZE + 1}] {len(chunk)}개 키워드 스크래핑 시작 (전체 진행률: {i+len(chunk)}/{len(kw_strings)})")
+        
+        # 청크 단위로 엔진 가동
+        chunk_results = await run_engine(keywords_list=chunk, concurrency=2, target_lat=target_lat, target_lon=target_lon, max_scroll=80, target_store_name=target_store_name)
+        all_results.extend(chunk_results)
+        
+        # [방어 로직] 청크 처리 중 IP 차단이 감지되면 즉시 셧다운
+        if len(chunk_results) > 0 and chunk_results[0].get("상호명") == "__BLOCKED__":
+            from fastapi import HTTPException
+            raise HTTPException(status_code=429, detail="네이버 IP 차단 방화벽(WAF)이 작동했습니다. 로컬 네트워크 IP를 변경하거나 잠시 후 다시 시도해주세요.")
+            
+        # 마지막 청크가 아니면 쿨다운 대기
+        if i + CHUNK_SIZE < len(kw_strings):
+            print(f"⏳ [쿨다운] 단일 IP 과부하(WAF 429) 방지를 위해 {COOLDOWN_SECONDS}초간 휴식합니다...")
+            await asyncio.sleep(COOLDOWN_SECONDS)
     
     # 키워드별 순위 집계 및 스토어 글로벌 통계 수집
     ranking_stats = {kw: {"organic": 0, "ad": 0} for kw in kw_strings}
@@ -137,10 +164,14 @@ async def generate_scored_keywords(base_keyword: str, target_store_name: str = N
     place_ranking_dict = {}
     store_metrics_dict = {}
     if target_store_name:
+        import time
+        capture_start = time.time()
         print(f"[스코어링 엔진] 2.5 '{target_store_name}' 모바일 노출 여부 검사 시작 ({len(kw_strings)}개)")
         exposure_dict = await check_mobile_exposure(kw_strings, target_store_name)
+        print(f"[스코어링 엔진] 모바일 노출 1페이지 검사(Top 5) 완료 소요시간: {time.time() - capture_start:.2f}초")
         
-        # [실험 기능] 플레이스 실시간 순위 조회 및 스토어 메타데이터 수집
+        # [대표님 지시] 300위 딥 스크랩 재활성화: 내 상점이 300위 안에 있다는 것 자체가 작업 가치가 높은 키워드임.
+        print(f"[스코어링 엔진] 2.6 '{target_store_name}' 300위 이내 딥 서치(실시간 순위) 시작")
         place_data = await check_place_ranking(base_keyword, kw_strings, target_store_name, user_lat=lat, user_lon=lon)
         place_ranking_dict = place_data.get("rankings", {})
         store_metrics_dict = place_data.get("store_metrics", {})
@@ -232,9 +263,9 @@ async def generate_scored_keywords(base_keyword: str, target_store_name: str = N
     
     return {
         "keywords": {
-            "high": high[:30], # 각 섹터당 무한정 길어지는 걸 방지하기 위해 최대 30개씩 자름
-            "mid": mid[:30],
-            "low": low[:40] 
+            "high": high, # 심해 키워드 유니버스 전체 노출 (15개 단위 청킹 도입으로 단일 IP 방화벽 문제 해소)
+            "mid": mid,
+            "low": low 
         },
         "store_metrics": store_metrics_dict
     }
