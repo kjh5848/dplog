@@ -130,7 +130,7 @@ export function StoreDetail({ storeId, onBack }: StoreDetailProps) {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href={`/dashboard/stores/${storeId}/keywords`}>
+          <Link href={`/dashboard/stores/detail/keywords?id=${storeId}`}>
             <Button
               variant="outline"
               className="rounded-xl border-slate-200 dark:border-white/10 gap-2"

@@ -135,11 +135,17 @@ def add_target_store(place_id: str, name: str, category: str = "", address: str 
         conn.commit()
     except Exception as e:
         print(f"Store upsert error: {e}")
-    finally:
-        cursor.execute("SELECT id FROM target_stores WHERE place_id = ?", (place_id,))
-        store_id = cursor.fetchone()[0]
-        conn.close()
-    return store_id
+        # 의도적으로 에러를 다시 던져서 preview_server에 알려야 합니다.
+        raise e
+    
+    # 마지막으로 방금 넣거나 업데이트한 row를 찾습니다.
+    cursor.execute("SELECT id FROM target_stores WHERE place_id = ?", (place_id,))
+    row = cursor.fetchone()
+    conn.close()
+    
+    if not row:
+        raise Exception("Store creation failed in database (likely a schema issue).")
+    return row[0]
 
 def delete_target_store(store_id: int) -> bool:
     conn = sqlite3.connect(DB_PATH)
@@ -325,14 +331,18 @@ def complete_keyword_scrape(keyword_id: int, next_scrape_at: datetime):
     conn.commit()
     conn.close()
 
-def unlock_keyword(keyword_id: int):
+def unlock_keyword(keyword_id: int, delay_minutes: int = 0):
     """
     에러 등의 이유로 스크랩이 중단된 경우 다시 큐로 돌려놓기 위해 락을 해제합니다.
     (의도치 않게 물려있는 경우 대비)
     """
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("UPDATE tracked_keywords SET is_processing = 0 WHERE id = ?", (keyword_id,))
+    if delay_minutes > 0:
+        next_scrape_str = (datetime.now() + timedelta(minutes=delay_minutes)).strftime("%Y-%m-%d %H:%M:%S")
+        cursor.execute("UPDATE tracked_keywords SET is_processing = 0, next_scrape_at = ? WHERE id = ?", (next_scrape_str, keyword_id))
+    else:
+        cursor.execute("UPDATE tracked_keywords SET is_processing = 0 WHERE id = ?", (keyword_id,))
     conn.commit()
     conn.close()
 

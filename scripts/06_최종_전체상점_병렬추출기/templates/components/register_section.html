@@ -1,11 +1,16 @@
 <!-- [뷰 A] 상점 등록 (지도 + URL) 모달형 뷰 -->
-<section id="registerView" class="max-w-4xl mx-auto space-y-6">
+<section id="registerView" class="w-full max-w-[95%] xl:max-w-[1400px] mx-auto space-y-6">
     <div class="mb-8">
         <h2 class="text-2xl font-bold tracking-tight mb-2">신규 타겟 상점 등록</h2>
         <p class="text-sm text-zinc-400 leading-relaxed">네이버 플레이스 URL을 입력하고 타겟 위치(위경도)를 지도에서 지정하면, <b>무제한</b>으로 상점과 분석 키워드들을 추출하여 트래킹 시스템에 추가할 수 있습니다.</p>
     </div>
 
-    <!-- 스텝 1: 기본 정보 (지도 & URL) -->
+    <!-- 2단 Grid 분할 시작 -->
+    <div class="grid grid-cols-1 xl:grid-cols-[1.2fr_1fr] gap-8 items-start">
+        
+        <!-- 왼쪽 컬럼 (기존 폼 로직 영역) -->
+        <div class="space-y-6 flex flex-col w-full overflow-hidden">
+            <!-- 스텝 1: 기본 정보 (지도 & URL) -->
     <div class="glass-panel p-6 rounded-xl space-y-6">
         <h3 class="text-lg font-semibold text-indigo-400">Step 1. 상점 정보 및 검색 중앙 좌표 핀포인트</h3>
         
@@ -19,8 +24,14 @@
             </div>
         </div>
 
-        <div class="space-y-2">
-            <label class="text-sm font-medium text-zinc-300">네이버 플레이스 URL</label>
+        <div class="space-y-4">
+            <div class="flex justify-between items-end">
+                <label class="text-sm font-medium text-zinc-300">네이버 플레이스 URL</label>
+                <button onclick="openStoreSearchModal()" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded flex items-center gap-1 transition-colors border border-zinc-700 hover:border-zinc-500">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    상호명으로 바로 검색하기
+                </button>
+            </div>
             <div class="flex gap-2">
                 <input type="text" id="targetUrl" placeholder="https://map.naver.com/p/search/.../place/12345" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-colors">
                 <button id="btnDeepScrape" onclick="registerAndScrape()" class="min-w-[120px] bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-semibold transition-all">
@@ -120,27 +131,285 @@
             </div>
         </div>
     </div>
+        </div>
+        <!-- // 좌측 컬럼 종료 -->
+
+        <!-- 우측 컬럼: 네이버 모바일 뷰어 Iframe -->
+        <div class="glass-panel p-6 rounded-xl flex flex-col h-full min-h-[850px] sticky top-6">
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-rose-400 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                    실시간 상점 미리보기(Preview)
+                </h3>
+                <p class="text-xs text-zinc-400 mt-2 leading-relaxed">
+                    1. 다른 탭의 네이버 지도에서 상점이름을 검색하거나 상점 URL을 <b>URL 복사</b>하세요.<br>
+                    2. 복사한 URL을 왼쪽 폼 <b class="text-zinc-200">입력 칸</b>에 <b>붙여넣기</b> 하시면 백그라운드 스크래핑이 도는 동안 이곳에 상점 미리보기가 출력됩니다.
+                </p>
+            </div>
+            
+            <!-- Iframe 영역 -->
+            <div id="previewWrapper" class="flex-grow w-full rounded-lg overflow-hidden border border-zinc-700 bg-zinc-900 relative">
+                <!-- 빈 상태 / 안내 스크린 -->
+                <div id="previewEmptyState" class="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 bg-zinc-900/50 z-20 transition-opacity">
+                    <svg class="w-12 h-12 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                    <p class="text-sm font-medium">좌측에 네이버 URL을 입력해주세요.</p>
+                </div>
+                
+                <!-- 로딩 스피너 -->
+                <div id="previewLoadingState" class="absolute inset-0 flex items-center justify-center text-zinc-500 bg-zinc-900 z-10 hidden">
+                    <svg class="animate-spin h-8 w-8 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </div>
+                
+                <!-- 실제 Iframe -->
+                <iframe id="naverPreviewIframe" class="absolute inset-0 w-full h-full z-0 opacity-0 transition-opacity duration-300" frameborder="0" allow="geolocation" allowfullscreen></iframe>
+            </div>
+        </div>
+        <!-- // 우측 컬럼 종료 -->
+
+    </div>
 </section>
 
+<!-- [뷰 B] 상호명 통합검색 모달 -->
+<div id="storeSearchModal" class="fixed inset-0 z-[100] hidden">
+    <!-- 패딩/백드롭 -->
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="closeStoreSearchModal()"></div>
+    
+    <!-- 모달 컨테이너 (정중앙 정렬) -->
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl">
+        <div class="bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+            
+            <!-- 모달 헤더 -->
+            <div class="p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-900/80">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    상호명 검색
+                </h3>
+                <button onclick="closeStoreSearchModal()" class="text-zinc-500 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <!-- 모달 바디 (검색 폼) -->
+            <div class="p-6 pb-4">
+                <div class="flex gap-3">
+                    <input type="text" id="storeSearchInput" placeholder="예: 해운대 부산상회" 
+                           class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-colors text-white"
+                           onkeypress="if(event.key === 'Enter') doStoreSearch()">
+                    <button onclick="doStoreSearch()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-semibold transition-all whitespace-nowrap hidden sm:block">
+                        검색
+                    </button>
+                </div>
+            </div>
+
+            <!-- 모달 바디 (검색 결과 리스트 영역) -->
+            <div class="px-6 pb-6 overflow-y-auto flex-1 custom-scrollbar">
+                
+                <!-- 검색 로딩 -->
+                <div id="searchModalLoading" class="hidden flex-col items-center justify-center py-12">
+                    <svg class="animate-spin h-8 w-8 text-indigo-500 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <p class="text-zinc-400 text-sm">네이버 플레이스 검색 중...</p>
+                </div>
+
+                <!-- 검색 결과가 없을 때 -->
+                <div id="searchModalEmpty" class="hidden text-center py-12 text-zinc-500 text-sm">
+                    검색 결과가 없습니다. 다른 검색어를 입력해보세요.
+                </div>
+
+                <!-- 검색 결과 리스트 컨테이너 -->
+                <div id="searchModalResults" class="space-y-3">
+                    <!-- JS DOM Render -->
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    function parseNaverUrlForPreview(url) {
+        if (!url) return null;
+        const match = url.match(/\/place\/(\d+)/);
+        if (match && match[1]) {
+            return match[1];
+        }
+        return null; // 숫자 ID 추출 불가 시 null
+    }
+
+    // URL 입력 폼 이벤트 리스너 바인딩
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlInput = document.getElementById('targetUrl');
+        const iframe = document.getElementById('naverPreviewIframe');
+        const emptyState = document.getElementById('previewEmptyState');
+        const loadingState = document.getElementById('previewLoadingState');
+        
+        let lastLoadUrl = ""; // 중복 호출 방지
+
+        urlInput.addEventListener('input', (e) => {
+            const rawUrl = e.target.value.trim();
+            const placeId = parseNaverUrlForPreview(rawUrl);
+            
+            if (placeId) {
+                const targetSrc = `https://m.place.naver.com/place/${placeId}/home`;
+                if(lastLoadUrl !== targetSrc) {
+                    lastLoadUrl = targetSrc;
+                    
+                    // UI 상태 업데이트
+                    emptyState.classList.add('hidden');
+                    loadingState.classList.remove('hidden');
+                    iframe.classList.remove('opacity-100');
+                    iframe.classList.add('opacity-0');
+                    
+                    // iframe 로드 시작
+                    iframe.src = targetSrc;
+                    
+                    // iframe 로드 완료 이벤트 리스너
+                    iframe.onload = () => {
+                        loadingState.classList.add('hidden');
+                        iframe.classList.remove('opacity-0');
+                        iframe.classList.add('opacity-100');
+                    };
+                }
+            } else if (!rawUrl) {
+                // 입력창이 비워졌을 때 초기화
+                lastLoadUrl = "";
+                emptyState.classList.remove('hidden');
+                loadingState.classList.add('hidden');
+                iframe.src = "";
+                iframe.classList.add('opacity-0');
+                iframe.classList.remove('opacity-100');
+            }
+        });
+    });
+
+// ==========================================
+// 상호명 검색 모달 (Search Modal) 로직
+// ==========================================
+
+function openStoreSearchModal() {
+    document.getElementById('storeSearchModal').classList.remove('hidden');
+    // 여는 동시에 포커스
+    setTimeout(() => {
+        document.getElementById('storeSearchInput').focus();
+    }, 100);
+}
+
+function closeStoreSearchModal() {
+    document.getElementById('storeSearchModal').classList.add('hidden');
+    document.getElementById('storeSearchInput').value = '';
+    document.getElementById('searchModalResults').innerHTML = '';
+}
+
+async function doStoreSearch() {
+    const q = document.getElementById('storeSearchInput').value.trim();
+    if(!q) return;
+
+    const loadingLayer = document.getElementById('searchModalLoading');
+    const emptyLayer = document.getElementById('searchModalEmpty');
+    const resultsContainer = document.getElementById('searchModalResults');
+
+    resultsContainer.innerHTML = '';
+    emptyLayer.classList.add('hidden');
+    loadingLayer.classList.remove('hidden');
+    loadingLayer.classList.add('flex');
+
+    try {
+        const res = await fetch(`/api/store/search?query=${encodeURIComponent(q)}`);
+        const data = await res.json();
+
+        loadingLayer.classList.add('hidden');
+        loadingLayer.classList.remove('flex');
+
+        if(data.status === 'success' && data.results && data.results.length > 0) {
+            renderSearchResults(data.results);
+        } else {
+            emptyLayer.classList.remove('hidden');
+        }
+    } catch (e) {
+        console.error('Search error', e);
+        loadingLayer.classList.add('hidden');
+        loadingLayer.classList.remove('flex');
+        emptyLayer.classList.remove('hidden');
+    }
+}
+
+function getGradientFromName(name) {
+    const gradients = [
+        'from-pink-500 to-rose-500',
+        'from-indigo-500 to-purple-500',
+        'from-emerald-400 to-cyan-500',
+        'from-amber-400 to-orange-500',
+        'from-blue-500 to-indigo-600',
+        'from-violet-500 to-fuchsia-500',
+        'from-lime-500 to-emerald-600',
+        'from-red-500 to-pink-600'
+    ];
+    let hash = 0;
+    for(let i=0; i<name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    return gradients[Math.abs(hash) % gradients.length];
+}
+
+function renderSearchResults(results) {
+    const container = document.getElementById('searchModalResults');
+    let html = '';
+
+    results.forEach(p => {
+        // 이미지가 있으면 렌더링하고, 없으면 아예 영역을 차지하지 않도록 빈 문자열 처리
+        const thum = p.thumUrl 
+            ? `<img src="${p.thumUrl}" class="w-16 h-16 object-cover rounded-2xl border border-zinc-700/50 shadow-md flex-shrink-0" alt="thumbnail">` 
+            : '';
+        
+        html += `
+        <div class="flex items-center gap-4 bg-zinc-950/50 hover:bg-zinc-800/80 p-3 rounded-xl border border-zinc-800/50 hover:border-zinc-600 transition-all group">
+            ${thum}
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                    <h4 class="text-sm font-bold text-zinc-100 truncate">${p.name}</h4>
+                    <span class="text-[10px] px-2 py-0.5 bg-zinc-800 text-zinc-400 rounded-full truncate max-w-[100px]">${p.category}</span>
+                </div>
+                <p class="text-xs text-zinc-500 truncate">${p.address}</p>
+            </div>
+            <button onclick="selectSearchStore('${p.id}', '${p.name.replace(/'/g, "\\'")}')" class="px-4 py-2 bg-zinc-800 hover:bg-indigo-600 text-zinc-300 hover:text-white rounded-lg text-sm font-medium transition-colors border border-zinc-700 hover:border-transparent whitespace-nowrap">
+                선택
+            </button>
+        </div>
+        `;
+    });
+
+    container.innerHTML = html;
+}
+
+function selectSearchStore(placeId, name) {
+    // URL 생성
+    const rawUrl = `https://m.place.naver.com/place/${placeId}/home`;
+    // Target URL 인풋에 삽입
+    const urlInput = document.getElementById('targetUrl');
+    urlInput.value = rawUrl;
+    
+    closeStoreSearchModal();
+    showToast(`"${name}" URL이 양식에 자동 기입되었습니다.`);
+
+    // 미리보기 Iframe 업데이트 트리거 (기존 이벤트 발동)
+    parseNaverUrlForPreview(rawUrl);
+}
+
     function initMap() {
         // 지도 초기화 (최초 1회)
-        if(map) map.remove();
-        map = L.map('map', {
+        if(leafletMap) leafletMap.remove();
+        leafletMap = L.map('map', {
             center: [selectedLat, selectedLon],
             zoom: 14,
             zoomControl: false 
         });
-        L.control.zoom({ position: 'bottomright' }).addTo(map);
+        L.control.zoom({ position: 'bottomright' }).addTo(leafletMap);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+        }).addTo(leafletMap);
         
-        marker = L.marker([selectedLat, selectedLon], {draggable: true}).addTo(map);
+        mapMarker = L.marker([selectedLat, selectedLon], {draggable: true}).addTo(leafletMap);
         
         // 드래그 이벤트로 좌표 갱신 (유저 요구사항 반영)
-        marker.on('dragend', function(e) {
-            const position = marker.getLatLng();
+        mapMarker.on('dragend', function(e) {
+            const position = mapMarker.getLatLng();
             selectedLat = position.lat;
             selectedLon = position.lng;
             document.getElementById('latDisplay').innerText = selectedLat.toFixed(5);
@@ -148,8 +417,8 @@
         });
         
         // 지도 클릭시 마커 이동
-        map.on('click', function(e) {
-            marker.setLatLng(e.latlng);
+        leafletMap.on('click', function(e) {
+            mapMarker.setLatLng(e.latlng);
             selectedLat = e.latlng.lat;
             selectedLon = e.latlng.lng;
             document.getElementById('latDisplay').innerText = selectedLat.toFixed(5);
@@ -162,8 +431,8 @@
                 (position) => {
                     selectedLat = position.coords.latitude;
                     selectedLon = position.coords.longitude;
-                    map.setView([selectedLat, selectedLon], 14);
-                    marker.setLatLng([selectedLat, selectedLon]);
+                    leafletMap.setView([selectedLat, selectedLon], 14);
+                    mapMarker.setLatLng([selectedLat, selectedLon]);
                     document.getElementById('latDisplay').innerText = selectedLat.toFixed(5);
                     document.getElementById('lonDisplay').innerText = selectedLon.toFixed(5);
                 },
@@ -183,7 +452,7 @@
         currentStoreId = null;
         currentPlaceId = null;
         
-        setTimeout(() => { map.invalidateSize(); }, 100); // 맵 리사이징 버그 방지
+        setTimeout(() => { if(leafletMap) leafletMap.invalidateSize(); }, 100); // 맵 리사이징 버그 방지
     }
 
     async function registerAndScrape() {

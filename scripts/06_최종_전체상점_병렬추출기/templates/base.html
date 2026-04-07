@@ -33,16 +33,15 @@
     </style>
 </head>
 <body class="flex flex-col md:flex-row h-screen overflow-hidden relative">
-    {% block content %}{% endblock %}
-    
     <!-- Toast Notification Container -->
     <div id="toastContainer" class="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
-    
-    <!-- Global Shared State & Scripts -->
+
+    <!-- Global Shared State & Scripts (Moved up to prevent ReferenceErrors in child templates) -->
     <script>
         // Custom Toast UI
         window.showToast = function(message, type = 'info') {
             const container = document.getElementById('toastContainer');
+            if(!container) return;
             const toast = document.createElement('div');
             
             let bgClass = "bg-zinc-800/90 border-zinc-700 text-white shadow-[0_4px_20px_rgba(0,0,0,0.5)]";
@@ -84,7 +83,7 @@
             showToast(msg, 'warning');
         };
 
-        let map, marker;
+        let leafletMap, mapMarker;
         let selectedLat = 35.1631139;
         let selectedLon = 129.1586925;
         let currentStoreId = null; 
@@ -96,6 +95,7 @@
             if(typeof loadSidebarStores === 'function') loadSidebarStores();
         });
     </script>
+    {% block content %}{% endblock %}
     {% block scripts %}{% endblock %}
 </body>
 </html>

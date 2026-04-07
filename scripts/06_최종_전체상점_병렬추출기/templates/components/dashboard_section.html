@@ -115,8 +115,6 @@
 </section>
 
 <script>
-    let currentStoreId = null;
-    let currentPlaceId = null;
     let currentStoreName = null;
     let currentDeepScrapedData = null;
 
@@ -435,9 +433,11 @@
         tbody.innerHTML = '';
         
         const allItems = [];
-        if(data.high) data.high.forEach(item => allItems.push({...item, level: "high"}));
-        if(data.mid) data.mid.forEach(item => allItems.push({...item, level: "mid"}));
-        if(data.low) data.low.forEach(item => allItems.push({...item, level: "low"}));
+        const kws = data.keywords || data; // 하위 호환성 
+        
+        if(kws.high) kws.high.forEach(item => allItems.push({...item, level: "high"}));
+        if(kws.mid) kws.mid.forEach(item => allItems.push({...item, level: "mid"}));
+        if(kws.low) kws.low.forEach(item => allItems.push({...item, level: "low"}));
         
         allItems.forEach(item => {
             let badgeHTML = "";

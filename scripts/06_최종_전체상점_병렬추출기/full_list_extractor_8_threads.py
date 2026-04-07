@@ -25,8 +25,15 @@ USER_AGENTS = [
     "Mozilla/5.0 (Linux; Android 13; SM-F731N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36",
 ]
 
-async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, target_lon):
+async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, target_lon, max_scroll=80, target_store_name=None):
     async with sem:
+        # 강력한 네이버 WAF IP 밴 우회용 Random Stagger Jitter (안전성 최우선)
+        # 통제된 무작위(Staggered Random)로 브라우저 충돌(동시접속) 원천 차단
+        base_delay = ((search_num - 1) % 8) * 0.5
+        jitter = random.uniform(0.1, 0.6)
+        delay = base_delay + jitter
+        await asyncio.sleep(delay)
+        
         # 매 요청마다 완전히 새로운 격리된 브라우저 환경(Context)과 무작위 스마트폰 기종 할당
         context = await browser.new_context(
             user_agent=random.choice(USER_AGENTS),
@@ -49,9 +56,17 @@ async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, tar
             prev_count = 0
             retries = 0
             
-            for _ in range(80): # 무한 루프 방지용 (80회면 충분히 300개 이상 커버)
+            for _ in range(max_scroll): # 최대 스크롤 횟수 (방어적)
                 await page.evaluate("window.scrollBy(0, 5000)")
-                await page.wait_for_timeout(1000)
+                await page.wait_for_timeout(800)
+                
+                # [초고속 조기 종료 알고리즘]: 타겟 상점을 이미 찾았다면 스크롤을 즉시 중단합니다 (속도 최적화)
+                if target_store_name:
+                    is_found = await page.evaluate("(name) => document.body.innerText.includes(name)", target_store_name)
+                    if is_found:
+                        # 0.5초만 더 대기하여 DOM 완전 로딩을 보장한 뒤 바로 탈출
+                        await page.wait_for_timeout(500)
+                        break
                 
                 # 스크롤 후 로딩된 리스트 항목 갯수 검사
                 curr_count = await page.evaluate("document.querySelectorAll('li.VLTHu, li.UEzoS, li.plk0Q, div.YwYLL').length")
@@ -156,10 +171,13 @@ async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, tar
                     };
                 }).filter(x => x['상호명'] !== "알수없음");
             }''')
-            
             # 결과가 없다면 IP 차단이거나 진짜 결과가 없는 키워드임
-            if not stores:
+            page_text = await page.content()
+            if "서비스 이용이 제한되었습니다" in page_text or "과도한 접근" in page_text:
                 return True, keyword, []
+                
+            if not stores:
+                return False, keyword, []
                 
             # 순위 매기기 (광고/오가닉 독립 채점)
             organic_index = 1
@@ -183,7 +201,7 @@ async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, tar
             await context.close()  # 고립 환경 영구 삭제하여 족적 리셋
 
 # 외부에서 Import 하여 실행 가능한 범용 엔진 함수
-async def run_engine(keywords_list: list, concurrency: int, target_lat: float, target_lon: float):
+async def run_engine(keywords_list, concurrency=8, target_lat=None, target_lon=None, max_scroll=80, target_store_name=None):
     sem = asyncio.Semaphore(concurrency)
     all_extracted_data = []
 
@@ -196,13 +214,17 @@ async def run_engine(keywords_list: list, concurrency: int, target_lat: float, t
         for i in range(0, len(keywords_list), concurrency):
             chunk = keywords_list[i:i+concurrency]
             # Context가 아닌 browser 자체를 각각의 Task에 넘겨서 내부에서 독립 격리 환경(Context)을 생성하게 함
-            tasks = [fetch_complete_list(kw, browser, sem, i+idx+1, target_lat, target_lon) for idx, kw in enumerate(chunk)]
+            tasks = [fetch_complete_list(kw, browser, sem, i+idx+1, target_lat, target_lon, max_scroll, target_store_name) for idx, kw in enumerate(chunk)]
             
             results = await asyncio.gather(*tasks)
             
             for blocked, kw, stores in results:
-                if blocked or not stores:
-                    print(f"⚠️ [{kw}] 차단됨 또는 결과 없음.")
+                if blocked:
+                    print(f"⚠️ [{kw}] IP 차단됨. 결과 없음 처리 생략.")
+                    all_extracted_data.append({"키워드": kw, "상호명": "__BLOCKED__"})
+                    continue
+                if not stores:
+                    print(f"⚠️ [{kw}] 진짜 결과 없음.")
                     continue
                 all_extracted_data.extend(stores)
                 

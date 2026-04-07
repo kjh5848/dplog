@@ -59,6 +59,12 @@ async def run_scheduled_extraction():
         # 각각의 결과물 분리
         place_data = [r for r in all_place_results if r['키워드'] == kw]
         search_data = [r for r in all_search_results if r['키워드'] == kw]
+
+        is_blocked = any(r.get('상호명') == '__BLOCKED__' for r in place_data)
+        if is_blocked:
+            print(f"[Scheduler] ⚠️ IP 밴(차단)으로 인해 '{kw}' 키워드 수집 실패. 1시간 뒤 재도전하도록 후방 스케줄링.")
+            unlock_keyword(kw_id, delay_minutes=60)
+            continue
         
         if not place_data and not search_data:
             print(f"[Scheduler] ⚠️ '{kw}' 키워드 수집 결과 전혀 없음. 1시간 뒤 재도전하도록 후방 스케줄링.")

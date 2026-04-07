@@ -14,8 +14,10 @@ from place_detail_extractor import scrape_place_details, extract_place_id
 from database import add_target_store, add_tracked_keyword, get_rank_history, get_all_target_stores, get_latest_snapshot, delete_target_store, delete_tracked_keyword, get_target_store
 from scheduler import run_scheduled_extraction
 from keyword_scoring_engine import generate_scored_keywords
+from v1_router import v1_router
 
 app = FastAPI(title="Naver Map Scraper Observer MVP")
+app.include_router(v1_router)
 
 # 전역 잠금장치 (Global Semaphore)
 # M1 16GB의 메모리 한계(최대 15탭)를 방어하기 위해 서버 전체에서 
@@ -45,20 +47,18 @@ async def locked_run_scheduled_extraction():
 @app.on_event("startup")
 async def startup_event():
     global GLOBAL_BROWSER_SEMAPHORE
-    # Mac Mini 16GB 기준, 8-Thread 엔진이 2개 동시 구동되면 (8*2=16개 브라우저)
-    # 메모리 약 8~10GB 소모로 아주 쾌적한 최대 성능 한계점에 도달합니다.
-    GLOBAL_BROWSER_SEMAPHORE = asyncio.Semaphore(2)
+    # 네이버 안티봇(WAF)의 동시 접속 DDoS 방어를 위해,
+    # 서버 전체 구동을 완벽하게 '1명(단일 그룹)'으로 직렬화(Serialize) 합니다.
+    # 이렇게 해야 각 스레드 간의 0.5초 Stagger Jitter 가 겹치지 않고 보장됩니다.
+    GLOBAL_BROWSER_SEMAPHORE = asyncio.Semaphore(1)
     
     asyncio.create_task(continuous_scheduler())
     print("✅ 자동 모니터링 스케줄러 및 글로벌 대기열(Max 2) 커널이 마운트되었습니다.")
 # ------------------------------------
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
-
-# Jinja2 템플릿 설정
-templates = Jinja2Templates(directory=TEMPLATES_DIR)
-
+# UI 디렉토리 마운트 설정 (마지막에 catch-all 라우터로 적용)
+UI_DIR = os.path.join(BASE_DIR, "ui")
 class ExtractRequest(BaseModel):
     keywords: list[str]
     concurrency: int = 8
@@ -92,9 +92,7 @@ class DeepRegisterRequest(BaseModel):
     lat: float = 0.0
     lon: float = 0.0
 
-@app.get("/", response_class=HTMLResponse)
-async def serve_ui(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+# (이전의 GET / 라우트는 최하단의 Next.js 마운트가 대신 처리합니다.)
 
 # --------------- CORE EXTRACTION ---------------
 @app.post("/api/extract")
@@ -126,6 +124,74 @@ async def geo_search(query: str):
             data = resp.json()[0]
             return {"status": "success", "lat": data["lat"], "lon": data["lon"], "display_name": data["display_name"]}
         return {"status": "error", "message": "Location not found"}
+
+# --------------- STORE SEARCH API (NAVER MAP PROXY) ---------------
+@app.get("/api/store/search")
+async def search_store_by_name(query: str):
+    """네이버 지도 비공식 API를 이용해 상호명 검색 결과를 반환합니다."""
+    if not query:
+        return {"status": "error", "message": "Query is required"}
+
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+        'Accept': 'application/json, text/plain, */*'
+    }
+    
+    # 1. 네이버 지도 모바일 (SSR Data) 기반 파싱 (가장 정확하고 안정적)
+    url_m = "https://m.map.naver.com/search"
+    params = {
+        "query": query
+    }
+    headers = {
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+        "Referer": "https://m.map.naver.com/"
+    }
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(url_m, params=params, headers=headers, timeout=5.0)
+            if resp.status_code == 200:
+                import re, json
+                html_content = resp.text
+                results = []
+
+                # React Query 의 Dehydrated State 에서 items (가게 목록) 추출
+                matches = re.findall(r'window\.__RQ_STREAMING_STATE__\.push\((.*?)\);', html_content)
+                for json_str in matches:
+                    try:
+                        data = json.loads(json_str)
+                        queries = data.get("queries", [])
+                        for q in queries:
+                            q_data = q.get("state", {}).get("data", {})
+                            if isinstance(q_data, dict) and "items" in q_data:
+                                items = q_data["items"]
+                                for item in items:
+                                    if "id" in item and "name" in item:
+                                        results.append({
+                                            "id": str(item["id"]),
+                                            "name": item.get("name", ""),
+                                            "category": item.get("category", ""),
+                                            "address": item.get("roadAddress", "") or item.get("address", ""),
+                                            "thumUrl": item.get("thumbUrl", ""),
+                                            "source": "map_ssr"
+                                        })
+                    except Exception as e:
+                        print(f"[검색 API] JSON 파싱 실패: {e}")
+
+                # 중복 제거 (여러 push에서 겹칠 수 있으므로)
+                unique_results = []
+                seen = set()
+                for r in results:
+                    if r['id'] not in seen:
+                        seen.add(r['id'])
+                        unique_results.append(r)
+
+                return {"status": "success", "results": unique_results}
+    except Exception as e:
+        print(f"[검색 API] HTML 스크래핑 검색 실패: {e}")
+        return {"status": "error", "message": str(e)}
+
+    return {"status": "success", "results": []}
 
 # --------------- STORE MONITORING & DB ---------------
 @app.post("/api/store/register")
@@ -270,6 +336,44 @@ async def auto_diagnose(req: DeepScrapeRequest):
         print(f"❌ Deep Scrape 에러: {e}")
         from fastapi import HTTPException
         raise HTTPException(status_code=500, detail=str(e))
+
+# --------------- NEXT.JS UI MOUNT ---------------
+from fastapi.responses import FileResponse
+from fastapi import HTTPException
+import os
+
+@app.get("/{full_path:path}")
+async def serve_nextjs_ui(request: Request, full_path: str):
+    """
+    Next.js 정적 빌드 파일(out 폴더)을 서빙하는 Catch-all 라우터.
+    API 요청이 아닌 모든 경로를 처리합니다.
+    """
+    if full_path.startswith("api/") or full_path.startswith("v1/"):
+        raise HTTPException(status_code=404, detail="API route not found")
+
+    file_path = os.path.join(UI_DIR, full_path)
+    
+    # 1. 파일이 정확히 존재하면 응답 (예: _next/static/css/... JS/CSS/이미지 등)
+    if os.path.isfile(file_path):
+        return FileResponse(file_path)
+    
+    # 2. Next.js export 는 /dashboard 에 대해 dashboard.html 을 생성함
+    html_path = file_path + ".html"
+    if full_path and os.path.isfile(html_path):
+        return FileResponse(html_path)
+        
+    # 3. / 로 끝나는 경우 index.html
+    index_path = os.path.join(file_path, "index.html")
+    if os.path.isfile(index_path):
+        return FileResponse(index_path)
+    
+    # 4. 전부 없으면 404를 위한 루트 index.html 처리 (SPA Fallback, Next.js 구조상 필수 아님)
+    # Next.js export 에서는 루트 index.html 이 CSR 을 관장하지 않으나, 최후의 보루로 남김
+    root_index = os.path.join(UI_DIR, "index.html")
+    if os.path.isfile(root_index):
+        return FileResponse(root_index)
+        
+    raise HTTPException(status_code=404, detail="Not Found")
 
 if __name__ == "__main__":
     import uvicorn

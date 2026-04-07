@@ -16,7 +16,7 @@ import { handleApiError, ApiError } from './error-handler';
  * - Content-Type: application/json
  */
 const apiClient: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080',
+  baseURL: process.env.NEXT_PUBLIC_API_URL ?? '',
   timeout: 15_000,
   headers: {
     'Content-Type': 'application/json',

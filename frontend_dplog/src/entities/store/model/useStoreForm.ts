@@ -69,24 +69,22 @@ export function useStoreForm(initialData?: Store) {
   const validate = useCallback((): boolean => {
     const newErrors: FormErrors = {};
 
-    if (!form.name.trim()) {
-      newErrors.name = '가게명은 필수입니다.';
-    } else if (form.name.length > 100) {
-      newErrors.name = '가게명은 100자 이내여야 합니다.';
-    }
+    const isEditMode = !!initialData;
 
-    if (!form.category.trim()) {
-      newErrors.category = '카테고리를 선택해주세요.';
-    }
-
-    if (!form.address.trim()) {
-      newErrors.address = '주소는 필수입니다.';
-    } else if (form.address.length > 300) {
-      newErrors.address = '주소는 300자 이내여야 합니다.';
-    }
-
-    if (form.placeUrl && form.placeUrl.length > 500) {
-      newErrors.placeUrl = '플레이스 URL은 500자 이내여야 합니다.';
+    if (!isEditMode) {
+      // 신규 등록: URL 필수
+      if (!form.placeUrl.trim()) {
+        newErrors.placeUrl = '네이버 플레이스 URL을 입력해주세요.';
+      } else if (form.placeUrl.length > 500) {
+        newErrors.placeUrl = '플레이스 URL은 500자 이내여야 합니다.';
+      } else if (!form.placeUrl.includes('place.naver.com') && !form.placeUrl.includes('naver.me')) {
+        newErrors.placeUrl = '올바른 네이버 플레이스 URL(place.naver.com 또는 naver.me)을 입력해주세요.';
+      }
+    } else {
+      // 수정 모드: 기존 항목들 필수 (Next.js 로직 호환성 유지)
+      if (!form.name.trim()) newErrors.name = '가게명은 필수입니다.';
+      if (!form.category.trim()) newErrors.category = '카테고리를 선택해주세요.';
+      if (!form.address.trim()) newErrors.address = '주소는 필수입니다.';
     }
 
     if (form.phone && form.phone.length > 20) {
@@ -95,7 +93,7 @@ export function useStoreForm(initialData?: Store) {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [form]);
+  }, [form, initialData]);
 
   /** 가게 등록 */
   const submitCreate = useCallback(async (): Promise<Store | null> => {
