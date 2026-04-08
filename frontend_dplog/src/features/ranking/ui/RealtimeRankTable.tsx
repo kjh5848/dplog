@@ -17,7 +17,8 @@ import {
   Loader2,
   ExternalLink,
   Globe,
-  MousePointerClick
+  MousePointerClick,
+  Lightbulb
 } from 'lucide-react';
 import type { RealtimeRank } from '../model/types';
 
@@ -239,7 +240,7 @@ export const RealtimeRankTable = ({
              <Lightbulb className="size-4" /> 알아두면 좋은 검색 꿀팁
            </h4>
            <ul className="space-y-2 text-[13px] text-blue-600/80 dark:text-blue-400/80 ml-6 list-disc">
-             <li><strong className="font-semibold text-blue-800 dark:text-blue-300">지역명이 포함된 검색어</strong> (예: "강남 맛집", "부산 돼지국밥")를 입력하시면 네이버 지도가 알아서 그쪽을 비춰줘요!</li>
+             <li><strong className="font-semibold text-blue-800 dark:text-blue-300">지역명이 포함된 검색어</strong> (예: "강남 맛집", "부산 돼지국밥")를 입력하시면 알아서 가져옵니다.</li>
              <li><strong className="font-semibold text-blue-800 dark:text-blue-300">지역명이 빠진 키워드</strong> (예: "마라탕", "필라테스")를 검색하실 때만 위 [내 위치] 콤보박스를 조정해주세요.</li>
            </ul>
         </div>
