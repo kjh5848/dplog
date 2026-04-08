@@ -144,8 +144,8 @@ async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, tar
             # --- 네트워크 인터셉터 코어 끝 ---
             
             url = f"https://m.place.naver.com/place/list?query={keyword}"
-            await page.goto(url, wait_until="domcontentloaded", timeout=20000)
-            await page.wait_for_timeout(2500)
+            await page.goto(url, wait_until="domcontentloaded", timeout=45000)
+            await page.wait_for_timeout(3500)
             
             # 페이지에 박제된 초기 상태(INITIAL_STATE) 훔치기
             # (만약 스크롤 전 첫 번째 50개가 graphql 인터셉트에 안 걸리는 경우를 대비)
@@ -177,12 +177,13 @@ async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, tar
             prev_length = 0
             retries = 0
             for i in range(max_scroll):
-                # 네트워크 통신이 발생하도록 빠르게 스크롤
+                # 네트워크 통신이 발생하도록 가장 밑바닥까지 끝까지 스크롤
                 await page.evaluate('''() => {
-                    let div = document.querySelector('div[class*="scroll"], #_pcmap_list_scroll_container');
-                    if (div) { div.scrollBy(0, 1500); } else { window.scrollBy(0, 1500); }
+                    let div = document.querySelector('#_pcmap_list_scroll_container') || document.querySelector('.scrolling_dir');
+                    if (div) { div.scrollTop = div.scrollHeight; } 
+                    else { window.scrollTo(0, document.body.scrollHeight); }
                 }''')
-                await page.wait_for_timeout(800)
+                await page.wait_for_timeout(1000)
                 
                 # 조기 종료 체크
                 curr_length = len(network_stores)
