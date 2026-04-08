@@ -234,15 +234,14 @@ export const RealtimeRankTable = ({
           </button>
         </form>
 
-        <div className="mt-3.5 px-1 flex flex-col gap-1.5 text-[11.5px] text-slate-500 dark:text-slate-400">
-           <p className="flex items-center gap-1.5">
-             <Lightbulb className="size-3.5 text-amber-500 shrink-0" />
-             <span><strong className="text-blue-500 dark:text-blue-400 font-semibold mr-1">검색 꿀팁:</strong> "강남 맛집", "부산 돼지국밥"처럼 지역명을 포함하면 지도가 자동으로 추적합니다!</span>
-           </p>
-           <p className="flex items-center gap-1.5">
-             <MapPin className="size-3.5 text-indigo-400 shrink-0" />
-             <span><strong className="text-indigo-500 dark:text-indigo-400 font-semibold mr-1">지역 위장:</strong> "마라탕", "필라테스" 등 <span className="underline decoration-slate-300 dark:decoration-slate-600 underline-offset-2">지역명이 빠진 키워드</span>를 칠 때만 위 콤보박스를 조정하세요.</span>
-           </p>
+        <div className="mt-4 bg-blue-50/80 dark:bg-blue-500/10 rounded-2xl p-4 sm:p-5 border border-blue-100/50 dark:border-blue-500/20">
+           <h4 className="text-sm font-bold text-blue-700 dark:text-blue-400 flex items-center gap-2 mb-2">
+             <Lightbulb className="size-4" /> 알아두면 좋은 검색 꿀팁
+           </h4>
+           <ul className="space-y-2 text-[13px] text-blue-600/80 dark:text-blue-400/80 ml-6 list-disc">
+             <li><strong className="font-semibold text-blue-800 dark:text-blue-300">지역명이 포함된 검색어</strong> (예: "강남 맛집", "부산 돼지국밥")를 입력하시면 네이버 지도가 알아서 그쪽을 비춰줘요!</li>
+             <li><strong className="font-semibold text-blue-800 dark:text-blue-300">지역명이 빠진 키워드</strong> (예: "마라탕", "필라테스")를 검색하실 때만 위 [내 위치] 콤보박스를 조정해주세요.</li>
+           </ul>
         </div>
       </div>
 
