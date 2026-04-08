@@ -72,7 +72,7 @@ const RankBadge = ({ rank }: { rank: number }) => (
           ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400'
           : rank <= 10
             ? 'bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-slate-400'
-            : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 shadow-sm',
+            : 'bg-slate-700 text-white dark:bg-slate-600 shadow-md',
     )}
   >
     {rank <= 3 && <Crown className="size-3 mr-0.5 inline" />}
