@@ -181,7 +181,7 @@ export const RealtimeRankTable = ({
           키워드로 네이버 플레이스 실시간 순위를 확인하세요
         </p>
 
-        <form onSubmit={handleSearch} className="flex gap-3 pb-2">
+        <form onSubmit={handleSearch} className="flex gap-3">
           {/* 드롭다운 왼쪽(앞쪽)으로 이동 */}
           <div className="flex gap-2 shrink-0">
             <button
@@ -218,10 +218,6 @@ export const RealtimeRankTable = ({
               placeholder="검색 키워드 입력 (예: 강남 빵집)"
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all"
             />
-            {/* 검색 키워드 예시 안내 */}
-            <p className="absolute -bottom-6 left-1 text-[11px] text-slate-400 dark:text-slate-500">
-              💡 <strong className="text-blue-500 dark:text-blue-400">추천 조합:</strong> "지역명 + 메뉴" (예: 강남 빵집), "동이름 + 업종" (예: 논현동 카페)
-            </p>
           </div>
 
           <button
@@ -237,6 +233,17 @@ export const RealtimeRankTable = ({
             검색
           </button>
         </form>
+
+        <div className="mt-3.5 px-1 flex flex-col gap-1.5 text-[11.5px] text-slate-500 dark:text-slate-400">
+           <p className="flex items-center gap-1.5">
+             <Lightbulb className="size-3.5 text-amber-500 shrink-0" />
+             <span><strong className="text-blue-500 dark:text-blue-400 font-semibold mr-1">검색 꿀팁:</strong> "강남 맛집", "부산 돼지국밥"처럼 지역명을 포함하면 지도가 자동으로 추적합니다!</span>
+           </p>
+           <p className="flex items-center gap-1.5">
+             <MapPin className="size-3.5 text-indigo-400 shrink-0" />
+             <span><strong className="text-indigo-500 dark:text-indigo-400 font-semibold mr-1">지역 위장:</strong> "마라탕", "필라테스" 등 <span className="underline decoration-slate-300 dark:decoration-slate-600 underline-offset-2">지역명이 빠진 키워드</span>를 칠 때만 위 콤보박스를 조정하세요.</span>
+           </p>
+        </div>
       </div>
 
       {/* 2열 스플릿 뷰 컨테이너 (좌측 리스트 / 우측 미리보기) */}
