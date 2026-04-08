@@ -58,7 +58,7 @@ export function useRankingViewModel(storeId: number) {
       // 실제 API 호출
       return await rankingApi.getRealtime(storeId, realtimeKeyword, realtimeProvince, realtimeLat, realtimeLon);
     },
-    { revalidateOnFocus: false, shouldRetryOnError: false, dedupingInterval: 60000 }
+    { revalidateOnFocus: false, shouldRetryOnError: false, dedupingInterval: 60000, revalidateIfStale: false, revalidateOnReconnect: false }
   );
 
   // ─── SWR 3: 차트 조회 (트래킹 목록에 종속) ──────────────────────
