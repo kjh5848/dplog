@@ -144,7 +144,7 @@ async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, tar
             # --- 네트워크 인터셉터 코어 끝 ---
             
             url = f"https://m.place.naver.com/place/list?query={keyword}"
-            await page.goto(url, wait_until="domcontentloaded", timeout=45000)
+            await page.goto(url, wait_until="domcontentloaded", timeout=300000)
             await page.wait_for_timeout(3500)
             
             # 페이지에 박제된 초기 상태(INITIAL_STATE) 훔치기
