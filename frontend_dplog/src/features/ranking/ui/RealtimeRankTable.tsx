@@ -273,6 +273,14 @@ export const RealtimeRankTable = ({
           </div>
         ) : (
           <div className="flex flex-col gap-3 p-5 sm:p-6 bg-slate-50/50 dark:bg-white/[0.01] overflow-x-auto">
+            <div className="flex items-center justify-between pb-2 mb-1 border-b border-slate-200 dark:border-slate-800">
+               <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                  전체 매장 배수: <span className="text-blue-600 dark:text-blue-400">{ranks[0]?.totalCount || ranks.length}</span>건
+               </span>
+               <span className="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline-block">
+                  * 네이버 모바일 플레이스 노출 순서와 동일
+               </span>
+            </div>
             <AnimatePresence>
               {ranks.map((shop, idx) => {
                 const isMyShop = myShopId && shop.shopId === myShopId;

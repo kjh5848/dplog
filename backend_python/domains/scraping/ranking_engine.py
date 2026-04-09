@@ -72,7 +72,7 @@ async def fetch_realtime_ranking(keyword: str, province: str, target_store_name:
             "totalCount": total_results
         })
         
-    # 순위(`rank`) 오름차순으로 정렬
-    formatted_results = sorted(formatted_results, key=lambda x: x["rank"])
+    # 광고 데이터(isAd)가 최상단에 먼저 노출되도록 하고, 그 다음 순위(rank) 오름차순 정렬
+    formatted_results = sorted(formatted_results, key=lambda x: (0 if x["isAd"] else 1, x["rank"]))
     
     return formatted_results

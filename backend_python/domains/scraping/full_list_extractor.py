@@ -216,10 +216,11 @@ async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, tar
             if "서비스 이용이 제한되었습니다" in page_text or "과도한 접근" in page_text:
                 return True, keyword, []
 
-            # 중복 제거 (이름 + ID 기준)
+            # 중복 제거 (이름 + ID + 광고여부 기준)
+            # (만약 한 매장이 파워링크 광고에도 뜨고 오가닉에도 뜨면 각각 따로 수집하여 네이버와 동일한 UI 구현)
             unique_stores = {}
             for st in network_stores:
-                key = f"{st['상호명']}_{st['네이버_플레이스_URL']}"
+                key = f"{st['상호명']}_{st['네이버_플레이스_URL']}_{st.get('광고여부', 'N')}"
                 if key not in unique_stores:
                     unique_stores[key] = st
             
