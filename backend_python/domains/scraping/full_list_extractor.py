@@ -116,26 +116,31 @@ async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, tar
                                 pass 
                                 
                             # 안전한 스니퍼 파싱 (재귀 탐색)
-                            def find_businesses(obj):
+                            def find_businesses(obj, is_ad_context=False):
                                 found = []
                                 if isinstance(obj, dict):
+                                    # 명시적 businesses (일반)
                                     if "businesses" in obj and isinstance(obj["businesses"], list):
-                                        found.extend(obj["businesses"])
-                                    elif "items" in obj and isinstance(obj["items"], list):
-                                        # 아이템들 중에서 name이나 title이 있는 것만 (쓰레기 필터링)
+                                        found.extend([(b, False) for b in obj["businesses"]])
+                                    # 블록 형태의 adBusinesses 확인
+                                    def_is_ad = True if obj.get("adId") else is_ad_context
+                                    
+                                    if "items" in obj and isinstance(obj["items"], list):
                                         for it in obj["items"]:
                                             if isinstance(it, dict) and ("name" in it or "title" in it) and "id" in it:
-                                                found.append(it)
+                                                found.append((it, def_is_ad))
+                                                
                                     for k, v in obj.items():
-                                        found.extend(find_businesses(v))
+                                        next_context = True if k == "adBusinesses" else def_is_ad
+                                        found.extend(find_businesses(v, next_context))
                                 elif isinstance(obj, list):
                                     for item in obj:
-                                        found.extend(find_businesses(item))
+                                        found.extend(find_businesses(item, is_ad_context))
                                 return found
                                 
                             extracted = find_businesses(root)
-                            for biz in extracted:
-                                network_stores.append(parse_business(biz))
+                            for biz, is_ad_flag in extracted:
+                                network_stores.append(parse_business(biz, is_ad_flag))
                                 
                     except Exception as e:
                         pass # json파싱 에러시 무시 (비관련 리소스)
@@ -153,25 +158,29 @@ async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, tar
                 try { return window.__INITIAL_STATE__ || {}; } catch(e) { return {}; }
             }''')
             
-            def find_businesses_initial(obj):
+            def find_businesses_initial(obj, is_ad_context=False):
                 found = []
                 if isinstance(obj, dict):
                     if "businesses" in obj and isinstance(obj["businesses"], list):
-                        found.extend(obj["businesses"])
-                    elif "items" in obj and isinstance(obj["items"], list):
+                        found.extend([(b, False) for b in obj["businesses"]])
+                    
+                    def_is_ad = True if obj.get("adId") else is_ad_context
+                    if "items" in obj and isinstance(obj["items"], list):
                         for it in obj["items"]:
                             if isinstance(it, dict) and ("name" in it or "title" in it) and "id" in it:
-                                found.append(it)
+                                found.append((it, def_is_ad))
+                                
                     for k, v in obj.items():
-                        found.extend(find_businesses_initial(v))
+                        next_context = True if k == "adBusinesses" else def_is_ad
+                        found.extend(find_businesses_initial(v, next_context))
                 elif isinstance(obj, list):
                     for item in obj:
-                        found.extend(find_businesses_initial(item))
+                        found.extend(find_businesses_initial(item, is_ad_context))
                 return found
 
             init_extracted = find_businesses_initial(initial_state_raw)
-            for biz in init_extracted:
-                network_stores.append(parse_business(biz))
+            for biz, is_ad_flag in init_extracted:
+                network_stores.append(parse_business(biz, is_ad_flag))
 
             # [스크롤 액션 시작] - 가상돔 걱정 없이 휙휙 내리기만 하면 백그라운드로 JSON이 쌓임
             prev_length = 0
