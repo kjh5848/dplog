@@ -45,6 +45,7 @@ export const RankingDashboard = ({
     isLoadingTrack,
     isLoadingChart,
     isRegistering,
+    refreshingId,
     error,
     actions,
   } = useRankingViewModel(storeId);
@@ -121,6 +122,8 @@ export const RankingDashboard = ({
           trackInfoList={trackInfoList}
           isLoading={isLoadingTrack}
           onDelete={actions.deleteTrack}
+          onRefresh={actions.refreshTrackItem}
+          refreshingId={refreshingId}
         />
       </div>
 

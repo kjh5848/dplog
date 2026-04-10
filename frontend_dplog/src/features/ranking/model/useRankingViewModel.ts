@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import useSWR from 'swr';
 import type {
   RealtimeRank,
@@ -22,6 +22,27 @@ export function useRankingViewModel(storeId: number) {
   const [realtimeProvince, setRealtimeProvince] = useState('서울');
   const [realtimeLat, setRealtimeLat] = useState<number | undefined>();
   const [realtimeLon, setRealtimeLon] = useState<number | undefined>();
+  const [cachedRealtimeData, setCachedRealtimeData] = useState<RealtimeRank[] | undefined>();
+
+  // 페이지 진입 시 로컬 스토리지의 실시간 조회 캐시 상태 복원
+  useEffect(() => {
+    if (storeId > 0) {
+      const savedKw = localStorage.getItem(`dplog_rt_kw_${storeId}`);
+      const savedProv = localStorage.getItem(`dplog_rt_prov_${storeId}`);
+      const savedData = localStorage.getItem(`dplog_rt_data_${storeId}`);
+      
+      if (savedKw) setRealtimeKeyword(savedKw);
+      if (savedProv) setRealtimeProvince(savedProv);
+      if (savedData) {
+        try {
+          setCachedRealtimeData(JSON.parse(savedData));
+        } catch(e) {
+          console.error("캐시 파싱 에러:", e);
+        }
+      }
+    }
+  }, [storeId]);
+
 
   // ─── SWR 1: 트래킹 정보 목록 & 수집 상태 (병렬 Fetch) ─────────
   const trackInfoKey = storeId > 0 ? `/ranking/track/info/${storeId}` : null;
@@ -58,7 +79,7 @@ export function useRankingViewModel(storeId: number) {
       // 실제 API 호출
       return await rankingApi.getRealtime(storeId, realtimeKeyword, realtimeProvince, realtimeLat, realtimeLon);
     },
-    { revalidateOnFocus: false, shouldRetryOnError: false, dedupingInterval: 60000, revalidateIfStale: false, revalidateOnReconnect: false }
+    { fallbackData: cachedRealtimeData, revalidateOnFocus: false, shouldRetryOnError: false, dedupingInterval: 60000, revalidateIfStale: false, revalidateOnReconnect: false }
   );
 
   // ─── SWR 3: 차트 조회 (트래킹 목록에 종속) ──────────────────────
@@ -76,8 +97,8 @@ export function useRankingViewModel(storeId: number) {
   } = useSWR(
     chartKey,
     async () => {
-      // 90일(3개월) 분량의 Mock 데이터 생성하여 리턴
-      return generateMockChartData(90);
+      // 90일(3개월) 분량의 실제 데이터 리턴
+      return await rankingApi.getTrackChart(storeId, trackInfoList.map((t: TrackInfo) => t.id));
     },
     { revalidateOnFocus: false }
   );
@@ -166,21 +187,26 @@ export function useRankingViewModel(storeId: number) {
   const fetchRealtime = useCallback(
     async (keyword?: string, province?: string, lat?: number, lon?: number) => {
       console.log('fetchRealtime triggered:', { keyword, province, lat, lon });
-      if (keyword !== undefined) setRealtimeKeyword(keyword);
-      if (province !== undefined) setRealtimeProvince(province);
+      if (keyword !== undefined) {
+         setRealtimeKeyword(keyword);
+         localStorage.setItem(`dplog_rt_kw_${storeId}`, keyword);
+      }
+      if (province !== undefined) {
+         setRealtimeProvince(province);
+         localStorage.setItem(`dplog_rt_prov_${storeId}`, province);
+      }
       if (lat !== undefined) setRealtimeLat(lat);
       if (lon !== undefined) setRealtimeLon(lon);
-      // 만약 키가 동일한 상태에서 다시 검색을 누른다면, SWR 캐시를 강제로 무효화하기 위해
-      // mutateRealtime을 실행할 수 있습니다. 
-      // 단, 컴포넌트 사이클 상 setState가 반영되기 직전이므로, 
-      // 동일한 키워드 재검색을 위함이라면 mutateRealtime으로 캐시를 갱신합니다.
       try {
-         await mutateRealtime();
+         const result = await mutateRealtime();
+         if (result) {
+            localStorage.setItem(`dplog_rt_data_${storeId}`, JSON.stringify(result));
+         }
       } catch(e) {
          console.error('mutateRealtime error:', e);
       }
     },
-    [mutateRealtime],
+    [mutateRealtime, storeId],
   );
 
   const fetchChart = useCallback(
@@ -193,12 +219,22 @@ export function useRankingViewModel(storeId: number) {
 
   const refreshAll = useCallback(async () => {
     setActionError(null);
-    await Promise.all([
-      mutateTrackData(),
-      mutateRealtime(),
-      mutateChart(),
-    ]);
-  }, [mutateTrackData, mutateRealtime, mutateChart]);
+    try {
+      // 1. 서버에 전체 항목 강제 스크래핑 갱신 요청
+      await rankingApi.refreshTrackAll(storeId);
+      
+      // 2. 갱신 후 최신 DB 데이터로 프론트 상태 동기화
+      await Promise.all([
+        mutateTrackData(),
+        mutateRealtime(),
+        mutateChart(),
+      ]);
+    } catch (err) {
+      setActionError(
+        err instanceof Error ? err.message : '전체 수동 갱신에 실패했습니다.',
+      );
+    }
+  }, [storeId, mutateTrackData, mutateRealtime, mutateChart]);
 
   // 에러 통합
   const error =

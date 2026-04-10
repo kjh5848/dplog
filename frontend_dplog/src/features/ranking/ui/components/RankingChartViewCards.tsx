@@ -122,7 +122,7 @@ export const RankingChartViewCards = ({ formattedData, keywords, visibleKeywords
               <div key={kw} className={cn("flex justify-between items-center bg-slate-50/50 dark:bg-slate-700/20 rounded-md border border-slate-100 dark:border-slate-700/50 overflow-hidden", dyn.row)}>
                 <span className={cn("text-[#4E5968] dark:text-slate-400 font-semibold truncate min-w-0 flex-1", dyn.kwName)} title={kw}>{kw}</span>
                 <div className="flex items-center flex-shrink-0 text-[#191F28] dark:text-slate-100 whitespace-nowrap">
-                  <span className={cn("font-bold", dyn.rankValue)}>{row[kw]}위</span>
+                  <span className={cn("font-bold", dyn.rankValue)}>{row[kw] ? `${row[kw]}위` : '-'}</span>
                   {getRankChange(idx, kw)}
                 </div>
               </div>
@@ -146,13 +146,6 @@ export const RankingChartViewCards = ({ formattedData, keywords, visibleKeywords
                   </div>
                 </div>
 
-                <div className={cn("flex justify-between items-center bg-orange-50/50 dark:bg-orange-900/20 rounded-md border border-orange-100/50 dark:border-orange-800/30", dyn.metricsRow)}>
-                  <span className={cn("text-orange-700 dark:text-orange-400 font-semibold truncate", dyn.metricsLabel)}>저장</span>
-                  <div className="flex items-center text-orange-800 dark:text-orange-300 whitespace-nowrap">
-                    <span className={cn("font-bold", dyn.metricsVal)}>{row.saveCount}</span>
-                    {getMetricChange(idx, 'saveCount')}
-                  </div>
-                </div>
               </div>
             )}
           </div>

@@ -49,8 +49,8 @@ export function StoreForm({ initialData, onSuccess, onBack }: StoreFormProps) {
     setIsSearching(true);
     setSearchResults(null);
     try {
-      // 자체 API 라우팅 (next.config.ts rewrites 로 파이썬 8000포트로 감)
-      const res = await axios.get(`/api/store/search?query=${encodeURIComponent(actualQuery.trim())}`);
+      // 자체 API 라우팅 (Next.js 빌드 시점에 상대경로 세팅됨)
+      const res = await axios.get(`/v1/stores/search?keyword=${encodeURIComponent(actualQuery.trim())}`);
       if (res.data && res.data.status === 'success' && Array.isArray(res.data.results)) {
         setSearchResults(res.data.results as SearchResult[]);
       } else if (res.data && typeof res.data === 'object' && !res.data.status) {
@@ -69,8 +69,11 @@ export function StoreForm({ initialData, onSuccess, onBack }: StoreFormProps) {
   };
 
   const handleSelectStore = (store: SearchResult) => {
-    const url = `https://m.place.naver.com/restaurant/${store.id}`;
+    const url = `https://m.place.naver.com/place/${store.id}`;
     updateField('placeUrl', url);
+    updateField('name', store.name || '');
+    updateField('category', store.category || '');
+    updateField('address', store.address || '');
     setSearchResults(null); // 검색창 닫기
   };
 
@@ -305,6 +308,7 @@ export function StoreForm({ initialData, onSuccess, onBack }: StoreFormProps) {
                   <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
                     <Loader2 className="size-8 animate-spin text-slate-300" />
                   </div>
+                  
                   {/* 스크롤바 바깥으로 밀어내기 */}
                   <iframe
                     src={form.placeUrl}
@@ -312,6 +316,13 @@ export function StoreForm({ initialData, onSuccess, onBack }: StoreFormProps) {
                     title="Store Preview"
                     sandbox="allow-scripts allow-same-origin allow-popups"
                   />
+
+                  {/* 안내 라벨 (클릭 차단 제거, 스크롤/터치 허용) */}
+                  <div className="absolute bottom-4 left-0 right-0 z-20 flex justify-center pointer-events-none">
+                    <div className="bg-slate-900/60 backdrop-blur-md text-white/90 text-[11px] font-medium px-4 py-1.5 rounded-full shadow-lg border border-white/5">
+                      스크롤이 가능합니다. (저장/길찾기 시 에러 발생 주의)
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             )}

@@ -17,7 +17,7 @@ import { handleApiError, ApiError } from './error-handler';
  */
 const apiClient: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? '',
-  timeout: 15_000,
+  timeout: 300_000,
   headers: {
     'Content-Type': 'application/json',
   },

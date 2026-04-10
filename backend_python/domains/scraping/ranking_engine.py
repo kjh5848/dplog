@@ -1,6 +1,10 @@
 import asyncio
 from .full_list_extractor import run_engine
 
+# Playwright 브라우저 동시 실행 방지용 전역 Lock
+# 동시에 두 개 이상의 스크래핑이 실행되면 0건 반환 문제가 발생하므로 직렬화
+_scraping_lock = asyncio.Lock()
+
 async def fetch_realtime_ranking(keyword: str, province: str, target_store_name: str, lat: float = None, lon: float = None) -> list:
     """
     단건 실시간 조회 탭에 쓰일 기능:
@@ -21,20 +25,28 @@ async def fetch_realtime_ranking(keyword: str, province: str, target_store_name:
         }
         lat, lon = province_coords.get(province, (37.5665, 126.9780))
         
-    # run_engine 호출
-    # target_store_name이 매칭되면 순위/절대순위 등이 dict에 채워짐. 못 찾았더라도 전체 리스트는 반환됨.
-    raw_results = await run_engine(
-        keywords_list=[keyword],
-        concurrency=1,
-        target_lat=lat,
-        target_lon=lon,
-        max_scroll=80,
-        target_store_name=target_store_name
-    )
+    # run_engine 호출 (전역 Lock으로 직렬화 → 동시 실행 시 0건 반환 방지)
+    raw_results = []
+    async with _scraping_lock:
+        for attempt in range(2):
+            raw_results = await run_engine(
+                keywords_list=[keyword],
+                concurrency=1,
+                target_lat=lat,
+                target_lon=lon,
+                max_scroll=80,
+                target_store_name=target_store_name
+            )
+            if raw_results:
+                break
+            if attempt == 0:
+                print(f"[랭킹 재시도] '{keyword}' 첫 시도 빈 결과 → 1회 자동 재시도")
+                await asyncio.sleep(2)
     
-    if not raw_results:
-        raise Exception("네이버 봇 방어(Captcha)에 일시적으로 차단되었거나 타임아웃이 발생했습니다. 1~2분 후 다시 시도해주세요.")
-        
+    # 만약 결과가 없더라도 (오타 등), 500 에러를 던지지 않고 빈 배열([])을 프론트에 정상 반환하여
+    # "순위 데이터가 없습니다"라는 UI 빈 화면 상태(Empty state)를 깔끔하게 보여주도록 통과시킵니다.
+    # if not raw_results:
+    #     raise Exception("검색 결과를 가져오지 못했습니다. 잠시 후 다시 시도해주세요. (네이버 일시적 응답 없음)")
     # 2. 결과 가공 (RealtimeRank DTO 형태)
     formatted_results = []
     total_results = len(raw_results)
@@ -67,12 +79,13 @@ async def fetch_realtime_ranking(keyword: str, province: str, target_store_name:
             "blogReviewCount": item.get("블로그리뷰", "0"),
             "scoreInfo": item.get("평점", "0"),
             "saveCount": item.get("저장수", "0"),
-            "rank": item.get("순위", 0), # 자연 노출 순위
-            "isAd": "Y" in item.get("광고여부", "N"),
+            "rank": item.get("순위", 0),
+            "naturalRank": item.get("순위", 0),  # 광고 없으므로 rank와 동일
+            "isAd": False,                        # 광고 수집 안 함
             "totalCount": total_results
         })
         
-    # 광고 데이터(isAd)가 최상단에 먼저 노출되도록 하고, 그 다음 순위(rank) 오름차순 정렬
-    formatted_results = sorted(formatted_results, key=lambda x: (0 if x["isAd"] else 1, x["rank"]))
+    # 자연 순위 오름차순 정렬
+    formatted_results = sorted(formatted_results, key=lambda x: x["rank"])
     
     return formatted_results

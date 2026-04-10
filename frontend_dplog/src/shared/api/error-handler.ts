@@ -55,6 +55,12 @@ export function handleApiError(error: unknown): ApiError {
       const { code, message, details } = responseData.error;
       return new ApiError(status, code, message, details);
     }
+    
+    // FastAPI 기본 HTTPException (detail) 폼인 경우
+    const fastApiData = error.response?.data as { detail?: string } | undefined;
+    if (fastApiData?.detail && typeof fastApiData.detail === 'string') {
+      return new ApiError(status, `HTTP_${status}`, fastApiData.detail);
+    }
 
     // 네트워크 에러 (서버에 도달하지 못한 경우)
     if (!error.response) {

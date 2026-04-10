@@ -12,6 +12,9 @@ import {
   ArrowLeft,
   Key,
   Loader2,
+  Users,
+  BookOpen,
+  Star,
 } from 'lucide-react';
 import { Button } from '@/shared/ui/button';
 import { StoreForm } from './StoreForm';
@@ -149,6 +152,163 @@ export function StoreDetail({ storeId, onBack }: StoreDetailProps) {
         </div>
       </div>
 
+      {/* ───────────────────────────────────────────────────────── */}
+      {/* 대표 이미지 갤러리 */}
+      {/* ───────────────────────────────────────────────────────── */}
+      <div className="mb-6">
+        {(() => {
+          const rawUrls = store.shopImageThumbUrl || store.shopImageUrl || '';
+          const imageUrls = rawUrls.split(',').map(u => u.trim()).filter(Boolean);
+          
+          if (imageUrls.length === 0 && store.scrape_status === 'COMPLETED') {
+            return (
+              <div className="w-full h-56 sm:h-72 rounded-3xl bg-slate-100 dark:bg-slate-800/50 flex flex-col items-center justify-center text-slate-400 shadow-sm border border-slate-200/50 dark:border-white/10">
+                <Store className="size-10 mb-3 opacity-40 border" />
+                <span className="text-sm font-medium">등록된 이미지가 없습니다</span>
+              </div>
+            );
+          }
+
+          if (imageUrls.length === 1) {
+            return (
+              <div className="w-full h-56 sm:h-80 overflow-hidden rounded-2xl relative shadow-sm border border-slate-200/50 dark:border-white/10 bg-slate-100 dark:bg-slate-800">
+                <img src={imageUrls[0]} alt="Store 1" className="w-full h-full object-cover" />
+              </div>
+            );
+          }
+
+          if (imageUrls.length === 2) {
+            return (
+              <div className="grid grid-cols-2 gap-[2px] w-full h-56 sm:h-72 overflow-hidden rounded-2xl relative shadow-sm border border-slate-200/50 dark:border-white/10 bg-slate-100 dark:bg-slate-800">
+                <img src={imageUrls[0]} alt="Store 1" className="w-full h-full object-cover" />
+                <img src={imageUrls[1]} alt="Store 2" className="w-full h-full object-cover" />
+              </div>
+            );
+          }
+
+          if (imageUrls.length === 3) {
+            return (
+              <div className="flex gap-[2px] w-full h-56 sm:h-72 overflow-hidden rounded-2xl relative shadow-sm border border-slate-200/50 dark:border-white/10 bg-slate-100 dark:bg-slate-800">
+                <div className="w-2/3 h-full">
+                  <img src={imageUrls[0]} alt="Store 1" className="w-full h-full object-cover" />
+                </div>
+                <div className="w-1/3 flex flex-col gap-[2px] h-full">
+                  <div className="h-1/2 w-full">
+                    <img src={imageUrls[1]} alt="Store 2" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="h-1/2 w-full">
+                    <img src={imageUrls[2]} alt="Store 3" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (imageUrls.length === 4) {
+            return (
+              <div className="grid grid-cols-2 gap-[2px] w-full h-56 sm:h-72 overflow-hidden rounded-2xl relative shadow-sm border border-slate-200/50 dark:border-white/10 bg-slate-100 dark:bg-slate-800">
+                <div className="grid grid-rows-2 gap-[2px] h-full">
+                  <img src={imageUrls[0]} alt="Store 1" className="w-full h-full object-cover" />
+                  <img src={imageUrls[1]} alt="Store 2" className="w-full h-full object-cover" />
+                </div>
+                <div className="grid grid-rows-2 gap-[2px] h-full">
+                  <img src={imageUrls[2]} alt="Store 3" className="w-full h-full object-cover" />
+                  <img src={imageUrls[3]} alt="Store 4" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            );
+          }
+
+          // 5개 이상 (네이버 플레이스 스타일)
+          if (imageUrls.length >= 5) {
+            return (
+              <div className="grid grid-cols-4 grid-rows-2 gap-[2px] w-full h-56 sm:h-80 overflow-hidden rounded-2xl relative shadow-sm border border-slate-200/50 dark:border-white/10 bg-slate-100 dark:bg-slate-800 cursor-pointer group">
+                <div className="col-span-2 row-span-2 h-full">
+                  <img src={imageUrls[0]} alt="Store 1" className="w-full h-full object-cover group-hover:brightness-95 transition-all" />
+                </div>
+                
+                <div className="col-span-1 row-span-1 h-full">
+                  <img src={imageUrls[1]} alt="Store 2" className="w-full h-full object-cover group-hover:brightness-95 transition-all" />
+                </div>
+
+                <div className="col-span-1 row-span-1 h-full">
+                  <img src={imageUrls[2]} alt="Store 3" className="w-full h-full object-cover group-hover:brightness-95 transition-all" />
+                </div>
+
+                <div className="col-span-1 row-span-1 h-full">
+                  <img src={imageUrls[3]} alt="Store 4" className="w-full h-full object-cover group-hover:brightness-95 transition-all" />
+                </div>
+
+                <div className="col-span-1 row-span-1 h-full relative">
+                  <img src={imageUrls[4]} alt="Store 5" className="w-full h-full object-cover" />
+                  {imageUrls.length > 5 ? (
+                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white backdrop-blur-[2px] transition-colors group-hover:bg-black/50">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-6 mb-1 opacity-90"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+                      <span className="font-semibold text-lg">+{imageUrls.length - 4}</span>
+                    </div>
+                  ) : (
+                    <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
+                  )}
+                </div>
+              </div>
+            );
+          }
+
+          if (store.scrape_status === 'PENDING') {
+            return (
+            <div className="w-full h-56 sm:h-72 rounded-3xl bg-slate-100/50 dark:bg-slate-800/30 flex flex-col items-center justify-center text-blue-500 shadow-sm border border-blue-500/10">
+              <Loader2 className="size-10 mb-3 opacity-60 animate-spin" />
+              <span className="text-sm font-medium">네이버 플레이스에서 이미지를 가져오는 중...</span>
+            </div>
+            );
+          }
+          
+          return null;
+        })()}
+      </div>
+
+      {/* ───────────────────────────────────────────────────────── */}
+      {/* 핵심 지표 요약 (메트릭 카드) */}
+      {/* ───────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-5">
+        <div className="bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-2xl p-4 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden">
+          {store.scrape_status === 'PENDING' && (
+            <div className="absolute inset-0 bg-white/50 dark:bg-slate-900/50 flex items-center justify-center z-10 backdrop-blur-[1px]">
+              <Loader2 className="size-4 text-blue-500 animate-spin" />
+            </div>
+          )}
+          <div className="size-8 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center mb-2">
+            <Users className="size-4" />
+          </div>
+          <p className="text-xs text-slate-500 font-medium">방문자 리뷰</p>
+          <p className="text-lg font-black mt-0.5">{store.visitor_reviews?.toLocaleString() || 0}</p>
+        </div>
+        <div className="bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-2xl p-4 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden">
+          {store.scrape_status === 'PENDING' && (
+            <div className="absolute inset-0 bg-white/50 dark:bg-slate-900/50 flex items-center justify-center z-10 backdrop-blur-[1px]">
+               <Loader2 className="size-4 text-blue-500 animate-spin" />
+            </div>
+          )}
+          <div className="size-8 rounded-full bg-green-500/10 text-green-500 flex items-center justify-center mb-2">
+            <BookOpen className="size-4" />
+          </div>
+          <p className="text-xs text-slate-500 font-medium">블로그 리뷰</p>
+          <p className="text-lg font-black mt-0.5">{store.blog_reviews?.toLocaleString() || 0}</p>
+        </div>
+        <div className="bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-2xl p-4 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden">
+          {store.scrape_status === 'PENDING' && (
+            <div className="absolute inset-0 bg-white/50 dark:bg-slate-900/50 flex items-center justify-center z-10 backdrop-blur-[1px]">
+               <Loader2 className="size-4 text-blue-500 animate-spin" />
+            </div>
+          )}
+          <div className="size-8 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center mb-2">
+            <Star className="size-4" />
+          </div>
+          <p className="text-xs text-slate-500 font-medium">평점</p>
+          <p className="text-lg font-black mt-0.5">{store.rating ? store.rating.toFixed(2) : '-'}</p>
+        </div>
+      </div>
+
       {/* 정보 카드 */}
       <div className="bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-2xl p-6 md:p-8 shadow-xl shadow-black/5 dark:shadow-black/30 space-y-5">
         {/* 주소 */}
@@ -229,6 +389,107 @@ export function StoreDetail({ storeId, onBack }: StoreDetailProps) {
           </div>
         </div>
       </div>
+
+      {/* ───────────────────────────────────────────────────────── */}
+      {/* 뷰 B 기반: 데이터 분석 패널 (대표키워드 + 리뷰 서브탭/샘플 그리드) */}
+      {/* ───────────────────────────────────────────────────────── */}
+      <div className="border border-slate-200 dark:border-slate-800/60 rounded-2xl p-6 bg-white dark:bg-slate-900 shadow-sm mt-8 mb-8 space-y-6">
+        
+        {/* 대표 키워드 영역 */}
+        {store.keywords && (
+          <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center gap-4">
+            <span className="text-[13px] font-medium text-slate-500 dark:text-slate-400 min-w-[70px]">
+              대표키워드
+            </span>
+            <div className="flex flex-wrap gap-2 text-sm">
+              {store.keywords
+                .split(',')
+                .map((kw) => kw.trim())
+                .filter(Boolean)
+                .slice(0, 5)
+                .map((keyword, i) => (
+                  <span
+                    key={i}
+                    className="px-2.5 py-1 bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20 rounded-full text-xs break-all"
+                  >
+                    {keyword}
+                  </span>
+                ))}
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-slate-200 dark:border-slate-800/80">
+          
+          {/* 최근 방문자 리뷰 (샘플) */}
+          <div>
+            <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              최근 방문자 리뷰 (샘플)
+            </h4>
+            <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-400">
+              {store.recent_reviews && store.recent_reviews.length > 0 ? (
+                store.recent_reviews.slice(0, 5).map((review) => (
+                  <li
+                    key={review.id}
+                    className="bg-white dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-700/50 shadow-sm shadow-slate-200/50 dark:shadow-none transition-all hover:border-blue-200 hover:shadow-md"
+                  >
+                    <p className="text-[13px] leading-relaxed text-slate-700 dark:text-slate-300 line-clamp-2">
+                      "{review.snippet}"
+                    </p>
+                  </li>
+                ))
+              ) : (
+                <li className="italic">
+                  - 추출된 텍스트 리뷰가 없습니다.
+                </li>
+              )}
+            </ul>
+          </div>
+
+          {/* 서브탭 분석 (주요 리뷰 키워드) */}
+          <div>
+            <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+              서브탭 분석 (주요 리뷰 키워드)
+            </h4>
+            <div className="space-y-4">
+              {store.review_tags && store.review_tags.length > 0 ? (
+                Object.entries(
+                  store.review_tags.reduce((acc, tag) => {
+                    if (!acc[tag.category]) acc[tag.category] = [];
+                    acc[tag.category].push(tag);
+                    return acc;
+                  }, {} as Record<string, NonNullable<typeof store.review_tags>>)
+                ).map(([category, tags]) => (
+                  <div key={category}>
+                    <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 block mb-1">
+                      {category}
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {tags.map((tag) => (
+                        <span
+                          key={tag.id}
+                          className="bg-slate-100 text-slate-600 px-2 py-1 rounded-md text-xs border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
+                        >
+                          {tag.name}
+                          <span className="text-indigo-500 dark:text-indigo-400 ml-1 font-bold">
+                            {tag.count}
+                          </span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-slate-400 dark:text-slate-500 italic">
+                  - 서브탭 리뷰 키워드가 없습니다.
+                </p>
+              )}
+            </div>
+          </div>
+          
+        </div>
+      </div>
+
     </motion.div>
   );
 }

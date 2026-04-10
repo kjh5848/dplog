@@ -33,6 +33,7 @@ export const mockRealtimeRanks: RealtimeRank[] = [
     scoreInfo: '4.8',
     saveCount: '150',
     rank: 3,
+    naturalRank: 2, // 광고 1개 앞에 있다고 가정
     totalCount: 150,
   },
   {
@@ -47,6 +48,7 @@ export const mockRealtimeRanks: RealtimeRank[] = [
     scoreInfo: '4.5',
     saveCount: '600',
     rank: 1,
+    naturalRank: 1,
     totalCount: 150,
   },
 ];

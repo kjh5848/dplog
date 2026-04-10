@@ -1,15 +1,17 @@
 'use client';
 
 import { StoreDetail } from '@/features/store/ui/StoreDetail';
-import { useParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 
 /**
  * 가게 상세/수정 페이지 클라이언트 컴포넌트
  */
-export default function StoreDetailPage() {
-  const params = useParams();
+function StoreDetailContent() {
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const storeId = Number(params.storeId);
+  const storeIdParam = searchParams.get('id');
+  const storeId = storeIdParam ? Number(storeIdParam) : NaN;
 
   if (isNaN(storeId)) {
     return (
@@ -26,5 +28,13 @@ export default function StoreDetailPage() {
         onBack={() => router.push('/dashboard')}
       />
     </div>
+  );
+}
+
+export default function StoreDetailPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-64">Loading...</div>}>
+      <StoreDetailContent />
+    </Suspense>
   );
 }

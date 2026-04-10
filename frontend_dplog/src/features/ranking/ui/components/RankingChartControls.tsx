@@ -183,7 +183,7 @@ export const RankingChartControls = ({
               )}
             >
               <BarChart3 className={cn("size-3.5", showReviews ? "text-emerald-400" : "")} />
-              리뷰 · 저장 추이 보기
+              리뷰 추이 보기
             </button>
           </div>
         </div>

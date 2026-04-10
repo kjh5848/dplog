@@ -19,7 +19,6 @@ export const RankingChartViewList = ({ formattedData, keywords, visibleKeywords,
               <>
                 <th className="px-5 py-3.5 font-bold text-emerald-600 dark:text-emerald-400 whitespace-nowrap border-b border-slate-200 dark:border-slate-700 text-right">방문자리뷰</th>
                 <th className="px-5 py-3.5 font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap border-b border-slate-200 dark:border-slate-700 text-right">블로그리뷰</th>
-                <th className="px-5 py-3.5 font-bold text-orange-500 dark:text-orange-400 whitespace-nowrap border-b border-slate-200 dark:border-slate-700 text-right">저장 수</th>
               </>
             )}
             {keywords.map(kw => visibleKeywords.has(kw) && (
@@ -42,9 +41,6 @@ export const RankingChartViewList = ({ formattedData, keywords, visibleKeywords,
                   </td>
                   <td className="px-5 py-3 text-blue-600 dark:text-blue-400 font-medium text-right bg-blue-50/30 dark:bg-blue-900/10">
                     {row.blogReview?.toLocaleString() ?? '-'}
-                  </td>
-                  <td className="px-5 py-3 text-orange-500 dark:text-orange-400 font-medium text-right bg-orange-50/30 dark:bg-orange-900/10">
-                    {row.saveCount?.toLocaleString() ?? '-'}
                   </td>
                 </>
               )}

@@ -21,6 +21,8 @@ export interface RealtimeRank {
   address: string;
   /** 도로명 주소 */
   roadAddress: string;
+  /** 해당 상점 플레이스 링크 (클릭 이동용) */
+  placeUrl?: string;
   /** 방문자 리뷰 수 */
   visitorReviewCount: string;
   /** 블로그 리뷰 수 */
@@ -29,8 +31,11 @@ export interface RealtimeRank {
   scoreInfo: string;
   /** 저장(찜) 수 */
   saveCount: string;
-  /** 현재 순위 */
+  /** 현재 순위 (광고 포함 절대순위) */
   rank: number;
+  /** 자연 노출 순위 (광고 제외, 광고이면 0) */
+  naturalRank: number;
+  isAd?: boolean;
   /** 전체 검색 결과 수 */
   totalCount: number;
 }
@@ -81,6 +86,7 @@ export interface KeywordChart {
 export interface DailyRank {
   /** 해당일 순위 */
   rank: number;
+  isAd?: boolean;
   /** 전일 순위 */
   prevRank: number;
   /** 방문자 리뷰 수 */

@@ -140,10 +140,16 @@ export function GoldenKeywords({ storeId, storeName, presetKeyword }: GoldenKeyw
       // 기존: keywordApi.createKeywordSet (단순 텍스트 저장)
       // 변경: rankingApi.registerTrack (일일 스냅샷 추적 명단에 저장)
       await rankingApi.registerTrack(storeId, kw, '서울');
-      showToast(`✅ ${kw} 키워드가 실시간 추적 명단에 추가되었습니다.`);
+      const msg = `✅ '${kw}' 키워드가 실시간 추적 명단에 추가되었습니다!\n\n가게 상세 정보로 접속하여 블로그 리뷰 및 방문자 리뷰를 수집했습니다.\n추적 대시보드에서 지금 바로 순위를 확인해보세요.`;
+      showToast(msg);
+      window.alert(msg);
     } catch (err: any) {
       console.error(err);
-      if (err?.response?.status === 400 && err?.response?.data?.detail?.includes('이미 추적 중')) {
+      const isAlreadyTracked = 
+        (err?.status === 400 && err?.message?.includes('이미 추적 중')) || 
+        (err?.response?.status === 400 && err?.response?.data?.detail?.includes('이미 추적 중'));
+        
+      if (isAlreadyTracked) {
         showToast('⚠️ 이미 추적 명단에 등록된 키워드입니다.');
       } else {
         showToast('키워드 추가 중 오류가 발생했습니다.');

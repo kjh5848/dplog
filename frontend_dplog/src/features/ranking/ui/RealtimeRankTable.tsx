@@ -93,6 +93,16 @@ export const RealtimeRankTable = ({
   const [province, setProvince] = useState('서울');
   const [selectedStore, setSelectedStore] = useState<RealtimeRank | null>(null);
 
+  // 로컬 스토리지에서 초기 검색어 복원
+  useEffect(() => {
+    if (myShopId) {
+      const savedKw = localStorage.getItem(`dplog_rt_kw_${myShopId}`);
+      const savedProv = localStorage.getItem(`dplog_rt_prov_${myShopId}`);
+      if (savedKw) setKeyword(savedKw);
+      if (savedProv) setProvince(savedProv);
+    }
+  }, [myShopId]);
+
   // 검색 시 선택된 상점 초기화
   useEffect(() => {
     setSelectedStore(null);
@@ -101,6 +111,7 @@ export const RealtimeRankTable = ({
   const [lat, setLat] = useState<number | undefined>();
   const [lon, setLon] = useState<number | undefined>();
   const [isLocating, setIsLocating] = useState(false);
+
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -183,8 +194,8 @@ export const RealtimeRankTable = ({
         </p>
 
         <form onSubmit={handleSearch} className="flex gap-3">
-          {/* 드롭다운 왼쪽(앞쪽)으로 이동 */}
-          <div className="flex gap-2 shrink-0">
+          {/* 드롭다운 왼쪽(앞쪽)으로 이동 (현재 뷰에서 숨김 처리) */}
+          <div className="hidden gap-2 shrink-0">
             <button
               type="button"
               onClick={handleGetLocation}
@@ -240,10 +251,34 @@ export const RealtimeRankTable = ({
              <Lightbulb className="size-4" /> 알아두면 좋은 검색 꿀팁
            </h4>
            <ul className="space-y-2 text-[13px] text-blue-600/80 dark:text-blue-400/80 ml-6 list-disc">
-             <li><strong className="font-semibold text-blue-800 dark:text-blue-300">지역명이 포함된 검색어</strong> (예: "강남 맛집", "부산 돼지국밥")를 입력하시면 알아서 가져옵니다.</li>
-             <li><strong className="font-semibold text-blue-800 dark:text-blue-300">지역명이 빠진 키워드</strong> (예: "마라탕", "필라테스")를 검색하실 때만 위 [내 위치] 콤보박스를 조정해주세요.</li>
+             <li><strong className="font-semibold text-blue-800 dark:text-blue-300">지역명이 포함된 검색어</strong> (예: "강남 맛집", "부산 돼지국밥")를 입력하시면 더욱 정확한 결과를 가져옵니다.</li>
            </ul>
         </div>
+
+        {ranks.length > 0 && onAddTracking && (
+          <div className="mt-5 flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 sm:p-5 bg-gradient-to-r from-indigo-50/80 to-blue-50/50 dark:from-indigo-900/20 dark:to-blue-900/10 border border-indigo-100 dark:border-indigo-800/30 rounded-2xl gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="p-2.5 bg-indigo-100 dark:bg-indigo-500/20 rounded-xl shadow-sm border border-indigo-200/50 dark:border-indigo-500/30">
+                <TrendingUp className="size-5 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <div>
+                <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">현재 검색된 키워드를 즉시 추적할까요?</h4>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">대시보드에 등록하여 매일 자동으로 내 가게의 순위 변동을 모니터링합니다.</p>
+              </div>
+            </div>
+            <button
+              onClick={() => onAddTracking(keyword, province)}
+              disabled={isRegistering}
+              className="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-md shadow-indigo-600/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
+            >
+              {isRegistering ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <span className="flex items-center gap-1.5"><TrendingUp className="size-4" /> 추적 명단에 추가하기</span>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* 2열 스플릿 뷰 컨테이너 (좌측 리스트 / 우측 미리보기) */}
@@ -275,17 +310,17 @@ export const RealtimeRankTable = ({
           <div className="flex flex-col gap-3 p-5 sm:p-6 bg-slate-50/50 dark:bg-white/[0.01] overflow-x-auto">
             <div className="flex items-center justify-between pb-2 mb-1 border-b border-slate-200 dark:border-slate-800">
                <span className="text-sm font-bold text-slate-700 dark:text-slate-300">
-                  전체 매장 배수: <span className="text-blue-600 dark:text-blue-400">{ranks[0]?.totalCount || ranks.length}</span>건
+                  전체 매장 <span className="text-blue-600 dark:text-blue-400">{ranks[0]?.totalCount || ranks.length}</span>건
                </span>
                <span className="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline-block">
-                  * 네이버 모바일 플레이스 노출 순서와 동일
+                 * 네이버 모바일 플레이스 자연 노출 순위
                </span>
             </div>
             <AnimatePresence>
               {ranks.map((shop, idx) => {
                 const isMyShop = myShopId && shop.shopId === myShopId;
                 return (
-                                    <motion.div
+                  <motion.div
                     key={shop.shopId}
                     onClick={() => setSelectedStore(shop)}
                     initial={{ opacity: 0, y: 10, scale: 0.98 }}
@@ -326,15 +361,9 @@ export const RealtimeRankTable = ({
                           </div>
                         )}
                         
-                        {/* 랭크 오버레이 뱃지 (광고/일반 분기) */}
+                        {/* 랭크 순위 뱃지 */}
                         <div className="absolute -bottom-2 -left-2 z-10">
-                           {shop.isAd ? (
-                             <div className="bg-slate-800 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-md shadow-md border border-slate-700">
-                               AD 광고
-                             </div>
-                           ) : (
-                             <RankBadge rank={shop.rank} />
-                           )}
+                          <RankBadge rank={shop.rank} />
                         </div>
                       </div>
 
@@ -453,24 +482,10 @@ export const RealtimeRankTable = ({
 
       {/* 푸터 */}
       {ranks.length > 0 && (
-        <div className="px-6 py-4 border-t border-slate-100 dark:border-white/[0.04] flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-xs text-slate-400 dark:text-slate-500">
-            <span>전체 {ranks[0]?.totalCount?.toLocaleString() ?? 0}개 결과 중 상위 {ranks.length}개 표출</span>
+        <div className="px-6 py-4 border-t border-slate-100 dark:border-white/[0.04] flex items-center justify-center sm:justify-start">
+          <div className="text-xs text-slate-400 dark:text-slate-500 font-medium">
+            전체 {ranks[0]?.totalCount?.toLocaleString() ?? 0}개 결과 중 상위 {ranks.length}개 표출
           </div>
-          {onAddTracking && (
-            <button
-              onClick={() => onAddTracking(keyword, province)}
-              disabled={isRegistering}
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-500/10 dark:border-indigo-500/20 dark:text-indigo-400 dark:hover:bg-indigo-500/20 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
-            >
-              {isRegistering ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <TrendingUp className="size-4" />
-              )}
-              👉 이 키워드를 추적 명단에 추가하기
-            </button>
-          )}
         </div>
       )}
     </div>

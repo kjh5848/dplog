@@ -8,6 +8,7 @@ import {
   TrendingDown,
   Minus,
   X,
+  RefreshCw,
   Tag,
   MapPin,
   Loader2,
@@ -29,10 +30,30 @@ interface TrackingCardGridProps {
   onDelete: (trackInfoId: number) => void;
   /** 삭제 진행 중인 ID */
   deletingId?: number | null;
+  /** 수동 갱신 콜백 */
+  onRefresh?: (trackInfoId: number) => void;
+  /** 갱신 진행 중인 ID */
+  refreshingId?: number | null;
 }
 
 /** 순위 변동 인디케이터 */
 const RankChangeIndicator = ({ change }: { change: number }) => {
+  if (change === 999) {
+    return (
+      <div className="flex items-center gap-1 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-2 py-1 rounded-lg w-fit">
+        <TrendingUp className="size-3.5" />
+        <span className="text-xs font-bold">신규 진입</span>
+      </div>
+    );
+  }
+  if (change === -999) {
+    return (
+      <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-white/5 px-2 py-1 rounded-lg w-fit">
+        <TrendingDown className="size-3.5" />
+        <span className="text-xs font-bold">순위권 밖</span>
+      </div>
+    );
+  }
   if (change > 0) {
     return (
       <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
@@ -45,7 +66,7 @@ const RankChangeIndicator = ({ change }: { change: number }) => {
     return (
       <div className="flex items-center gap-1 text-red-500 dark:text-red-400">
         <TrendingDown className="size-4" />
-        <span className="text-sm font-bold">{change}</span>
+        <span className="text-sm font-bold">{Math.abs(change)}계단 하락</span>
       </div>
     );
   }
@@ -74,6 +95,8 @@ export const TrackingCardGrid = ({
   isLoading,
   onDelete,
   deletingId,
+  onRefresh,
+  refreshingId,
 }: TrackingCardGridProps) => {
   if (isLoading) {
     return (
@@ -116,18 +139,35 @@ export const TrackingCardGrid = ({
               'hover:shadow-md hover:border-blue-200 dark:hover:border-blue-500/20',
             )}
           >
-            {/* 삭제 버튼 */}
-            <button
-              onClick={() => onDelete(info.id)}
-              disabled={deletingId === info.id}
-              className="absolute top-3 right-3 size-6 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-500"
-            >
-              {deletingId === info.id ? (
-                <Loader2 className="size-3 animate-spin" />
-              ) : (
-                <X className="size-3" />
+            {/* 액션 버튼 그룹 */}
+            <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {onRefresh && (
+                <button
+                  onClick={() => onRefresh(info.id)}
+                  disabled={refreshingId === info.id}
+                  className="size-6 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center transition-colors hover:bg-blue-100 dark:hover:bg-blue-500/20 hover:text-blue-500"
+                  title="순위 실시간 새로고침"
+                >
+                  {refreshingId === info.id ? (
+                    <Loader2 className="size-3 animate-spin text-blue-500" />
+                  ) : (
+                    <RefreshCw className="size-3" />
+                  )}
+                </button>
               )}
-            </button>
+              <button
+                onClick={() => onDelete(info.id)}
+                disabled={deletingId === info.id}
+                className="size-6 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center transition-colors hover:bg-red-100 dark:hover:bg-red-500/20 hover:text-red-500"
+                title="트래킹 삭제"
+              >
+                {deletingId === info.id ? (
+                  <Loader2 className="size-3 animate-spin text-red-500" />
+                ) : (
+                  <X className="size-3" />
+                )}
+              </button>
+            </div>
 
             {/* 키워드 */}
             <p className="font-bold text-sm text-slate-900 dark:text-white mb-1 pr-6">

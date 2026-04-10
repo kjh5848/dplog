@@ -22,9 +22,12 @@ export async function getRealtime(
   storeId: number,
   keyword: string,
   province: string = '서울',
+  lat?: number,
+  lon?: number,
 ): Promise<RealtimeRank[]> {
   return get<RealtimeRank[]>(`/v1/stores/${storeId}/ranking/realtime`, {
-    params: { keyword, province },
+    params: { keyword, province, lat, lon },
+    timeout: 120000, // 최대 스크래핑 대기 시간 (2분) 허용
   });
 }
 
@@ -59,6 +62,33 @@ export async function getTrackChart(
   return post<TrackChartResponse>(
     `/v1/stores/${storeId}/ranking/track/chart`,
     { trackInfoIds, startDate },
+  );
+}
+
+// ─── #3-1 트래킹 수동 갱신 ─────────────────────────────────────
+
+/**
+ * 트래킹 항목 수동 순위 갱신 (단건)
+ * POST /v1/stores/{storeId}/ranking/track/{trackInfoId}/refresh
+ */
+export async function refreshTrack(
+  storeId: number,
+  trackInfoId: number,
+): Promise<{ message: string }> {
+  return post<{ message: string }>(
+    `/v1/stores/${storeId}/ranking/track/${trackInfoId}/refresh`,
+  );
+}
+
+/**
+ * 트래킹 항목 수동 순위 갱신 (전체 일괄)
+ * POST /v1/stores/{storeId}/ranking/track/refresh_all
+ */
+export async function refreshTrackAll(
+  storeId: number,
+): Promise<{ message: string; refreshed_count: number; total_count: number }> {
+  return post<{ message: string; refreshed_count: number; total_count: number }>(
+    `/v1/stores/${storeId}/ranking/track/refresh_all`,
   );
 }
 

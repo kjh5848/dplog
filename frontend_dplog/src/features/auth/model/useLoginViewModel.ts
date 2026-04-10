@@ -34,8 +34,8 @@ export const useLoginViewModel = () => {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
-      password: "",
+      username: "kjh5848",
+      password: "wngur5848@&",
       rememberMe: false,
     },
   });

@@ -91,3 +91,4 @@ backend_python/
   - `domains/billing`, `domains/users` 인프라 해제.
   - PortOne 구독형 토큰 결제 도입. JWT 액세스 토큰과 회원 티어(`FREE`, `PREMIUM`) 분리 적용.
   - `security.py` 를 통해 인증 없는 무단 API 콜과 스크래퍼 호출 차단 (API Rate Limiting 적용).
+  - SaaS 트래픽 비용 최적화를 위한 **[하이브리드 프록시 티어링 라우터]** 도입 (상세 내용은 `saas_proxy_tiering.md` 참조).

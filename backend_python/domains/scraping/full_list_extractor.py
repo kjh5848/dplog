@@ -115,32 +115,29 @@ async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, tar
                                 # "businesses" 나 "items"가 있으면 파싱 시도 (너무 무식하지만 정밀함)
                                 pass 
                                 
-                            # 안전한 스니퍼 파싱 (재귀 탐색)
-                            def find_businesses(obj, is_ad_context=False):
+                            # 실제 API 구조: root["businesses"]["items"] → 오가닉 검색 결과만 수집
+                            # adBusinesses(광고)는 의도적으로 제외
+                            def find_businesses(obj):
                                 found = []
                                 if isinstance(obj, dict):
-                                    # 명시적 businesses (일반)
-                                    if "businesses" in obj and isinstance(obj["businesses"], list):
-                                        found.extend([(b, False) for b in obj["businesses"]])
-                                    # 블록 형태의 adBusinesses 확인
-                                    def_is_ad = True if obj.get("adId") else is_ad_context
-                                    
-                                    if "items" in obj and isinstance(obj["items"], list):
-                                        for it in obj["items"]:
-                                            if isinstance(it, dict) and ("name" in it or "title" in it) and "id" in it:
-                                                found.append((it, def_is_ad))
-                                                
-                                    for k, v in obj.items():
-                                        next_context = True if k == "adBusinesses" else def_is_ad
-                                        found.extend(find_businesses(v, next_context))
+                                    biz_node = obj.get("businesses")
+                                    if isinstance(biz_node, dict) and isinstance(biz_node.get("items"), list):
+                                        for b in biz_node["items"]:
+                                            if isinstance(b, dict) and b.get("id"):
+                                                found.append(b)
+                                    else:
+                                        # 중첩 구조 재귀 탐색
+                                        for k, v in obj.items():
+                                            if k != "adBusinesses":  # 광고 완전 무시
+                                                found.extend(find_businesses(v))
                                 elif isinstance(obj, list):
                                     for item in obj:
-                                        found.extend(find_businesses(item, is_ad_context))
+                                        found.extend(find_businesses(item))
                                 return found
                                 
                             extracted = find_businesses(root)
-                            for biz, is_ad_flag in extracted:
-                                network_stores.append(parse_business(biz, is_ad_flag))
+                            for biz in extracted:
+                                network_stores.append(parse_business(biz, False))
                                 
                     except Exception as e:
                         pass # json파싱 에러시 무시 (비관련 리소스)
@@ -158,29 +155,36 @@ async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, tar
                 try { return window.__INITIAL_STATE__ || {}; } catch(e) { return {}; }
             }''')
             
-            def find_businesses_initial(obj, is_ad_context=False):
+            def find_businesses_initial(obj):
                 found = []
                 if isinstance(obj, dict):
-                    if "businesses" in obj and isinstance(obj["businesses"], list):
-                        found.extend([(b, False) for b in obj["businesses"]])
-                    
-                    def_is_ad = True if obj.get("adId") else is_ad_context
-                    if "items" in obj and isinstance(obj["items"], list):
-                        for it in obj["items"]:
-                            if isinstance(it, dict) and ("name" in it or "title" in it) and "id" in it:
-                                found.append((it, def_is_ad))
-                                
-                    for k, v in obj.items():
-                        next_context = True if k == "adBusinesses" else def_is_ad
-                        found.extend(find_businesses_initial(v, next_context))
+                    biz_node = obj.get("businesses")
+                    if isinstance(biz_node, dict) and isinstance(biz_node.get("items"), list):
+                        for b in biz_node["items"]:
+                            if isinstance(b, dict) and b.get("id"):
+                                found.append(b)
+                    else:
+                        for k, v in obj.items():
+                            if k != "adBusinesses":
+                                found.extend(find_businesses_initial(v))
                 elif isinstance(obj, list):
                     for item in obj:
-                        found.extend(find_businesses_initial(item, is_ad_context))
+                        found.extend(find_businesses_initial(item))
                 return found
 
             init_extracted = find_businesses_initial(initial_state_raw)
-            for biz, is_ad_flag in init_extracted:
-                network_stores.append(parse_business(biz, is_ad_flag))
+            for biz in init_extracted:
+                network_stores.append(parse_business(biz, False))
+                
+            # [핵심] 네이버 모바일 플레이스가 디폴트로 '지도 보기(Map)' 모드로 열리는 경우 스크롤이 무시되는 문제 해결
+            # DOM 내 '목록보기' 버튼이 있다면 무조건 클릭하여 리스트 뷰(Bottom Sheet)를 강제 활성화합니다.
+            try:
+                list_btn = page.locator("a:has-text('목록보기'), button:has-text('목록보기')").first
+                if await list_btn.is_visible(timeout=2000):
+                    await list_btn.click(timeout=3000)
+                    await page.wait_for_timeout(1500)
+            except Exception:
+                pass # 이미 목록 뷰이거나 버튼이 없는 경우 무시
 
             # [스크롤 액션 시작] - 가상돔 걱정 없이 휙휙 내리기만 하면 백그라운드로 JSON이 쌓임
             prev_length = 0
@@ -188,17 +192,17 @@ async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, tar
             for i in range(max_scroll):
                 # 네트워크 통신이 발생하도록 가장 밑바닥까지 끝까지 스크롤
                 await page.evaluate('''() => {
-                    let div = document.querySelector('#_pcmap_list_scroll_container') || document.querySelector('.scrolling_dir');
+                    let div = document.querySelector('#_list_scroll_container') || document.querySelector('#_pcmap_list_scroll_container') || document.querySelector('.scrolling_dir');
                     if (div) { div.scrollTop = div.scrollHeight; } 
                     else { window.scrollTo(0, document.body.scrollHeight); }
                 }''')
-                await page.wait_for_timeout(1000)
+                await page.wait_for_timeout(1500)
                 
                 # 조기 종료 체크
                 curr_length = len(network_stores)
                 if curr_length == prev_length:
                     retries += 1
-                    if retries >= 3:
+                    if retries >= 5:
                         break # 새로운 데이터가 더 이상 로드되지 않음
                 else:
                     retries = 0
@@ -216,11 +220,10 @@ async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, tar
             if "서비스 이용이 제한되었습니다" in page_text or "과도한 접근" in page_text:
                 return True, keyword, []
 
-            # 중복 제거 (이름 + ID + 광고여부 기준)
-            # (만약 한 매장이 파워링크 광고에도 뜨고 오가닉에도 뜨면 각각 따로 수집하여 네이버와 동일한 UI 구현)
+            # 중복 제거 (이름 + ID 기준)
             unique_stores = {}
             for st in network_stores:
-                key = f"{st['상호명']}_{st['네이버_플레이스_URL']}_{st.get('광고여부', 'N')}"
+                key = f"{st['상호명']}_{st['네이버_플레이스_URL']}"
                 if key not in unique_stores:
                     unique_stores[key] = st
             
@@ -229,15 +232,9 @@ async def fetch_complete_list(keyword, browser, sem, search_num, target_lat, tar
             if not final_stores:
                 return False, keyword, []
                 
-            # 순위 매기기 (광고/오가닉 독립 채점)
-            organic_index = 1
+            # 순위 매기기: 수집된 순서대로 1, 2, 3...
             for i, st in enumerate(final_stores):
-                st["절대순위"] = i + 1
-                if "Y" in st["광고여부"]:
-                    st["순위"] = i + 1 
-                else:
-                    st["순위"] = organic_index 
-                    organic_index += 1
+                st["순위"] = i + 1
                 st["키워드"] = keyword
                 
             return False, keyword, final_stores

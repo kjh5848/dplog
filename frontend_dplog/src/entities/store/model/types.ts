@@ -6,6 +6,18 @@
 
 // ─── 가게 관련 타입 ──────────────────────────────────────────
 
+export interface StoreReviewTag {
+  id: number;
+  category: string;
+  name: string;
+  count: number;
+}
+
+export interface StoreRecentReview {
+  id: number;
+  snippet: string;
+}
+
 /** 가게 정보 */
 export interface Store {
   /** 가게 고유 ID */
@@ -22,10 +34,30 @@ export interface Store {
   phone?: string;
   /** 가게 이미지 URL (내순이 연동 시 자동 수집) */
   shopImageUrl?: string;
+  /** 정규화/썸네일 적용된 로컬 이미지 캐시 URL */
+  shopImageThumbUrl?: string;
+  /** 네이버 공식/설정 키워드 콤마 구문 */
+  keywords?: string;
+  /** 방문자 리뷰 수 */
+  visitor_reviews?: number;
+  /** 블로그 리뷰 수 */
+  blog_reviews?: number;
+  /** 저장(북마크) 수 */
+  saves?: number;
+  /** 평점 */
+  rating?: number;
+  /** 스크래핑 상태 (PENDING, COMPLETED, FAILED) */
+  scrape_status?: string;
   /** 생성일 */
   createdAt: string;
   /** 수정일 */
   updatedAt: string;
+  /** 리뷰 분석 태그 목록 */
+  review_tags?: StoreReviewTag[];
+  /** 최근 텍스트 리뷰 말풍선 목록 */
+  recent_reviews?: StoreRecentReview[];
+  /** 추출된 다중 이미지 URL 목록 */
+  images?: string[];
 }
 
 /** 가게 등록 요청 */
