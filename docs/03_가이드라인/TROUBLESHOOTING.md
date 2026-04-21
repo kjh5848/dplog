@@ -24,3 +24,12 @@
   1. `full_list_extractor_8_threads.py` 내 Jitter 로직을 `통제된 무작위(Staggered Random Jitter: base_delay + random)` 방식으로 구조 개편하여, 브라우저 스폰(Spawn) 시 최소 0.5초의 절대 간격을 보장하도록 수정.
   2. 깊은 딥 서치(300위 확인) 로직을 되살리되, 비즈니스 가치("내 상점이 존재한다는 것 자체가 가치")를 위해 속도 저하를 감수하기로 의사 결정(결과 반환 시까지 클라이언트 측에서 대기 필요).
 - **교훈(Takeaway)**: 안티봇(WAF) 사이트를 상대할 때 단순히 딜레이를 주는 것이 아니라 **순차적인 티켓 발부 형태(Staggering)의 딜레이 분산 구조**를 무조건 기초 설계에 포함할 것.
+
+## [ISSUE-003] 프론트엔드 코드 수정 후 브라우저 화면 মি갱신 (Static Export 아키텍처 망각)
+- **발생일**: 2026-04-10
+- **증상**: 프론트엔드(`frontend_dplog`) 컴포넌트 코드(버튼 크기, 상태바)를 성공적으로 수정했음에도 불구하고, 브라우저 대시보드를 새로고침해도 구버전 UI가 그대로 노출됨. Next.js 개발 서버 문제로 착각하여 터미널에서 `npm run dev`를 재시작하고 웹팩 캐시를 조작하는 등 잘못된 우회 시도를 함.
+- **근본 원인(Root Cause)**: D-PLOG의 런타임 아키텍처에 대한 이해 부족. 본 프로젝트는 Next.js 개발 서버(`localhost:3000`)를 띄워 렌더링하는 방식이 아니라, Next.js를 `output: "export"`로 **정적 빌드(Static Export)** 한 뒤, FastAPI 백엔드(`localhost:8000`)에서 `StaticFiles`를 이용해 빌드 산출물(`out/` 폴더)을 직접 서빙하는 구조임.
+- **해결책(Resolution)**: 
+  1. `cd frontend_dplog && npm run build` 명령어를 싱행하여 프론트엔드 변경 사항을 `out/` 폴더로 다시 정적 빌드(컴파일)함.
+  2. 빌드 직후 브라우저(`localhost:8000`)를 강력 새로고침하자 정상적으로 수정된 UI가 렌더링됨.
+- **교훈(Takeaway)**: Next.js 코드를 한 줄이라도 수정했다면 **무조건 `npm run build`를 돌려야만** 파이썬 백엔드가 변경 사항을 감지하여 브라우저에 쏠 수 있다. `npm run dev`를 띄우거나 Next.js 캐시 탓을 하지 말고 아키텍처 흐름(Next.js Build -> FastAPI Static Serve)을 가슴에 새길 것.
