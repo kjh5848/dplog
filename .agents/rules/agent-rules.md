@@ -7,9 +7,9 @@ description:
 - 프론트엔드 관련 작업을 수행할 때는 반드시 `/.agent/workflows/implement-fsd-feature.md` 워크플로우를 읽고 지침을 따르세요.
 - 백엔드 관련 작업을 수행할 때는 반드시 `/.agent/workflows/implement-backend-feature.md` 워크플로우를 읽고 지침을 따르세요.
 - 기획이 변경되거나 프로젝트 로드맵의 일정(Phase) 및 우선순위를 재조정해야 할 경우, 반드시 `/.agents/workflows/update-roadmap.md` 워크플로우를 읽고 기획 문서(JSON 및 MD 파일)들을 안전하게 현행화하세요.
-- 새로운 프론트/백엔드 코드를 작성하거나 디버깅을 진행할 때는 항상 `docs/planning/ARCHITECTURE.md` (아키텍처 규칙)와 `docs/planning/CONVENTIONS.md` (코딩 컨벤션)를 먼저 숙지하십시오.
-- **[핵심] 에러가 발생하여 디버깅을 시작하기 전(분석 단계)에는 반드시 `docs/planning/TROUBLESHOOTING.md` 문서를 선제적으로 열람하여, 과거에 이미 해결된 알려진 문제(Known Issues)인지 확인부터 하십시오.**
-- **[핵심] 만약 개발 진행 중 초기 버전에 없던 새로운 라이브러리를 도입하거나, 폴더 구조를 변경하거나, 아키텍처 룰을 벗어나는 중대한 설계적 결정이 내려진다면, 반드시 `/.agents/skills/architecture-evaluator/SKILL.md` 스킬명세서를 읽고 수석 아키텍트의 관점에서 트레이드오프(Pros/Cons)를 심도 있게 분석한 뒤 `docs/planning/ADR.md` 문서에 전문가 수준의 기록을 남기십시오.**
-- **[핵심] 디버깅 과정에서 복잡한 버그를 해결했거나 AI 스스로의 환각(실수)을 바로잡았다면, 다시는 동일한 문제가 재발하지 않도록 즉시 `/.agents/skills/postmortem/SKILL.md` 스킬을 발동하여 `docs/planning/TROUBLESHOOTING.md`에 '근본 원인과 해결 교훈'을 영구 박제(기록) 하십시오.**
+- 새로운 프론트/백엔드 코드를 작성하거나 디버깅을 진행할 때는 항상 `docs/02_아키텍처/시스템_아키텍처(ARCHITECTURE).md` (아키텍처 규칙)와 `docs/03_가이드라인/코딩_컨벤션(CONVENTIONS).md` (코딩 컨벤션)를 먼저 숙지하십시오.
+- **[핵심] 에러가 발생하여 디버깅을 시작하기 전(분석 단계)에는 반드시 `docs/03_가이드라인/트러블슈팅(TROUBLESHOOTING).md` 문서를 선제적으로 열람하여, 과거에 이미 해결된 알려진 문제(Known Issues)인지 확인부터 하십시오.**
+- **[핵심] 만약 개발 진행 중 초기 버전에 없던 새로운 라이브러리를 도입하거나, 폴더 구조를 변경하거나, 아키텍처 룰을 벗어나는 중대한 설계적 결정이 내려진다면, 반드시 `/.agents/skills/architecture-evaluator/SKILL.md` 스킬명세서를 읽고 수석 아키텍트의 관점에서 트레이드오프(Pros/Cons)를 심도 있게 분석한 뒤 `docs/03_가이드라인/아키텍처_결정_기록(ADR).md` 문서에 전문가 수준의 기록을 남기십시오.**
+- **[핵심] 디버깅 과정에서 복잡한 버그를 해결했거나 AI 스스로의 환각(실수)을 바로잡았다면, 다시는 동일한 문제가 재발하지 않도록 즉시 `/.agents/skills/postmortem/SKILL.md` 스킬을 발동하여 `docs/03_가이드라인/트러블슈팅(TROUBLESHOOTING).md`에 '근본 원인과 해결 교훈'을 영구 박제(기록) 하십시오.**
 - **[핵심] 사용자가 프론트엔드 UI/UX의 퀄리티업을 요구하거나 "디자인이 밋밋하다/AI 양산형(AI-Slop) 같다"고 지적할 경우, 즉시 `/.agent/workflows/implement-fsd-feature.md` 내부의 [Advanced UI/UX 파이프라인]을 재가동하여 내장된 미학 스킬들을 폭발시키고 프로덕션 레벨의 압도적인 화면을 구현하십시오.**
 - **[핵심] Mermaid 다이어그램 에러 방지 규칙:** 다이어그램 작성 시 파싱(Parsing) 충돌을 막기 위해 다음 문법을 엄격히 준수하십시오. (1) `subgraph` 작성 시 콜론(`:`)을 사용하지 말고 반드시 `subgraph ID ["제목"]` 형태로 작성합니다. (2) 노드 내에서 줄바꿈이 필요할 때는 `\n` 대신 안전한 HTML 방식인 `<br/>` 태그를 사용하십시오. (3) 괄호(`()`)를 텍스트에 포함할 경우, 반드시 텍스트 전체를 쌍따옴표 `""`로 감싸야 합니다. (예: `["문구 (괄호)"]`)
