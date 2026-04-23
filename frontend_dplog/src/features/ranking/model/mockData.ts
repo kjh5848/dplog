@@ -1,11 +1,11 @@
-import type { TrackInfo, TrackState, RealtimeRank, TrackChartResponse, KeywordChart, DailyRank } from './types';
+import type { TrackInfo, TrackState, RealtimeRank, TrackChartResponse, KeywordChart, DailyRank } from '@/entities/ranking/model/types';
 
 export const mockTrackInfoList: TrackInfo[] = [
-  { id: 1, keyword: '부산시청맛집', province: '부산', businessSector: '식당', shopId: '1', rankChange: 2 },
-  { id: 2, keyword: '연산동카레', province: '부산', businessSector: '식당', shopId: '1', rankChange: -1 },
-  { id: 3, keyword: '연제구점심', province: '부산', businessSector: '식당', shopId: '1', rankChange: 5 },
-  { id: 4, keyword: '부산카레맛집', province: '부산', businessSector: '식당', shopId: '1', rankChange: 1 },
-  { id: 5, keyword: '연제맛집', province: '부산', businessSector: '식당', shopId: '1', rankChange: 0 },
+  { id: 1, keyword: '부산시청맛집', province: '부산', businessSector: '식당', shopId: '1', rankChange: 2, currentRank: 5, totalCount: 150 },
+  { id: 2, keyword: '연산동카레', province: '부산', businessSector: '식당', shopId: '1', rankChange: -1, currentRank: 12, totalCount: 150 },
+  { id: 3, keyword: '연제구점심', province: '부산', businessSector: '식당', shopId: '1', rankChange: 5, currentRank: 3, totalCount: 150 },
+  { id: 4, keyword: '부산카레맛집', province: '부산', businessSector: '식당', shopId: '1', rankChange: 1, currentRank: 8, totalCount: 150 },
+  { id: 5, keyword: '연제맛집', province: '부산', businessSector: '식당', shopId: '1', rankChange: 0, currentRank: 10, totalCount: 150 },
 ];
 
 export const mockTrackState: TrackState = {

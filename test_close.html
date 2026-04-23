@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h1>App Close Test</h1>
+  <button onclick="window.close()">Close Me</button>
+  <script>
+    setTimeout(() => {
+        console.log("Attempting close...");
+        window.close();
+    }, 2000);
+  </script>
+</body>
+</html>

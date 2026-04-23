@@ -1,0 +1,81 @@
+INFO:     Started server process [52327]
+INFO:     Waiting for application startup.
+2026-04-07 18:09:06,590 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-07 18:09:06,590 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("store_review_tag")
+2026-04-07 18:09:06,590 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-04-07 18:09:06,591 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("store_recent_review")
+2026-04-07 18:09:06,591 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-04-07 18:09:06,591 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("store")
+2026-04-07 18:09:06,591 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-04-07 18:09:06,591 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("keyword_task")
+2026-04-07 18:09:06,591 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-04-07 18:09:06,591 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8002 (Press CTRL+C to quit)
+2026-04-07 18:09:08,002 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-07 18:09:08,007 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-07 18:09:08,007 INFO sqlalchemy.engine.Engine [generated in 0.00012s] ()
+2026-04-07 18:09:08,008 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:50953 - "GET /v1/stores/me HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/uvicorn/protocols/http/httptools_impl.py", line 420, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/fastapi/applications.py", line 1163, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/starlette/applications.py", line 90, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/starlette/middleware/cors.py", line 88, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/starlette/routing.py", line 660, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/starlette/routing.py", line 680, in app
+    await route.handle(scope, receive, send)
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/starlette/routing.py", line 276, in handle
+    await self.app(scope, receive, send)
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/fastapi/routing.py", line 134, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/fastapi/routing.py", line 120, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/fastapi/routing.py", line 695, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<11 lines>...
+    )
+    ^
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/venv/lib/python3.14/site-packages/fastapi/routing.py", line 300, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 2 validation errors:
+  {'type': 'string_too_long', 'loc': ('response', 1, 'shopImageUrl'), 'msg': 'String should have at most 1000 characters', 'input': 'https://search.pstatic.net/common/?autoRotate=true&quality=100&type=w640_auto&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20180413_221%2F1523606684451FP1va_JPEG%2FEI2p0GphPlS6XQaMl8hjn4Q1.jpg,https://search.pstatic.net/common/?autoRotate=true&type=w640_auto&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20180413_221%2F1523606684451FP1va_JPEG%2FEI2p0GphPlS6XQaMl8hjn4Q1.jpg,https://search.pstatic.net/common/?autoRotate=true&type=w640_auto&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220728_185%2F1658996691196kj8Es_PNG%2F%25B3%25D7%25C0%25CC%25B9%25F6%25BA%25BB%25C1%25A1_2_%25BB%25E7%25C0%25CC%25C1%25EE%25C1%25B6%25C1%25A4.png,https://search.pstatic.net/common/?autoRotate=true&type=w640_auto&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220728_241%2F1658996708034usH5M_JPEG%2F20150910_%25BA%25BB%25C1%25A1_%25BC%25F6%25C1%25A4_%25BB%25E7%25C1%25F8_%25C7%25C1%25B8%25AE%25BA%25E4-8.jpg,https://search.pstatic.net/common/?autoRotate=true&type=w640_auto&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220728_286%2F1658996686205cRrN7_PNG%2F%25B3%25D7%25C0%25CC%25B9%25F6%25BA%25BB%25C1%25A1_1_%25BB%25E7%25C0%25CC%25C1%25EE%25C1%25B6%25C1%25A4.png', 'ctx': {'max_length': 1000}}
+  {'type': 'string_too_long', 'loc': ('response', 2, 'shopImageUrl'), 'msg': 'String should have at most 1000 characters', 'input': 'https://search.pstatic.net/common/?autoRotate=true&quality=100&type=w640_auto&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20180413_221%2F1523606684451FP1va_JPEG%2FEI2p0GphPlS6XQaMl8hjn4Q1.jpg,https://search.pstatic.net/common/?autoRotate=true&type=w640_auto&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20180413_221%2F1523606684451FP1va_JPEG%2FEI2p0GphPlS6XQaMl8hjn4Q1.jpg,https://search.pstatic.net/common/?autoRotate=true&type=w640_auto&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220728_185%2F1658996691196kj8Es_PNG%2F%25B3%25D7%25C0%25CC%25B9%25F6%25BA%25BB%25C1%25A1_2_%25BB%25E7%25C0%25CC%25C1%25EE%25C1%25B6%25C1%25A4.png,https://search.pstatic.net/common/?autoRotate=true&type=w640_auto&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220728_241%2F1658996708034usH5M_JPEG%2F20150910_%25BA%25BB%25C1%25A1_%25BC%25F6%25C1%25A4_%25BB%25E7%25C1%25F8_%25C7%25C1%25B8%25AE%25BA%25E4-8.jpg,https://search.pstatic.net/common/?autoRotate=true&type=w640_auto&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20220728_286%2F1658996686205cRrN7_PNG%2F%25B3%25D7%25C0%25CC%25B9%25F6%25BA%25BB%25C1%25A1_1_%25BB%25E7%25C0%25CC%25C1%25EE%25C1%25B6%25C1%25A4.png', 'ctx': {'max_length': 1000}}
+
+  File "/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/backend_python/domains/stores/router.py", line 106, in get_my_stores
+    GET /v1/stores/me

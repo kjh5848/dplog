@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><style>img {max-width: 400px; padding: 10px; border: 1px solid black;}</style></head>
+<body>
+<h1>철이네 Media Index Check</h1>
+<script>
+    const files = [
+        "KakaoTalk_Photo_2026-04-14-16-33-08 019.jpeg",
+        "KakaoTalk_Photo_2026-04-14-16-33-08 020.jpeg",
+        "KakaoTalk_Photo_2026-04-14-16-33-08 021.jpeg",
+        "KakaoTalk_Photo_2026-04-14-16-33-08 022.jpeg"
+    ];
+    files.forEach(f => {
+        document.write("<h2>" + f + "</h2>");
+        document.write("<img src='asset/철이네/" + encodeURI(f) + "'>");
+    });
+</script>
+</body>
+</html>

@@ -8,10 +8,22 @@ from sqlmodel import SQLModel
 
 # 향후 배포 및 AWS 중앙 DB 이관을 고려하여, 초기 환경(SaaS 런칭 전 MVP)은 로컬 SQLite를 사용합니다.
 # SQLite는 비동기 드라이버인 aiosqlite 를 사용합니다. (스크래핑 속도가 프레임 드랍을 일으키지 않도록)
+import shutil
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
 # 로컬 개발/설치형 배포 시에는 file DB를 사용
-DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite+aiosqlite:///{os.path.join(BASE_DIR, 'dplog.db')}")
+# 패키징된 데스크탑 앱 환경을 고려하여, DB를 사용자 홈 디렉토리의 .dplog 폴더에 저장합니다.
+USER_DATA_DIR = os.path.expanduser("~/.dplog")
+os.makedirs(USER_DATA_DIR, exist_ok=True)
+db_path = os.path.join(USER_DATA_DIR, 'dplog.db')
+
+# 처음 앱을 실행하여 ~/.dplog/dplog.db가 없다면, 빌드 시 번들에 포함된 dplog.db를 복사해 옵니다.
+bundled_db_path = os.path.join(BASE_DIR, 'dplog.db')
+if not os.path.exists(db_path) and os.path.exists(bundled_db_path):
+    shutil.copy2(bundled_db_path, db_path)
+
+DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite+aiosqlite:///{db_path}")
 
 # 엔진 생성 (SQLite 동시성 옵션 추가)
 engine = create_async_engine(

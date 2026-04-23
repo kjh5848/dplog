@@ -1,0 +1,6 @@
+fastapi[standard]
+sqlmodel
+aiosqlite
+httpx
+playwright
+python-dotenv

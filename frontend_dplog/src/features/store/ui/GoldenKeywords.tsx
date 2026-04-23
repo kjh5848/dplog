@@ -3,15 +3,18 @@ import { Loader2 } from 'lucide-react';
 import * as storeApi from '@/entities/store/api/storeApi';
 import * as keywordApi from '@/entities/store/api/keywordApi';
 import * as rankingApi from '@/features/ranking/api/rankingApi';
+import { useRouter } from 'next/navigation';
 
 interface GoldenKeywordsProps {
   storeId: number;
   storeName: string;
-  presetKeyword?: string;
+  /** 여러 개 선택된 시드 키워드 배열 */
+  presetKeywords?: string[];
 }
 
-export function GoldenKeywords({ storeId, storeName, presetKeyword }: GoldenKeywordsProps) {
+export function GoldenKeywords({ storeId, storeName, presetKeywords }: GoldenKeywordsProps) {
   const [seedKeyword, setSeedKeyword] = useState('');
+  const router = useRouter();
   const [isDiscovering, setIsDiscovering] = useState(false);
   const [taskId, setTaskId] = useState<string | null>(null);
   const [results, setResults] = useState<any[]>([]);
@@ -25,12 +28,12 @@ export function GoldenKeywords({ storeId, storeName, presetKeyword }: GoldenKeyw
 
   const cleanStoreName = storeName.replace(' 랭킹 추이', '').trim();
 
-  // 프리셋 키워드 반영
+  // 선택된 프리셋 키워드들 반영 (쉼표 구분)
   useEffect(() => {
-    if (presetKeyword) {
-      setSeedKeyword(presetKeyword);
+    if (presetKeywords && presetKeywords.length > 0) {
+      setSeedKeyword(presetKeywords.join(', '));
     }
-  }, [presetKeyword]);
+  }, [presetKeywords]);
 
   // 컴포넌트 마운트 시 로컬스토리지 쿨다운 확인
   useEffect(() => {
@@ -135,26 +138,13 @@ export function GoldenKeywords({ storeId, storeName, presetKeyword }: GoldenKeyw
     }
   };
 
-  const handleAddKeyword = async (kw: string) => {
-    try {
-      // 기존: keywordApi.createKeywordSet (단순 텍스트 저장)
-      // 변경: rankingApi.registerTrack (일일 스냅샷 추적 명단에 저장)
-      await rankingApi.registerTrack(storeId, kw, '서울');
-      const msg = `✅ '${kw}' 키워드가 실시간 추적 명단에 추가되었습니다!\n\n가게 상세 정보로 접속하여 블로그 리뷰 및 방문자 리뷰를 수집했습니다.\n추적 대시보드에서 지금 바로 순위를 확인해보세요.`;
-      showToast(msg);
-      window.alert(msg);
-    } catch (err: any) {
-      console.error(err);
-      const isAlreadyTracked = 
-        (err?.status === 400 && err?.message?.includes('이미 추적 중')) || 
-        (err?.response?.status === 400 && err?.response?.data?.detail?.includes('이미 추적 중'));
-        
-      if (isAlreadyTracked) {
-        showToast('⚠️ 이미 추적 명단에 등록된 키워드입니다.');
-      } else {
-        showToast('키워드 추가 중 오류가 발생했습니다.');
-      }
-    }
+  const handleAddKeyword = (kw: string) => {
+    // 백그라운드로 API 요청 (결과를 기다리지 않음)
+    rankingApi.registerTrack(storeId, kw, '서울').catch(err => console.error(err));
+    
+    const msg = `✅ '${kw}' 키워드 추적을 실행합니다!\n\n순위 대시보드로 이동합니다.`;
+    window.alert(msg);
+    router.push('/dashboard/ranking');
   };
 
   return (

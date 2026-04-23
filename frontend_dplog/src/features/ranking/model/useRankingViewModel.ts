@@ -7,7 +7,7 @@ import type {
   TrackInfo,
   TrackChartResponse,
   TrackState,
-} from './types';
+} from '@/entities/ranking/model/types';
 import * as rankingApi from '../api/rankingApi';
 import { mockTrackInfoList, mockTrackState, mockRealtimeRanks, generateMockChartData } from './mockData';
 
@@ -50,7 +50,7 @@ export function useRankingViewModel(storeId: number) {
   const {
     data: trackData,
     error: trackError,
-    isLoading: isLoadingTrack,
+    isLoading: isSwrLoadingTrack,
     mutate: mutateTrackData,
   } = useSWR(trackInfoKey, async () => {
     // 실제 API 호출 연동
@@ -59,8 +59,67 @@ export function useRankingViewModel(storeId: number) {
     return result as any; // Type override
   }, { revalidateOnFocus: false });
 
+  // ─── 차트 뷰 모드 ('daily' | 'hourly') ──────────────────────────────
+  const [chartInterval, setChartInterval] = useState<'daily' | 'hourly'>('daily');
+
+  const [isRefreshingAll, setIsRefreshingAll] = useState(false);
+  const isLoadingTrack = isSwrLoadingTrack || isRefreshingAll;
+
   const trackInfoList: TrackInfo[] = trackData?.info ?? [];
   const trackState: TrackState | null = trackData?.state ?? null;
+
+  // ─── 쿨다운 계산 (3시간) ──────────────────────────────────────────
+  const [cooldownRemaining, setCooldownRemaining] = useState<number>(0);
+  
+  useEffect(() => {
+    if (trackInfoList.length === 0) {
+      setCooldownRemaining(0);
+      return;
+    }
+    
+    let latestTime = 0;
+    trackInfoList.forEach((t) => {
+      if (t.rawLastTrackedAt) {
+        const time = new Date(t.rawLastTrackedAt).getTime();
+        if (time > latestTime) latestTime = time;
+      }
+    });
+
+    if (latestTime === 0) {
+      setCooldownRemaining(0);
+      return;
+    }
+
+    const calcCooldown = () => {
+      const now = Date.now();
+      const diffMs = now - latestTime;
+      const cooldownMs = 3 * 60 * 60 * 1000; // 3시간
+      
+      // [골든타임 프리패스 로직] (KST 12:00 정오 리셋)
+      // 1. 현재와 마지막 갱신시간에 각각 9시간을 더해 KST 기준의 가상 타임스탬프(UTC 컴포넌트 활용)를 생성합니다.
+      const nowKst = new Date(now + 9 * 60 * 60 * 1000);
+      const latestKst = new Date(latestTime + 9 * 60 * 60 * 1000);
+      
+      // 2. KST 기준 오늘의 골든타임 (12:00 PM) 계산
+      const kstYear = nowKst.getUTCFullYear();
+      const kstMonth = nowKst.getUTCMonth();
+      const kstDate = nowKst.getUTCDate();
+      const goldenKstTimeMs = Date.UTC(kstYear, kstMonth, kstDate, 12, 0, 0, 0);
+      
+      // 3. 마지막 갱신은 12시 이전이었고, 현재 시간은 12시가 넘었다면 쿨다운 무시
+      const bypassCooldown = (latestKst.getTime() < goldenKstTimeMs) && (nowKst.getTime() >= goldenKstTimeMs);
+
+      if (diffMs < cooldownMs && !bypassCooldown) {
+        setCooldownRemaining(cooldownMs - diffMs);
+      } else {
+        setCooldownRemaining(0);
+      }
+    };
+
+    calcCooldown();
+    const timerId = setInterval(calcCooldown, 60000);
+    return () => clearInterval(timerId);
+  }, [trackInfoList]);
 
   // ─── SWR 2: 실시간 순위 조회 ──────────────────────────────────
   const realtimeKey =
@@ -86,7 +145,7 @@ export function useRankingViewModel(storeId: number) {
   // 트래킹 정보가 로딩 완료되고, 최소 1개 이상 있을 때만 fetch
   const chartKey =
     storeId > 0 && trackInfoList.length > 0
-      ? `/ranking/track/chart/${storeId}/${trackInfoList.map((t: TrackInfo) => t.id).join(',')}`
+      ? `/ranking/track/chart/${storeId}/${trackInfoList.map((t: TrackInfo) => t.id).join(',')}/${chartInterval}`
       : null;
 
   const {
@@ -98,7 +157,7 @@ export function useRankingViewModel(storeId: number) {
     chartKey,
     async () => {
       // 90일(3개월) 분량의 실제 데이터 리턴
-      return await rankingApi.getTrackChart(storeId, trackInfoList.map((t: TrackInfo) => t.id));
+      return await rankingApi.getTrackChart(storeId, trackInfoList.map((t: TrackInfo) => t.id), null, chartInterval);
     },
     { revalidateOnFocus: false }
   );
@@ -107,12 +166,19 @@ export function useRankingViewModel(storeId: number) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [refreshingId, setRefreshingId] = useState<number | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  
+  // 낙관적 UI 대기열
+  const [pendingKeywords, setPendingKeywords] = useState<{id: number; keyword: string; province: string}[]>([]);
 
 
   const registerTrack = useCallback(
     async (keyword: string, province: string) => {
       setIsRegistering(true);
       setActionError(null);
+      
+      const tempId = -Date.now();
+      setPendingKeywords(prev => [...prev, { id: tempId, keyword, province }]);
+
       try {
         const result = await rankingApi.registerTrack(storeId, keyword, province);
         // 캐시 즉시 갱신 (리플래시 트리거)
@@ -124,6 +190,7 @@ export function useRankingViewModel(storeId: number) {
         );
         return null;
       } finally {
+        setPendingKeywords(prev => prev.filter(p => p.id !== tempId));
         setIsRegistering(false);
       }
     },
@@ -161,6 +228,34 @@ export function useRankingViewModel(storeId: number) {
       }
     },
     [storeId, mutateTrackData],
+  );
+
+  const editTrack = useCallback(
+    async (trackInfoId: number, newKeyword: string, province: string = '서울') => {
+      setActionError(null);
+      // 낙관적 UI 로딩
+      const tempId = -Date.now();
+      setPendingKeywords(prev => [...prev, { id: tempId, keyword: newKeyword, province }]);
+
+      try {
+        // 1. 기존 삭제
+        await rankingApi.deleteTrack(storeId, trackInfoId);
+        
+        // 2. 신규 등록 (백엔드 구조상 수정이 삭제+등록으로 동작)
+        await rankingApi.registerTrack(storeId, newKeyword, province);
+        
+        // 동기화
+        await mutateTrackData();
+        return true;
+      } catch (err) {
+        await mutateTrackData();
+        setActionError('수정에 실패했습니다.');
+        return false;
+      } finally {
+        setPendingKeywords(prev => prev.filter(p => p.id !== tempId));
+      }
+    },
+    [storeId, mutateTrackData]
   );
 
   const refreshTrackItem = useCallback(
@@ -219,6 +314,7 @@ export function useRankingViewModel(storeId: number) {
 
   const refreshAll = useCallback(async () => {
     setActionError(null);
+    setIsRefreshingAll(true);
     try {
       // 1. 서버에 전체 항목 강제 스크래핑 갱신 요청
       await rankingApi.refreshTrackAll(storeId);
@@ -233,6 +329,8 @@ export function useRankingViewModel(storeId: number) {
       setActionError(
         err instanceof Error ? err.message : '전체 수동 갱신에 실패했습니다.',
       );
+    } finally {
+      setIsRefreshingAll(false);
     }
   }, [storeId, mutateTrackData, mutateRealtime, mutateChart]);
 
@@ -250,6 +348,8 @@ export function useRankingViewModel(storeId: number) {
     trackState,
     realtimeKeyword,
     realtimeProvince,
+    chartInterval,
+    cooldownRemaining,
 
     isLoadingRealtime,
     isLoadingTrack,
@@ -257,18 +357,22 @@ export function useRankingViewModel(storeId: number) {
     isRegistering,
     refreshingId,
     error,
+    isRefreshingAll,
+    pendingKeywords,
 
     actions: {
       fetchRealtime,
       fetchChart,
       registerTrack,
       deleteTrack,
+      editTrack,
       refreshTrackItem,
       refreshAll,
       setRealtimeKeyword,
       setRealtimeProvince,
       setRealtimeLat,
       setRealtimeLon,
+      setChartInterval,
       clearError: () => setActionError(null),
     },
   };

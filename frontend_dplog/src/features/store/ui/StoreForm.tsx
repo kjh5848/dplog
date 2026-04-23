@@ -34,13 +34,15 @@ export function StoreForm({ initialData, onSuccess, onBack }: StoreFormProps) {
     apiError,
     updateField,
     submitCreate,
-    submitUpdate,
-  } = useStoreForm(initialData);
+  } = useStoreForm();
 
   // 상호명 검색 관련 상태
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResult[] | null>(null);
+  
+  // 보안 규정 동의 여부 (신규 생성 시에만 적용)
+  const [isAgreed, setIsAgreed] = useState(false);
 
   const handleSearch = async (queryOverride?: string) => {
     // 마우스 클릭 이벤트 객체가 들어오는 것을 방지하기 위해 타입 체크
@@ -79,9 +81,7 @@ export function StoreForm({ initialData, onSuccess, onBack }: StoreFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = isEditMode
-      ? await submitUpdate(initialData!.id)
-      : await submitCreate();
+    const result = await submitCreate();
 
     if (result && onSuccess) {
       onSuccess(result);
@@ -114,12 +114,10 @@ export function StoreForm({ initialData, onSuccess, onBack }: StoreFormProps) {
               </button>
             )}
             <h1 className="text-2xl font-black tracking-tight">
-              {isEditMode ? '가게 정보 수정' : '새 가게 검색 및 등록'}
+              새 가게 검색 및 등록
             </h1>
             <p className="text-slate-500 dark:text-slate-400 mt-1">
-              {isEditMode
-                ? '가게 정보를 수정합니다.'
-                : '가게 상호명을 검색해 간편하게 등록하세요.'}
+              가게 상호명을 검색해 간편하게 등록하세요.
             </p>
           </div>
 
@@ -261,6 +259,30 @@ export function StoreForm({ initialData, onSuccess, onBack }: StoreFormProps) {
                   <p className="text-sm text-red-500 mt-1 font-medium">{errors.placeUrl}</p>
                 )}
               </div>
+
+              {/* 아주아주 강력한 경고 체크박스 (등록 시에만 노출) */}
+              {!isEditMode && (
+                <div className="mt-6 p-4 bg-red-50/50 dark:bg-red-900/10 border border-red-200/50 dark:border-red-900/30 rounded-xl">
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <input
+                        type="checkbox"
+                        checked={isAgreed}
+                        onChange={(e) => setIsAgreed(e.target.checked)}
+                        className="size-5 rounded border-red-300 text-red-600 focus:ring-red-500/30 bg-white"
+                      />
+                    </div>
+                    <div>
+                      <div className="text-red-800 dark:text-red-400 font-bold text-sm mb-1 group-hover:text-red-900 transition-colors">
+                        [필수 확인] 등록 이후 1:1 라이선스 귀속
+                      </div>
+                      <p className="text-red-600/80 dark:text-red-400/80 text-xs font-medium leading-relaxed">
+                        하나의 라이선스 키로는 단 하나의 가게만 운영할 수 있습니다. 한 번 등록된 데이터베이스는 임의로 삭제할 수 없으며, 타 가게로 교체(초기화)를 원하실 경우 사장님을 통해 <strong className="underline decoration-red-400 underline-offset-2">전용 삭제 코드</strong>를 발급받아야만 합니다. 올바른 가게를 등록하시는지 확인하셨습니까?
+                      </p>
+                    </div>
+                  </label>
+                </div>
+              )}
             </div>
 
             {/* 제출 버튼 */}
@@ -277,16 +299,13 @@ export function StoreForm({ initialData, onSuccess, onBack }: StoreFormProps) {
               )}
               <Button
                 type="submit"
-                disabled={isLoading || !form.placeUrl.trim()}
+                disabled={isLoading || !form.placeUrl.trim() || !isAgreed}
                 className="px-8 h-12 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-600/20 transition-all duration-300 hover:shadow-blue-600/30 hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
-                  <>
-                    <Loader2 className="size-4 animate-spin mr-2" />
-                    가게 등록 중...
-                  </>
+                  <Loader2 className="size-5 animate-spin" />
                 ) : (
-                  isEditMode ? '수정 완료' : '스마트 등록 시작'
+                  '가게 등록 시작'
                 )}
               </Button>
             </div>

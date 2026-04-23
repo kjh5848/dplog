@@ -4,6 +4,8 @@ import "@/shared/styles/globals.css";
 import { AuroraBackground } from "@/shared/ui/aurora-background";
 import { MswProvider } from "@/shared/providers/MswProvider";
 import { AuthProvider } from "@/app/providers/AuthProvider";
+import { VersionCheckModal } from "@/features/version-check/ui/VersionCheckModal";
+import SingleInstanceGuard from "@/app/SingleInstanceGuard";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +25,8 @@ export default function RootLayout({
         <MswProvider>
           <AuthProvider>
             <AuroraBackground className="min-h-screen">
+              <SingleInstanceGuard />
+              <VersionCheckModal />
               {children}
             </AuroraBackground>
           </AuthProvider>

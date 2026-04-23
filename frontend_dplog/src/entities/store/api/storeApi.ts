@@ -11,7 +11,6 @@ import { get, post, put } from '@/shared/api';
 import type {
   Store,
   StoreCreateRequest,
-  StoreUpdateRequest,
 } from '../model/types';
 
 /**
@@ -29,13 +28,12 @@ export async function getStore(storeId: number): Promise<Store> {
 }
 
 /**
- * 가게 정보 수정
+ * 가게 최신 데이터로 동기화 (딥 스크래핑 갱신)
  */
-export async function updateStore(
+export async function syncStore(
   storeId: number,
-  request: StoreUpdateRequest,
 ): Promise<Store> {
-  return put<Store>(`/v1/stores/${storeId}`, request);
+  return post<Store>(`/v1/stores/${storeId}/sync`, {});
 }
 
 /**

@@ -7,6 +7,7 @@ description: D-PLOG 에픽 및 페이즈 파이프라인 수행 가이드 (Next.
 ## Step 1. 코어 문서 열람 및 상태 진단
 AI는 코딩을 시작하기 전, 반드시 다음 4개의 파일을 `view_file` 도구로 열람하여 전체 아키텍처와 현재 진척도를 동기화해야 합니다.
 - `/docs/next_python_packaging/architecture.md` (시스템 구조 및 도메인 분리 룰 확인)
+- `/docs/next_python_packaging/saas_proxy_tiering.md` (SaaS 스케일업 및 프록시 네트워크 통신 티어링 전략 확인)
 - `/docs/next_python_packaging/spec.md` (기술 스택 및 API 렌더링 규약 확인)
 - `/docs/next_python_packaging/phase.md` (우리가 달성해야 할 Epic 및 진행 단계 확인)
 - `/docs/next_python_packaging/task.md` (가장 마이크로한 체크리스트 확인)
@@ -20,8 +21,12 @@ AI는 코딩을 시작하기 전, 반드시 다음 4개의 파일을 `view_file`
 - **도메인 분리**: 모든 비즈니스 로직은 `backend_python/domains/{stores, scraping, users, billing}` 하위에 쪼개어 작성하십시오.
 - **SQLModel 강제**: FastAPI의 데이터베이스(`database.py`)와 DTO는 무조건 Pydantic과 SQLAlchemy가 결합된 `SQLModel` 스키마로 선언하십시오.
 
-## Step 4. 무결성 테스트
-- 뷰(View) 수정 시: `cd frontend_dplog && npm run build` 가 문제 없이 `out` 폴더를 뱉어내는지 확인.
+## Step 4. 무결성 테스트 (프론트엔드 빌드 아키텍처 엄수)
+> [!WARNING] (치명적 주의사항)
+> **본 프로젝트의 프론트엔드(`frontend_dplog`)는 Next.js 개발 서버(`npm run dev`)로 도는 방식이 아닙니다!**
+> Next.js의 `output: 'export'` 설정을 바탕으로 **정적 빌드된 결과물(`out/` 폴더)을 FastAPI 백엔드가 서빙(`StaticFiles`)하는 구조**입니다. 따라서 프론트엔드 코드를 단 한 줄이라도 수정했다면 **무조건 `cd frontend_dplog && npm run build`를 실행하여 `out` 폴더를 갱신**하십시오. 이 과정을 빼먹으면 백엔드가 과거 찌꺼기를 계속 화면에 띄우게 됩니다!!
+
+- 뷰(View) 수정 시: 반드시 `cd frontend_dplog && npm run build` 가 문제 없이 `out` 폴더를 최신화했는지 로그를 확인.
 - 로직 수정 시: 백그라운드 구동 환경 등을 고려하여 스크래핑 엔진 등 파이썬 로직 테스트 진행.
 
 ## Step 5. 진척도 로깅 (문서 현행화)

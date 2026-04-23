@@ -1,4 +1,4 @@
-import { RealtimeRankingDashboard } from '@/features/ranking';
+import { RealtimeRankingDashboard } from '@/widgets/ranking';
 
 /**
  * 실시간 순위 조회 페이지

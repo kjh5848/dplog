@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
-/* Components */
 /* Components */
 import { HeroSection } from './components/HeroSection';
 import { AgentFirst } from './components/AgentFirst';
@@ -38,6 +38,19 @@ const scaleUp = {
 
 export const HomeClient = () => {
   const [isHeadlineFinished, setIsHeadlineFinished] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    // 로컬 모드일 경우 마케팅 랜딩 페이지를 건너뛰고 대시보드로 직행 (Feature Toggle)
+    if (process.env.NEXT_PUBLIC_APP_MODE === 'local') {
+      router.replace('/dashboard');
+    }
+  }, [router]);
+
+  // 로컬 모드일 경우 렌더링을 완전히 막음 (화면 깜박임 방지)
+  if (process.env.NEXT_PUBLIC_APP_MODE === 'local') {
+    return null;
+  }
 
   return (
     <div className="flex flex-col">

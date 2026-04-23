@@ -63,14 +63,37 @@ async def scrape_place_details(place_id: str):
         "saves": 0,   # 최근 네이버 앱 정책으로 웹 DOM에서 숨겨지는 경우가 많음
         "rating": 0.0,
         "recent_reviews": [],
-        "suggested_keywords": [] # 자동 진단을 위한 키워드 조합
+        "suggested_keywords": [], # 자동 진단을 위한 키워드 조합
+        "menus": [], # 전체 메뉴 리스트
+        "representative_menus": [] # 홈 화면 대표메뉴
     }
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(
-            headless=True,
-            args=['--disable-blink-features=AutomationControlled', '--no-sandbox']
-        )
+        try:
+            browser = await p.chromium.launch(
+                headless=True,
+                args=['--disable-blink-features=AutomationControlled', '--no-sandbox']
+            )
+        except Exception as e:
+            if "Executable doesn't exist" in str(e):
+                import subprocess
+                import sys
+                print("⚡ [Auto-Fix] Playwright 브라우저 엔진이 누락되었습니다. 자동 설치를 진행합니다 (약 10~30초 소요)...")
+                try:
+                    if getattr(sys, 'frozen', False):
+                        subprocess.run(["playwright", "install", "chromium"], check=True)
+                    else:
+                        subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], check=True)
+                    print("⚡ [Auto-Fix] 크롬 엔진 설치 완료. 브라우저를 재구동합니다.")
+                    browser = await p.chromium.launch(
+                        headless=True,
+                        args=['--disable-blink-features=AutomationControlled', '--no-sandbox']
+                    )
+                except Exception as install_err:
+                    print(f"❌ Playwright 설치 실패 (수동 설치 필요: playwright install chromium): {install_err}")
+                    raise e
+            else:
+                raise
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
             viewport={'width': 390, 'height': 844},
@@ -220,17 +243,28 @@ async def scrape_place_details(place_id: str):
             elif not dong_name:
                 dong_name = result["name"].split()[0]  # 최후의 보루 (상호명 첫 단어)
 
-            # 카테고리에서 메인 업종 뽑기 (예: "카페,디저트" -> ["카페", "디저트"])
-            cat_parts = [c.strip() for c in result["category"].split(',') if c.strip()]
+            # 카테고리에서 메인 업종 뽑기 (블랙리스트 필터링 적용)
+            raw_cats = [c.strip() for c in result["category"].split(',') if c.strip()]
+            blacklist = ['기타', '배달', '포장', '종합소매업', '소매업', '도매업', '전문대행', '일반음식점', '생활용품', '잡화']
+            cat_parts = [c for c in raw_cats if not any(b in c for b in blacklist)]
             if not cat_parts:
-                cat_parts = ["맛집", "추천"] # 카테고리가 아예 없는 경우 방어
+                cat_parts = ["맛집", "추천", "가볼만한곳"] # 유효한 카테고리가 없으면 범용 키워드 사용
 
-            # 동이름 + 카테고리 / 상호명 조합
+            # 구 이름 추출 (예: 연제구)
+            gu_name = ""
+            for part in addr_parts:
+                if part.endswith('구') or part.endswith('군'):
+                    gu_name = part
+                    break
+
+            # 구/동이름 + 카테고리 / 상호명 조합
             for c in cat_parts:
-                result["suggested_keywords"].append(f"{dong_name} {c}")
+                if dong_name: result["suggested_keywords"].append(f"{dong_name} {c}")
+                if gu_name: result["suggested_keywords"].append(f"{gu_name} {c}")
                 
             base_name = result["name"].split()[0]
-            result["suggested_keywords"].append(f"{dong_name} {base_name}")
+            if dong_name: result["suggested_keywords"].append(f"{dong_name} {base_name}")
+            if gu_name: result["suggested_keywords"].append(f"{gu_name} {base_name}")
             
             # 카테고리 단독 검색어 추가
             if len(cat_parts) > 0 and dong_name != base_name:
@@ -273,6 +307,102 @@ async def scrape_place_details(place_id: str):
                 pass
 
             result["suggested_keywords"] = list(set([k for k in result["suggested_keywords"] if k and len(k) > 1])) # 중복/빈값 제거
+
+            # --- 1.5 홈 화면 대표메뉴 추출 ---
+            # 네이버 플레이스 홈에 '대표' 섹션으로 노출되는 시그니처 메뉴를 먼저 수집합니다.
+            # 이 시점에서는 아직 홈 페이지 DOM이 살아있으므로 여기에서 추출해야 합니다.
+            try:
+                representative_menus = await page.evaluate('''() => {
+                    let results = [];
+                    let seen = new Set();
+                    
+                    // 방법 1: 메뉴/대표 섹션 내의 카드형 항목 탐색
+                    // 네이버 플레이스는 대표메뉴를 가로 스크롤 카드로 보여줌
+                    let menuCards = document.querySelectorAll(
+                        'a[href*="/menu"], a[data-pui-click-code*="menu"], ' +
+                        'div[class*="menu"] li, ul[class*="menu"] li'
+                    );
+                    
+                    menuCards.forEach(card => {
+                        let name = '';
+                        let price = '';
+                        let imgUrl = null;
+                        let desc = '';
+                        
+                        // 이미지 추출
+                        let img = card.querySelector('img');
+                        if (img && img.src && !img.src.includes('data:')) {
+                            imgUrl = img.src;
+                        }
+                        
+                        // 텍스트 파싱 (줄바꿈 기준으로 분리)
+                        let texts = card.innerText.split('\\n')
+                            .map(t => t.trim())
+                            .filter(t => t.length > 0 && t.length < 100);
+                        
+                        if (texts.length >= 1) {
+                            // 첫 번째 텍스트가 보통 메뉴 이름
+                            name = texts[0].replace(/대표|BEST|HIT|NEW|인기/g, '').trim();
+                            // '원'이 포함된 텍스트가 가격
+                            let priceText = texts.find(t => t.includes('원') && /[0-9]/.test(t));
+                            if (priceText) price = priceText.trim();
+                            // 설명 (이름/가격이 아닌 나머지 긴 텍스트)
+                            let descText = texts.find(t => 
+                                t !== name && t !== price && t.length > 5 && !t.includes('원')
+                            );
+                            if (descText) desc = descText;
+                        }
+                        
+                        if (name && name.length > 1 && name.length < 50 && !seen.has(name)) {
+                            seen.add(name);
+                            results.push({name, price, desc, imgUrl, is_representative: true});
+                        }
+                    });
+                    
+                    // 방법 2: 홈 페이지의 메뉴 섹션 내 span/div 조합 수집 (폴백)
+                    if (results.length === 0) {
+                        // '대표', '메뉴', '시그니처' 텍스트가 포함된 섹션 내의 항목 탐색
+                        let sections = document.querySelectorAll('div, section, ul');
+                        sections.forEach(sec => {
+                            let heading = sec.querySelector('h2, h3, strong, span');
+                            if (!heading) return;
+                            let headText = heading.innerText || '';
+                            if (!headText.includes('메뉴') && !headText.includes('대표')) return;
+                            
+                            // 섹션 내 항목 추출
+                            let items = sec.querySelectorAll('li, a, div[class]');
+                            items.forEach(item => {
+                                let texts = item.innerText.split('\\n')
+                                    .map(t => t.trim())
+                                    .filter(t => t.length > 0 && t.length < 80);
+                                if (texts.length < 1) return;
+                                
+                                let name = texts[0].replace(/대표|BEST|HIT|NEW|인기/g, '').trim();
+                                let priceText = texts.find(t => t.includes('원') && /[0-9]/.test(t));
+                                let price = priceText ? priceText.trim() : '';
+                                
+                                let img = item.querySelector('img');
+                                let imgUrl = (img && img.src && !img.src.includes('data:')) ? img.src : null;
+                                
+                                if (name && name.length > 1 && name.length < 50 && !seen.has(name)) {
+                                    seen.add(name);
+                                    results.push({
+                                        name, price, desc: '', imgUrl, is_representative: true
+                                    });
+                                }
+                            });
+                        });
+                    }
+                    
+                    return results.slice(0, 10); // 최대 10개
+                }''')
+                
+                if representative_menus:
+                    result["representative_menus"] = representative_menus
+                    print(f"✅ [대표메뉴] {len(representative_menus)}개 추출 완료")
+            except Exception as rep_e:
+                print(f"[대표메뉴 추출 경고] {rep_e}")
+
 
             # --- 2. 리뷰 실제 원문 & 서브탭(태그) 추출하기 ---
             # 直接 URL 로딩 시 렌더링이 안되는 이슈 해결을 위해, 홈 화면에서 '리뷰' 탭을 직접 클릭합니다.
@@ -361,10 +491,62 @@ async def scrape_place_details(place_id: str):
                     
             result["recent_reviews"] = unique_reviews[:3]
 
+            # --- 3. 전체 메뉴 추출 ---
+            try:
+                menu_url = f"https://m.place.naver.com/place/{place_id_clean}/menu/list"
+                await page.goto(menu_url, wait_until="networkidle", timeout=15000)
+                await page.wait_for_timeout(2000)
+                
+                menus_data = await page.evaluate('''() => {
+                    let items = Array.from(document.querySelectorAll('li')).filter(li => li.innerText.includes('원'));
+                    let results = [];
+                    items.forEach(item => {
+                        let textParts = item.innerText.split('\\n');
+                        let price = textParts.find(p => p.includes('원'));
+                        // 보통 첫번째가 메뉴 이름
+                        let name = textParts[0];
+                        if (name.includes('BEST') || name.includes('HIT')) {
+                            name = name.replace('BEST', '').replace('HIT', '').trim();
+                        }
+                        
+                        let desc = '';
+                        if (textParts.length > 2) {
+                            // 가격 다음 요소부터 설명일 확률 높음
+                            let descIndex = textParts.indexOf(price) + 1;
+                            if (descIndex < textParts.length && textParts[descIndex] && textParts[descIndex].length > 4) {
+                                desc = textParts[descIndex];
+                            }
+                        }
+                        
+                        let bgImg = item.querySelector('.place_thumb img') || item.querySelector('img');
+                        let imgUrl = bgImg ? bgImg.src : null;
+                        
+                        if(name && price && name.trim().length > 1) {
+                            results.push({name: name.trim(), price: price.trim(), desc: desc.trim(), imgUrl: imgUrl});
+                        }
+                    });
+                    
+                    // 중복제거
+                    let uniqueResults = [];
+                    let names = new Set();
+                    results.forEach(r => {
+                        if(!names.has(r.name)) {
+                            names.add(r.name);
+                            uniqueResults.push(r);
+                        }
+                    });
+                    
+                    return uniqueResults;
+                }''')
+                result["menus"] = menus_data
+            except Exception as menu_e:
+                print(f"[Menu Extract Error] {menu_e}")
+                
         except Exception as e:
             print(f"[Deep Scrape Error] {e}")
         finally:
-            await browser.close()
+            if 'browser' in locals():
+                await browser.close()
 
     # 캐시 저장
     _SCORE_CACHE[place_id_clean] = (result, time.time())

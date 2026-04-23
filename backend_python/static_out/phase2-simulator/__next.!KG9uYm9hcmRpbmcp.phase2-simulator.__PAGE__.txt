@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[72915,["8409","static/chunks/8409-9d23a5336e2bf296.js","1567","static/chunks/1567-6f2d4b4afc28c4e5.js","9304","static/chunks/9304-1f940d490ea5c972.js","6691","static/chunks/6691-dc04a5c5dde4ffae.js","1218","static/chunks/1218-cbcbb321c270a2d7.js","2634","static/chunks/2634-c05dc6f7dd3199c5.js","5956","static/chunks/5956-4ae2cdfa3222a825.js","7064","static/chunks/app/(onboarding)/phase2-simulator/page-5f0fa5d968c4ff9d.js"],"Phase2SimulatorContainer"]
+3:I[90484,[],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"pYGaIOrqw_dQPIxD7UUSx","rsc":["$","$1","c",{"children":[["$","$L2",null,{}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null

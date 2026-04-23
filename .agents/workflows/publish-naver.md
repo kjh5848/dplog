@@ -1,0 +1,62 @@
+---
+description: 네이버 블로그 자동 발행 파이프라인 — 원고 검증부터 포스팅 발행까지
+---
+
+이 워크플로우는 네이버 블로그에 자동으로 포스트를 발행하는 전체 파이프라인입니다.
+에이전트는 아래 단계를 **순서대로** 수행하십시오.
+
+## Step 1. 매장명 확인
+
+사용자에게 어떤 매장의 원고를 발행할지 확인합니다.
+- 사용자가 매장명을 명시하지 않았다면: `scripts/asset/` 하위 디렉토리를 `list_dir`로 조회하여 목록을 보여주고 선택하게 합니다.
+- 매장명이 확인되면 이후 모든 Step에서 `STORE_NAME` 변수로 사용합니다.
+
+## Step 2. 원고 파일 검증
+
+`scripts/asset/{STORE_NAME}/blog_draft.md` 파일을 `view_file`로 열어 다음을 확인합니다:
+
+1. **제목** 존재 여부 (첫 줄 `# 제목`)
+2. **이미지 참조** 검증: `![alt](<파일명>)` 형태의 이미지들이 실제로 `scripts/asset/{STORE_NAME}/` 폴더에 존재하는지 `list_dir`로 교차 확인
+3. **해시태그** 존재 여부 (`#태그1 #태그2` 패턴)
+4. 전체 구조가 파서 규격에 맞는지 육안 검증
+
+> [!WARNING]
+> 이미지 파일이 누락된 채로 발행하면 빈 자리가 남습니다. 반드시 실물 파일 존재를 확인하십시오.
+
+## Step 3. 환경 설정 점검
+
+다음 환경 요소들을 점검합니다:
+
+1. **`.env.naver`** 파일 (`scripts/` 디렉토리): `NAVER_ID`와 `NAVER_PW` 키가 존재하는지 확인 (값은 출력 금지)
+2. **세션 파일** (`scripts/naver_session.json`): 존재 시 "기존 세션 재사용 가능" 안내, 없으면 "첫 로그인이 필요합니다" 안내
+3. **Playwright** 설치 여부: `python -c "from playwright.async_api import async_playwright; print('OK')"` 로 임포트 테스트
+
+## Step 4. 발행 스크립트 실행
+
+// turbo
+```bash
+cd /Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts && python -m sns_publish.open_naver --store {STORE_NAME}
+```
+
+- `{STORE_NAME}` 자리에 Step 1에서 확인한 매장명을 치환합니다.
+- 스크립트는 **headless=False** 로 실행되어 브라우저 창이 열립니다.
+- 전체 실행 시간은 약 1~3분 소요됩니다.
+
+## Step 5. 결과 확인 및 후처리
+
+콘솔 출력을 확인하여 발행 성공 여부를 판단합니다:
+
+| 출력 메시지 | 의미 |
+|---|---|
+| `🎉 포스팅 발행 완료!` | ✅ 성공 |
+| `⚠️ 발행 버튼 클릭 실패` | ❌ 발행 단계 실패 — 수동 확인 필요 |
+| `❌ 원고 파일 읽기 실패` | ❌ Step 2 재점검 |
+| `❌ .env.naver에서 찾을 수 없습니다` | ❌ Step 3 재점검 |
+
+**성공 시:**
+1. 사용자에게 발행 완료를 알립니다.
+2. 인스타그램 동시 발행 여부를 제안합니다: "인스타그램에도 발행하시겠습니까? (`/publish-instagram`)"
+
+**실패 시:**
+1. 에러 로그를 분석하여 원인을 안내합니다.
+2. `docs/planning/TROUBLESHOOTING.md` 참조를 권합니다.

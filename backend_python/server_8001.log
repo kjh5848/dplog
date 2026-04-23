@@ -1,0 +1,629 @@
+INFO:     Started server process [69450]
+INFO:     Waiting for application startup.
+2026-04-09 14:01:14,765 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:01:14,765 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("store_review_tag")
+2026-04-09 14:01:14,765 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-04-09 14:01:14,765 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("store_recent_review")
+2026-04-09 14:01:14,766 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-04-09 14:01:14,766 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("store")
+2026-04-09 14:01:14,766 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-04-09 14:01:14,766 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("keyword_task")
+2026-04-09 14:01:14,766 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-04-09 14:01:14,766 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("tracked_keyword")
+2026-04-09 14:01:14,766 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-04-09 14:01:14,766 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("keyword_rank_history")
+2026-04-09 14:01:14,766 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-04-09 14:01:14,767 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:62151 - "GET /dashboard/realtime HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62151 - "GET /_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62152 - "GET /_next/static/chunks/4e20891f2fd03463.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62154 - "GET /_next/static/chunks/2ec1ae7e69ac880c.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62154 - "GET /_next/static/chunks/de39dadec386ee96.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62151 - "GET /_next/static/chunks/aee6c7720838f8a2.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62158 - "GET /_next/static/chunks/98230169874c5199.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62152 - "GET /_next/static/chunks/f1b4d49aa9e249c5.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62159 - "GET /_next/static/chunks/f091501564eb2ea3.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62160 - "GET /_next/static/chunks/turbopack-7ec51861f0ae4254.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62160 - "GET /_next/static/chunks/07ffb030848139fa.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62154 - "GET /_next/static/chunks/7ee9cb78782f6441.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62158 - "GET /_next/static/chunks/a2dfb6fc5208ab9b.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62159 - "GET /_next/static/chunks/015fbc3f42eba775.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62151 - "GET /_next/static/chunks/90c41c7c7f3a86c5.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62152 - "GET /_next/static/chunks/ff1a16fafef87110.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62152 - "GET /_next/static/chunks/8d9ce281e2699520.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62158 - "GET /_next/static/chunks/3704bf596703f3e9.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62151 - "GET /_next/static/chunks/814c781725ebe977.js HTTP/1.1" 200 OK
+2026-04-09 14:10:57,987 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:10:58,002 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:10:58,002 INFO sqlalchemy.engine.Engine [generated in 0.00022s] ()
+INFO:     127.0.0.1:62159 - "HEAD /dashboard/keywords HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62158 - "HEAD /dashboard/report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62151 - "HEAD /dashboard/realtime HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62154 - "HEAD /dashboard/ranking HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62152 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:10:58,006 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62152 - "GET /dashboard/realtime/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62159 - "GET /dashboard/keywords/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62154 - "GET /dashboard/ranking/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62151 - "GET /dashboard/report/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+2026-04-09 14:10:58,021 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:10:58,022 INFO sqlalchemy.engine.Engine SELECT tracked_keyword.id, tracked_keyword.store_id, tracked_keyword.keyword, tracked_keyword.province, tracked_keyword."businessSector", tracked_keyword.created_at 
+FROM tracked_keyword 
+WHERE tracked_keyword.store_id = ? ORDER BY tracked_keyword.created_at DESC
+2026-04-09 14:10:58,022 INFO sqlalchemy.engine.Engine [generated in 0.00017s] (16,)
+INFO:     127.0.0.1:62159 - "HEAD /dashboard/stores/new HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62152 - "HEAD /dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62154 - "HEAD / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62158 - "GET /dashboard/realtime/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62160 - "GET /dashboard/realtime/__next._index.txt?_rsc=yp3be HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62151 - "GET /v1/stores/16/ranking/track/info HTTP/1.1" 200 OK
+2026-04-09 14:10:58,027 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62152 - "GET /dashboard/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62159 - "GET /__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62154 - "GET /dashboard/stores/new/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62160 - "GET /dashboard/realtime/__next.dashboard.txt?_rsc=yuv3o HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62154 - "GET /dashboard/realtime/__next.dashboard.realtime.txt?_rsc=ma1iw HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62159 - "GET /dashboard/realtime/__next.dashboard.realtime.__PAGE__.txt?_rsc=16n6k HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62152 - "GET /dashboard/report/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62159 - "GET /dashboard/report/__next.dashboard.report.txt?_rsc=i89v7 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62154 - "GET /dashboard/keywords/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62160 - "GET /dashboard/keywords/__next.dashboard.keywords.txt?_rsc=1yzfe HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62152 - "GET /dashboard/report/__next.dashboard.report.__PAGE__.txt?_rsc=154xf HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62160 - "GET /dashboard/keywords/__next.dashboard.keywords.__PAGE__.txt?_rsc=1cec3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62152 - "GET /dashboard/ranking/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62158 - "GET /dashboard/ranking/__next.dashboard.ranking.txt?_rsc=1r4h2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62159 - "GET /dashboard/ranking/__next.dashboard.ranking.__PAGE__.txt?_rsc=1kslj HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62154 - "GET /_next/static/chunks/05588ea2cb26cd88.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62154 - "GET /_next/static/chunks/4cbd958d754cf630.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62158 - "GET /dashboard/stores/new/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62160 - "GET /dashboard/stores/new/__next.dashboard.stores.new.txt?_rsc=x2fj1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62151 - "GET /dashboard/stores/new/__next.dashboard.stores.new.__PAGE__.txt?_rsc=3x3d0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62159 - "GET /dashboard/stores/new/__next.dashboard.stores.txt?_rsc=w1loh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62152 - "GET /_next/static/chunks/54e700e2f6315f0c.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62160 - "GET /dashboard/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62158 - "GET /dashboard/__next.dashboard.__PAGE__.txt?_rsc=wgtz3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62151 - "GET /__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62154 - "GET /__next.%21KGhvbWUp.txt?_rsc=hqtvw HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62159 - "GET /_next/static/chunks/af5682dda9962fb0.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62152 - "GET /_next/static/chunks/8cadb965a70429eb.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62154 - "GET /__next.%21KGhvbWUp.__PAGE__.txt?_rsc=1mdql HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62152 - "GET /_next/static/chunks/7e0d544622be7d7f.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62159 - "GET /_next/static/chunks/094538bd42ada775.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62152 - "GET /_next/static/chunks/bfaea35e66099690.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62159 - "GET /_next/static/chunks/1facb14094118c1e.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62152 - "GET /favicon.ico HTTP/1.1" 200 OK
+2026-04-09 14:11:05,798 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:11:05,801 INFO sqlalchemy.engine.Engine SELECT store.name AS store_name, store.category AS store_category, store.address AS store_address, store."placeUrl" AS "store_placeUrl", store.phone AS store_phone, store."shopImageUrl" AS "store_shopImageUrl", store."shopImageThumbUrl" AS "store_shopImageThumbUrl", store.keywords AS store_keywords, store.visitor_reviews AS store_visitor_reviews, store.blog_reviews AS store_blog_reviews, store.saves AS store_saves, store.rating AS store_rating, store.scrape_status AS store_scrape_status, store.id AS store_id, store."createdAt" AS "store_createdAt", store."updatedAt" AS "store_updatedAt" 
+FROM store 
+WHERE store.id = ?
+2026-04-09 14:11:05,801 INFO sqlalchemy.engine.Engine [generated in 0.00017s] (16,)
+INFO:     127.0.0.1:62163 - "GET /v1/stores/16/ranking/realtime?keyword=%EB%B6%80%EC%82%B0%EC%8B%9C%EC%B2%AD%EB%A7%9B%EC%A7%91&province=%EC%84%9C%EC%9A%B8 HTTP/1.1" 200 OK
+2026-04-09 14:11:21,277 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:14:59,960 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:14:59,963 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:14:59,964 INFO sqlalchemy.engine.Engine [cached since 242s ago] ()
+INFO:     127.0.0.1:62298 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:14:59,975 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:15:00,004 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:15:00,010 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store 
+WHERE store.id = ?
+2026-04-09 14:15:00,010 INFO sqlalchemy.engine.Engine [generated in 0.00025s] (16,)
+2026-04-09 14:15:00,023 INFO sqlalchemy.engine.Engine SELECT store_review_tag.store_id AS store_review_tag_store_id, store_review_tag.id AS store_review_tag_id, store_review_tag.category AS store_review_tag_category, store_review_tag.name AS store_review_tag_name, store_review_tag.count AS store_review_tag_count 
+FROM store_review_tag 
+WHERE store_review_tag.store_id IN (?)
+2026-04-09 14:15:00,023 INFO sqlalchemy.engine.Engine [generated in 0.00021s] (16,)
+2026-04-09 14:15:00,033 INFO sqlalchemy.engine.Engine SELECT store_recent_review.store_id AS store_recent_review_store_id, store_recent_review.id AS store_recent_review_id, store_recent_review.snippet AS store_recent_review_snippet 
+FROM store_recent_review 
+WHERE store_recent_review.store_id IN (?)
+2026-04-09 14:15:00,033 INFO sqlalchemy.engine.Engine [generated in 0.00382s] (16,)
+INFO:     127.0.0.1:62298 - "GET /v1/stores/16 HTTP/1.1" 200 OK
+2026-04-09 14:15:00,035 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62298 - "GET /_next/static/chunks/fb9fd2e6a508208a.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62302 - "GET /static/images/stores/16/thumb_3.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62298 - "GET /static/images/stores/16/thumb_0.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62306 - "GET /static/images/stores/16/thumb_4.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62301 - "GET /static/images/stores/16/thumb_1.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62304 - "GET /static/images/stores/16/thumb_2.jpg HTTP/1.1" 304 Not Modified
+2026-04-09 14:15:00,059 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:15:00,060 INFO sqlalchemy.engine.Engine SELECT tracked_keyword.id, tracked_keyword.store_id, tracked_keyword.keyword, tracked_keyword.province, tracked_keyword."businessSector", tracked_keyword.created_at 
+FROM tracked_keyword 
+WHERE tracked_keyword.store_id = ? ORDER BY tracked_keyword.created_at DESC
+2026-04-09 14:15:00,061 INFO sqlalchemy.engine.Engine [cached since 242s ago] (16,)
+INFO:     127.0.0.1:62308 - "GET /v1/stores/16/ranking/track/info HTTP/1.1" 200 OK
+2026-04-09 14:15:00,064 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:15:00,067 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:15:00,067 INFO sqlalchemy.engine.Engine SELECT keyword_task.id, keyword_task.task_id, keyword_task.store_id, keyword_task.seed_keyword, keyword_task.status, keyword_task.result_data, keyword_task.created_at, keyword_task.completed_at, keyword_task.error_message 
+FROM keyword_task 
+WHERE keyword_task.store_id = ? ORDER BY keyword_task.created_at DESC
+2026-04-09 14:15:00,068 INFO sqlalchemy.engine.Engine [generated in 0.00018s] (16,)
+INFO:     127.0.0.1:62308 - "GET /_next/static/chunks/35f923a18534412a.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62298 - "GET /_next/static/chunks/969599514edb0b9e.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62304 - "GET /_next/static/chunks/b8018aa4a3bbf171.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62306 - "GET /v1/stores/16/keywords/status HTTP/1.1" 200 OK
+2026-04-09 14:15:00,075 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:15:01,193 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:15:01,193 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:15:01,193 INFO sqlalchemy.engine.Engine [cached since 243.2s ago] ()
+INFO:     127.0.0.1:62298 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:15:01,194 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:16:07,052 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:16:07,053 INFO sqlalchemy.engine.Engine SELECT store.name AS store_name, store.category AS store_category, store.address AS store_address, store."placeUrl" AS "store_placeUrl", store.phone AS store_phone, store."shopImageUrl" AS "store_shopImageUrl", store."shopImageThumbUrl" AS "store_shopImageThumbUrl", store.keywords AS store_keywords, store.visitor_reviews AS store_visitor_reviews, store.blog_reviews AS store_blog_reviews, store.saves AS store_saves, store.rating AS store_rating, store.scrape_status AS store_scrape_status, store.id AS store_id, store."createdAt" AS "store_createdAt", store."updatedAt" AS "store_updatedAt" 
+FROM store 
+WHERE store.id = ?
+2026-04-09 14:16:07,053 INFO sqlalchemy.engine.Engine [cached since 301.3s ago] (16,)
+INFO:     127.0.0.1:62369 - "GET /v1/stores/16/ranking/realtime?keyword=%EB%B6%80%EC%82%B0%EB%B9%B5%EC%A7%91%EC%B6%94%EC%B2%9C&province=%EC%84%9C%EC%9A%B8 HTTP/1.1" 200 OK
+2026-04-09 14:16:21,820 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62446 - "HEAD /dashboard/report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62446 - "HEAD /dashboard/keywords HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62446 - "HEAD /dashboard/ranking HTTP/1.1" 200 OK
+2026-04-09 14:18:32,792 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:18:32,799 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:18:32,799 INFO sqlalchemy.engine.Engine [cached since 454.8s ago] ()
+INFO:     127.0.0.1:62446 - "HEAD /dashboard/stores/new HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62450 - "HEAD /dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62452 - "HEAD / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62448 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:18:32,810 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62446 - "GET /dashboard/stores/new/__next._tree.txt?_rsc=btxuy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62452 - "GET /dashboard/__next._tree.txt?_rsc=btxuy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62450 - "GET /__next._tree.txt?_rsc=btxuy HTTP/1.1" 200 OK
+2026-04-09 14:18:32,852 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:18:32,853 INFO sqlalchemy.engine.Engine SELECT tracked_keyword.id, tracked_keyword.store_id, tracked_keyword.keyword, tracked_keyword.province, tracked_keyword."businessSector", tracked_keyword.created_at 
+FROM tracked_keyword 
+WHERE tracked_keyword.store_id = ? ORDER BY tracked_keyword.created_at DESC
+2026-04-09 14:18:32,853 INFO sqlalchemy.engine.Engine [cached since 454.8s ago] (16,)
+INFO:     127.0.0.1:62446 - "GET /dashboard/stores/new/__next.dashboard.stores.txt?_rsc=17u5s HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62452 - "GET /dashboard/stores/new/__next._head.txt?_rsc=15b3r HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62448 - "GET /dashboard/stores/new/__next.dashboard.stores.new.txt?_rsc=11et8 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62454 - "GET /dashboard/stores/new/__next.dashboard.stores.new.__PAGE__.txt?_rsc=10j0i HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62450 - "GET /v1/stores/16/ranking/track/info HTTP/1.1" 200 OK
+2026-04-09 14:18:32,862 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62454 - "GET /dashboard/__next.dashboard.__PAGE__.txt?_rsc=15p4t HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62446 - "GET /__next.%21KGhvbWUp.txt?_rsc=o160r HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62452 - "GET /dashboard/__next._head.txt?_rsc=15b3r HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62448 - "GET /__next._head.txt?_rsc=15b3r HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62452 - "GET /__next.%21KGhvbWUp.__PAGE__.txt?_rsc=it16t HTTP/1.1" 200 OK
+2026-04-09 14:18:35,047 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:18:35,050 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:18:35,053 INFO sqlalchemy.engine.Engine [cached since 457.1s ago] ()
+INFO:     127.0.0.1:62452 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:18:35,054 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:18:35,062 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:18:35,062 INFO sqlalchemy.engine.Engine SELECT tracked_keyword.id, tracked_keyword.store_id, tracked_keyword.keyword, tracked_keyword.province, tracked_keyword."businessSector", tracked_keyword.created_at 
+FROM tracked_keyword 
+WHERE tracked_keyword.store_id = ? ORDER BY tracked_keyword.created_at DESC
+2026-04-09 14:18:35,062 INFO sqlalchemy.engine.Engine [cached since 457s ago] (16,)
+INFO:     127.0.0.1:62452 - "GET /v1/stores/16/ranking/track/info HTTP/1.1" 200 OK
+2026-04-09 14:18:35,063 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62580 - "HEAD /dashboard/realtime HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62580 - "GET /dashboard/realtime/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62580 - "GET /dashboard/realtime/__next._index.txt?_rsc=yp3be HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62584 - "GET /dashboard/realtime/__next.dashboard.txt?_rsc=yuv3o HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62585 - "GET /dashboard/realtime/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62586 - "GET /dashboard/realtime/__next.dashboard.realtime.txt?_rsc=ma1iw HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62588 - "GET /dashboard/realtime/__next.dashboard.realtime.__PAGE__.txt?_rsc=16n6k HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62588 - "HEAD /dashboard/keywords HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62588 - "GET /dashboard/keywords/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62588 - "GET /dashboard/keywords/__next.dashboard.keywords.__PAGE__.txt?_rsc=1cec3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62584 - "GET /dashboard/keywords/__next.dashboard.keywords.txt?_rsc=1yzfe HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62586 - "GET /dashboard/keywords/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62584 - "GET /_next/static/chunks/4cbd958d754cf630.js HTTP/1.1" 304 Not Modified
+2026-04-09 14:25:17,754 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:25:17,760 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:25:17,760 INFO sqlalchemy.engine.Engine [cached since 859.8s ago] ()
+INFO:     127.0.0.1:62586 - "HEAD /dashboard/report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62580 - "HEAD /dashboard/stores/new HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62584 - "HEAD /dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62590 - "GET /favicon.ico HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62585 - "HEAD /dashboard/ranking HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62588 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:25:17,782 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62586 - "GET /dashboard/report/__next._tree.txt?_rsc=od810 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62585 - "GET /dashboard/stores/new/__next._tree.txt?_rsc=od810 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62580 - "GET /dashboard/ranking/__next._tree.txt?_rsc=od810 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62584 - "GET /dashboard/__next._tree.txt?_rsc=od810 HTTP/1.1" 200 OK
+2026-04-09 14:25:17,818 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:25:17,824 INFO sqlalchemy.engine.Engine SELECT keyword_task.id, keyword_task.task_id, keyword_task.store_id, keyword_task.seed_keyword, keyword_task.status, keyword_task.result_data, keyword_task.created_at, keyword_task.completed_at, keyword_task.error_message 
+FROM keyword_task 
+WHERE keyword_task.store_id = ? ORDER BY keyword_task.created_at DESC
+2026-04-09 14:25:17,824 INFO sqlalchemy.engine.Engine [cached since 617.8s ago] (16,)
+INFO:     127.0.0.1:62586 - "HEAD / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62580 - "GET /__next._tree.txt?_rsc=od810 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62584 - "GET /dashboard/ranking/__next.dashboard.ranking.__PAGE__.txt?_rsc=13uso HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62585 - "GET /dashboard/ranking/__next.dashboard.ranking.txt?_rsc=1a6o6 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62586 - "GET /dashboard/ranking/__next._head.txt?_rsc=qxxdu HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62590 - "GET /v1/stores/16/keywords/status HTTP/1.1" 200 OK
+2026-04-09 14:25:17,854 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62580 - "GET /dashboard/stores/new/__next._head.txt?_rsc=qxxdu HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62585 - "GET /dashboard/report/__next.dashboard.report.txt?_rsc=1agzy HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62586 - "GET /dashboard/report/__next._head.txt?_rsc=qxxdu HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62584 - "GET /dashboard/report/__next.dashboard.report.__PAGE__.txt?_rsc=1j8g4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62584 - "GET /dashboard/stores/new/__next.dashboard.stores.txt?_rsc=f3st7 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62586 - "GET /dashboard/stores/new/__next.dashboard.stores.new.__PAGE__.txt?_rsc=1m0ej HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62585 - "GET /dashboard/stores/new/__next.dashboard.stores.new.txt?_rsc=g4mns HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62580 - "GET /dashboard/__next._head.txt?_rsc=qxxdu HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62585 - "GET /dashboard/__next.dashboard.__PAGE__.txt?_rsc=fj13t HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62586 - "GET /__next.%21KGhvbWUp.txt?_rsc=t10na HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62580 - "GET /__next._head.txt?_rsc=qxxdu HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62584 - "GET /__next.%21KGhvbWUp.__PAGE__.txt?_rsc=15fxq HTTP/1.1" 200 OK
+2026-04-09 14:25:27,857 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:25:27,858 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:25:27,858 INFO sqlalchemy.engine.Engine [cached since 869.9s ago] ()
+INFO:     127.0.0.1:62594 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:25:27,859 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:25:27,869 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:25:27,871 INFO sqlalchemy.engine.Engine SELECT tracked_keyword.id, tracked_keyword.store_id, tracked_keyword.keyword, tracked_keyword.province, tracked_keyword."businessSector", tracked_keyword.created_at 
+FROM tracked_keyword 
+WHERE tracked_keyword.store_id = ? ORDER BY tracked_keyword.created_at DESC
+2026-04-09 14:25:27,871 INFO sqlalchemy.engine.Engine [cached since 869.8s ago] (16,)
+INFO:     127.0.0.1:62594 - "GET /v1/stores/16/ranking/track/info HTTP/1.1" 200 OK
+2026-04-09 14:25:27,872 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:25:30,558 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:25:30,560 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:25:30,560 INFO sqlalchemy.engine.Engine [cached since 872.6s ago] ()
+INFO:     127.0.0.1:62594 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:25:30,564 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:25:30,573 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:25:30,573 INFO sqlalchemy.engine.Engine SELECT keyword_task.id, keyword_task.task_id, keyword_task.store_id, keyword_task.seed_keyword, keyword_task.status, keyword_task.result_data, keyword_task.created_at, keyword_task.completed_at, keyword_task.error_message 
+FROM keyword_task 
+WHERE keyword_task.store_id = ? ORDER BY keyword_task.created_at DESC
+2026-04-09 14:25:30,573 INFO sqlalchemy.engine.Engine [cached since 630.5s ago] (16,)
+INFO:     127.0.0.1:62594 - "GET /v1/stores/16/keywords/status HTTP/1.1" 200 OK
+2026-04-09 14:25:30,576 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:25:30,835 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:25:30,835 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:25:30,835 INFO sqlalchemy.engine.Engine [cached since 872.8s ago] ()
+INFO:     127.0.0.1:62594 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:25:30,837 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:25:30,853 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:25:30,853 INFO sqlalchemy.engine.Engine SELECT tracked_keyword.id, tracked_keyword.store_id, tracked_keyword.keyword, tracked_keyword.province, tracked_keyword."businessSector", tracked_keyword.created_at 
+FROM tracked_keyword 
+WHERE tracked_keyword.store_id = ? ORDER BY tracked_keyword.created_at DESC
+2026-04-09 14:25:30,853 INFO sqlalchemy.engine.Engine [cached since 872.8s ago] (16,)
+INFO:     127.0.0.1:62594 - "GET /v1/stores/16/ranking/track/info HTTP/1.1" 200 OK
+2026-04-09 14:25:30,853 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:25:31,931 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:25:31,931 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:25:31,931 INFO sqlalchemy.engine.Engine [cached since 873.9s ago] ()
+INFO:     127.0.0.1:62594 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:25:31,932 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:25:31,942 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:25:31,942 INFO sqlalchemy.engine.Engine SELECT keyword_task.id, keyword_task.task_id, keyword_task.store_id, keyword_task.seed_keyword, keyword_task.status, keyword_task.result_data, keyword_task.created_at, keyword_task.completed_at, keyword_task.error_message 
+FROM keyword_task 
+WHERE keyword_task.store_id = ? ORDER BY keyword_task.created_at DESC
+2026-04-09 14:25:31,942 INFO sqlalchemy.engine.Engine [cached since 631.9s ago] (16,)
+INFO:     127.0.0.1:62594 - "GET /v1/stores/16/keywords/status HTTP/1.1" 200 OK
+2026-04-09 14:25:31,945 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:25:32,411 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:25:32,411 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:25:32,411 INFO sqlalchemy.engine.Engine [cached since 874.4s ago] ()
+INFO:     127.0.0.1:62594 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:25:32,413 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:25:36,237 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:25:36,238 INFO sqlalchemy.engine.Engine SELECT store.name AS store_name, store.category AS store_category, store.address AS store_address, store."placeUrl" AS "store_placeUrl", store.phone AS store_phone, store."shopImageUrl" AS "store_shopImageUrl", store."shopImageThumbUrl" AS "store_shopImageThumbUrl", store.keywords AS store_keywords, store.visitor_reviews AS store_visitor_reviews, store.blog_reviews AS store_blog_reviews, store.saves AS store_saves, store.rating AS store_rating, store.scrape_status AS store_scrape_status, store.id AS store_id, store."createdAt" AS "store_createdAt", store."updatedAt" AS "store_updatedAt" 
+FROM store 
+WHERE store.id = ?
+2026-04-09 14:25:36,238 INFO sqlalchemy.engine.Engine [cached since 870.4s ago] (16,)
+INFO:     127.0.0.1:62594 - "GET /v1/stores/16/ranking/realtime?keyword=%EB%B6%80%EC%82%B0%EC%8B%9C%EC%B2%AD%EA%B3%A0%EA%B8%B0%EC%A7%91&province=%EC%84%9C%EC%9A%B8 HTTP/1.1" 200 OK
+2026-04-09 14:25:51,210 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:26:15,760 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:26:15,762 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:26:15,762 INFO sqlalchemy.engine.Engine [cached since 917.8s ago] ()
+INFO:     127.0.0.1:62668 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:26:15,765 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:26:15,784 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:26:15,785 INFO sqlalchemy.engine.Engine SELECT keyword_task.id, keyword_task.task_id, keyword_task.store_id, keyword_task.seed_keyword, keyword_task.status, keyword_task.result_data, keyword_task.created_at, keyword_task.completed_at, keyword_task.error_message 
+FROM keyword_task 
+WHERE keyword_task.store_id = ? ORDER BY keyword_task.created_at DESC
+2026-04-09 14:26:15,785 INFO sqlalchemy.engine.Engine [cached since 675.7s ago] (16,)
+INFO:     127.0.0.1:62668 - "GET /v1/stores/16/keywords/status HTTP/1.1" 200 OK
+2026-04-09 14:26:15,788 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:26:20,241 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:26:20,241 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:26:20,242 INFO sqlalchemy.engine.Engine [cached since 922.2s ago] ()
+INFO:     127.0.0.1:62668 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:26:20,243 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:26:20,256 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:26:20,257 INFO sqlalchemy.engine.Engine SELECT tracked_keyword.id, tracked_keyword.store_id, tracked_keyword.keyword, tracked_keyword.province, tracked_keyword."businessSector", tracked_keyword.created_at 
+FROM tracked_keyword 
+WHERE tracked_keyword.store_id = ? ORDER BY tracked_keyword.created_at DESC
+2026-04-09 14:26:20,257 INFO sqlalchemy.engine.Engine [cached since 922.2s ago] (16,)
+INFO:     127.0.0.1:62668 - "GET /v1/stores/16/ranking/track/info HTTP/1.1" 200 OK
+2026-04-09 14:26:20,258 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:26:26,835 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:26:26,836 INFO sqlalchemy.engine.Engine SELECT store.name AS store_name, store.category AS store_category, store.address AS store_address, store."placeUrl" AS "store_placeUrl", store.phone AS store_phone, store."shopImageUrl" AS "store_shopImageUrl", store."shopImageThumbUrl" AS "store_shopImageThumbUrl", store.keywords AS store_keywords, store.visitor_reviews AS store_visitor_reviews, store.blog_reviews AS store_blog_reviews, store.saves AS store_saves, store.rating AS store_rating, store.scrape_status AS store_scrape_status, store.id AS store_id, store."createdAt" AS "store_createdAt", store."updatedAt" AS "store_updatedAt" 
+FROM store 
+WHERE store.id = ?
+2026-04-09 14:26:26,836 INFO sqlalchemy.engine.Engine [cached since 921s ago] (16,)
+[랭킹 재시도] '대전은행동맛집' 첫 시도 빈 결과 → 1회 자동 재시도
+INFO:     127.0.0.1:62672 - "GET /v1/stores/16/ranking/realtime?keyword=%EB%8C%80%EC%A0%84%EC%9D%80%ED%96%89%EB%8F%99%EB%A7%9B%EC%A7%91&province=%EC%84%9C%EC%9A%B8 HTTP/1.1" 200 OK
+2026-04-09 14:26:50,524 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-04-09 14:28:05,583 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:28:05,586 INFO sqlalchemy.engine.Engine SELECT store.name AS store_name, store.category AS store_category, store.address AS store_address, store."placeUrl" AS "store_placeUrl", store.phone AS store_phone, store."shopImageUrl" AS "store_shopImageUrl", store."shopImageThumbUrl" AS "store_shopImageThumbUrl", store.keywords AS store_keywords, store.visitor_reviews AS store_visitor_reviews, store.blog_reviews AS store_blog_reviews, store.saves AS store_saves, store.rating AS store_rating, store.scrape_status AS store_scrape_status, store.id AS store_id, store."createdAt" AS "store_createdAt", store."updatedAt" AS "store_updatedAt" 
+FROM store 
+WHERE store.id = ?
+2026-04-09 14:28:05,586 INFO sqlalchemy.engine.Engine [cached since 1020s ago] (16,)
+[랭킹 재시도] '대전은행동맛집' 첫 시도 빈 결과 → 1회 자동 재시도
+INFO:     127.0.0.1:62722 - "GET /v1/stores/16/ranking/realtime?keyword=%EB%8C%80%EC%A0%84%EC%9D%80%ED%96%89%EB%8F%99%EB%A7%9B%EC%A7%91&province=%EC%84%9C%EC%9A%B8 HTTP/1.1" 200 OK
+2026-04-09 14:28:29,431 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:63214 - "GET /dashboard/realtime HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "GET /_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "GET /_next/static/chunks/4e20891f2fd03463.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63217 - "GET /_next/static/chunks/2ec1ae7e69ac880c.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "GET /_next/static/chunks/aee6c7720838f8a2.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63217 - "GET /_next/static/chunks/f1b4d49aa9e249c5.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63221 - "GET /_next/static/chunks/f091501564eb2ea3.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /_next/static/chunks/98230169874c5199.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "GET /_next/static/chunks/de39dadec386ee96.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63223 - "GET /_next/static/chunks/turbopack-7ec51861f0ae4254.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63217 - "GET /_next/static/chunks/015fbc3f42eba775.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "GET /_next/static/chunks/07ffb030848139fa.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63221 - "GET /_next/static/chunks/90c41c7c7f3a86c5.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63223 - "GET /_next/static/chunks/ff1a16fafef87110.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /_next/static/chunks/a2dfb6fc5208ab9b.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "GET /_next/static/chunks/7ee9cb78782f6441.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "GET /_next/static/chunks/3704bf596703f3e9.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63221 - "GET /_next/static/chunks/814c781725ebe977.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63217 - "GET /_next/static/chunks/8d9ce281e2699520.js HTTP/1.1" 200 OK
+2026-04-09 14:34:19,604 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:34:19,605 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:34:19,605 INFO sqlalchemy.engine.Engine [cached since 1402s ago] ()
+INFO:     127.0.0.1:63217 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:34:19,607 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:63221 - "HEAD /dashboard/report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "HEAD /dashboard/ranking HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63217 - "HEAD /dashboard/realtime HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "HEAD /dashboard/keywords HTTP/1.1" 200 OK
+2026-04-09 14:34:19,619 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:34:19,619 INFO sqlalchemy.engine.Engine SELECT tracked_keyword.id, tracked_keyword.store_id, tracked_keyword.keyword, tracked_keyword.province, tracked_keyword."businessSector", tracked_keyword.created_at 
+FROM tracked_keyword 
+WHERE tracked_keyword.store_id = ? ORDER BY tracked_keyword.created_at DESC
+2026-04-09 14:34:19,619 INFO sqlalchemy.engine.Engine [cached since 1402s ago] (16,)
+INFO:     127.0.0.1:63222 - "GET /dashboard/ranking/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "GET /dashboard/realtime/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63221 - "GET /dashboard/keywords/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63217 - "GET /dashboard/report/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "GET /v1/stores/16/ranking/track/info HTTP/1.1" 200 OK
+2026-04-09 14:34:19,621 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:63217 - "HEAD /dashboard/stores/new HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "HEAD /dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "HEAD / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63221 - "GET /dashboard/realtime/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "GET /dashboard/realtime/__next._index.txt?_rsc=yp3be HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "GET /dashboard/stores/new/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "GET /__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63221 - "GET /dashboard/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /dashboard/realtime/__next.dashboard.txt?_rsc=yuv3o HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "GET /dashboard/realtime/__next.dashboard.realtime.txt?_rsc=ma1iw HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "GET /dashboard/realtime/__next.dashboard.realtime.__PAGE__.txt?_rsc=16n6k HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /dashboard/report/__next.dashboard.report.txt?_rsc=i89v7 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63221 - "GET /dashboard/report/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63221 - "GET /dashboard/report/__next.dashboard.report.__PAGE__.txt?_rsc=154xf HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /dashboard/keywords/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "GET /dashboard/keywords/__next.dashboard.keywords.txt?_rsc=1yzfe HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "GET /dashboard/keywords/__next.dashboard.keywords.__PAGE__.txt?_rsc=1cec3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63221 - "GET /dashboard/ranking/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "GET /dashboard/ranking/__next.dashboard.ranking.txt?_rsc=1r4h2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /dashboard/ranking/__next.dashboard.ranking.__PAGE__.txt?_rsc=1kslj HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63217 - "GET /dashboard/stores/new/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "GET /_next/static/chunks/4cbd958d754cf630.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63223 - "GET /_next/static/chunks/05588ea2cb26cd88.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63221 - "GET /dashboard/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /dashboard/stores/new/__next.dashboard.stores.new.txt?_rsc=x2fj1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63217 - "GET /dashboard/stores/new/__next.dashboard.stores.new.__PAGE__.txt?_rsc=3x3d0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "GET /dashboard/stores/new/__next.dashboard.stores.txt?_rsc=w1loh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "GET /_next/static/chunks/54e700e2f6315f0c.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /dashboard/__next.dashboard.__PAGE__.txt?_rsc=wgtz3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63221 - "GET /__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63217 - "GET /__next.%21KGhvbWUp.txt?_rsc=hqtvw HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63223 - "GET /__next.%21KGhvbWUp.__PAGE__.txt?_rsc=1mdql HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "GET /_next/static/chunks/8cadb965a70429eb.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "GET /_next/static/chunks/af5682dda9962fb0.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63214 - "GET /_next/static/chunks/1facb14094118c1e.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63215 - "GET /_next/static/chunks/7e0d544622be7d7f.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /_next/static/chunks/bfaea35e66099690.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63223 - "GET /_next/static/chunks/094538bd42ada775.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /favicon.ico HTTP/1.1" 200 OK
+2026-04-09 14:34:21,040 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:34:21,040 INFO sqlalchemy.engine.Engine SELECT store.name AS store_name, store.category AS store_category, store.address AS store_address, store."placeUrl" AS "store_placeUrl", store.phone AS store_phone, store."shopImageUrl" AS "store_shopImageUrl", store."shopImageThumbUrl" AS "store_shopImageThumbUrl", store.keywords AS store_keywords, store.visitor_reviews AS store_visitor_reviews, store.blog_reviews AS store_blog_reviews, store.saves AS store_saves, store.rating AS store_rating, store.scrape_status AS store_scrape_status, store.id AS store_id, store."createdAt" AS "store_createdAt", store."updatedAt" AS "store_updatedAt" 
+FROM store 
+WHERE store.id = ?
+2026-04-09 14:34:21,040 INFO sqlalchemy.engine.Engine [cached since 1395s ago] (16,)
+INFO:     127.0.0.1:63222 - "GET /v1/stores/16/ranking/realtime?keyword=%EB%8C%80%EC%A0%84%EC%9D%80%ED%96%89%EB%8F%99%EB%A7%9B%EC%A7%91&province=%EC%84%9C%EC%9A%B8 HTTP/1.1" 200 OK
+2026-04-09 14:34:33,170 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:63222 - "GET /dashboard/realtime HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63330 - "GET /_next/static/chunks/4e20891f2fd03463.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63332 - "GET /_next/static/chunks/2ec1ae7e69ac880c.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63332 - "GET /_next/static/chunks/f1b4d49aa9e249c5.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /_next/static/chunks/aee6c7720838f8a2.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63332 - "GET /_next/static/chunks/98230169874c5199.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63330 - "GET /_next/static/chunks/de39dadec386ee96.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63341 - "GET /_next/static/chunks/turbopack-7ec51861f0ae4254.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63342 - "GET /_next/static/chunks/07ffb030848139fa.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63340 - "GET /_next/static/chunks/f091501564eb2ea3.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63332 - "GET /_next/static/chunks/90c41c7c7f3a86c5.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63330 - "GET /_next/static/chunks/015fbc3f42eba775.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63341 - "GET /_next/static/chunks/814c781725ebe977.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63340 - "GET /_next/static/chunks/8d9ce281e2699520.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63330 - "GET /_next/static/chunks/3704bf596703f3e9.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63332 - "GET /_next/static/chunks/ff1a16fafef87110.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63342 - "GET /_next/static/chunks/7ee9cb78782f6441.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /_next/static/chunks/a2dfb6fc5208ab9b.js HTTP/1.1" 200 OK
+2026-04-09 14:34:36,979 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:34:36,979 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:34:36,979 INFO sqlalchemy.engine.Engine [cached since 1419s ago] ()
+INFO:     127.0.0.1:63222 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:34:36,983 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:63342 - "HEAD /dashboard/report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "HEAD /dashboard/realtime HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63340 - "HEAD /dashboard/keywords HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63332 - "HEAD /dashboard/ranking HTTP/1.1" 200 OK
+2026-04-09 14:34:36,994 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:34:36,995 INFO sqlalchemy.engine.Engine SELECT tracked_keyword.id, tracked_keyword.store_id, tracked_keyword.keyword, tracked_keyword.province, tracked_keyword."businessSector", tracked_keyword.created_at 
+FROM tracked_keyword 
+WHERE tracked_keyword.store_id = ? ORDER BY tracked_keyword.created_at DESC
+2026-04-09 14:34:36,995 INFO sqlalchemy.engine.Engine [cached since 1419s ago] (16,)
+INFO:     127.0.0.1:63222 - "GET /dashboard/realtime/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63340 - "GET /dashboard/report/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63330 - "GET /dashboard/ranking/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63342 - "GET /dashboard/keywords/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63332 - "GET /v1/stores/16/ranking/track/info HTTP/1.1" 200 OK
+2026-04-09 14:34:36,997 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:63222 - "HEAD /dashboard/stores/new HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63342 - "HEAD /dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63342 - "HEAD / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /dashboard/realtime/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63340 - "GET /dashboard/realtime/__next._index.txt?_rsc=yp3be HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63330 - "GET /dashboard/stores/new/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63332 - "GET /dashboard/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63342 - "GET /__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63342 - "GET /dashboard/realtime/__next.dashboard.txt?_rsc=yuv3o HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63332 - "GET /dashboard/realtime/__next.dashboard.realtime.txt?_rsc=ma1iw HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63340 - "GET /dashboard/report/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63330 - "GET /dashboard/realtime/__next.dashboard.realtime.__PAGE__.txt?_rsc=16n6k HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63330 - "GET /dashboard/report/__next.dashboard.report.txt?_rsc=i89v7 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63340 - "GET /dashboard/keywords/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63332 - "GET /dashboard/report/__next.dashboard.report.__PAGE__.txt?_rsc=154xf HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63342 - "GET /dashboard/keywords/__next.dashboard.keywords.txt?_rsc=1yzfe HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63342 - "GET /dashboard/keywords/__next.dashboard.keywords.__PAGE__.txt?_rsc=1cec3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63332 - "GET /dashboard/ranking/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63330 - "GET /dashboard/ranking/__next.dashboard.ranking.txt?_rsc=1r4h2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /dashboard/ranking/__next.dashboard.ranking.__PAGE__.txt?_rsc=1kslj HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63340 - "GET /_next/static/chunks/05588ea2cb26cd88.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /dashboard/stores/new/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63341 - "GET /dashboard/stores/new/__next.dashboard.stores.new.txt?_rsc=x2fj1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63342 - "GET /dashboard/stores/new/__next.dashboard.stores.txt?_rsc=w1loh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63340 - "GET /dashboard/stores/new/__next.dashboard.stores.new.__PAGE__.txt?_rsc=3x3d0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63330 - "GET /_next/static/chunks/4cbd958d754cf630.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63332 - "GET /_next/static/chunks/54e700e2f6315f0c.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /dashboard/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63222 - "GET /dashboard/__next.dashboard.__PAGE__.txt?_rsc=wgtz3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63340 - "GET /__next.%21KGhvbWUp.txt?_rsc=hqtvw HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63332 - "GET /__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63341 - "GET /__next.%21KGhvbWUp.__PAGE__.txt?_rsc=1mdql HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63330 - "GET /_next/static/chunks/af5682dda9962fb0.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63342 - "GET /_next/static/chunks/8cadb965a70429eb.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63340 - "GET /_next/static/chunks/1facb14094118c1e.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63330 - "GET /_next/static/chunks/7e0d544622be7d7f.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63342 - "GET /_next/static/chunks/094538bd42ada775.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63341 - "GET /_next/static/chunks/bfaea35e66099690.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63341 - "GET /favicon.ico HTTP/1.1" 200 OK
+2026-04-09 14:34:38,714 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:34:38,714 INFO sqlalchemy.engine.Engine SELECT store.name AS store_name, store.category AS store_category, store.address AS store_address, store."placeUrl" AS "store_placeUrl", store.phone AS store_phone, store."shopImageUrl" AS "store_shopImageUrl", store."shopImageThumbUrl" AS "store_shopImageThumbUrl", store.keywords AS store_keywords, store.visitor_reviews AS store_visitor_reviews, store.blog_reviews AS store_blog_reviews, store.saves AS store_saves, store.rating AS store_rating, store.scrape_status AS store_scrape_status, store.id AS store_id, store."createdAt" AS "store_createdAt", store."updatedAt" AS "store_updatedAt" 
+FROM store 
+WHERE store.id = ?
+2026-04-09 14:34:38,715 INFO sqlalchemy.engine.Engine [cached since 1413s ago] (16,)
+INFO:     127.0.0.1:63341 - "GET /v1/stores/16/ranking/realtime?keyword=%EB%8C%80%EC%A0%84%EC%9D%80%ED%96%89%EB%8F%99%EB%A7%9B%EC%A7%91&province=%EC%84%9C%EC%9A%B8 HTTP/1.1" 200 OK
+2026-04-09 14:34:49,879 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:63701 - "GET /dashboard/realtime HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63701 - "GET /_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63702 - "GET /_next/static/chunks/4e20891f2fd03463.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63704 - "GET /_next/static/chunks/2ec1ae7e69ac880c.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63704 - "GET /_next/static/chunks/f1b4d49aa9e249c5.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63704 - "GET /_next/static/chunks/98230169874c5199.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63702 - "GET /_next/static/chunks/aee6c7720838f8a2.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63706 - "GET /_next/static/chunks/f091501564eb2ea3.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63709 - "GET /_next/static/chunks/turbopack-7ec51861f0ae4254.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63710 - "GET /_next/static/chunks/07ffb030848139fa.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63701 - "GET /_next/static/chunks/de39dadec386ee96.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63704 - "GET /_next/static/chunks/7ee9cb78782f6441.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63709 - "GET /_next/static/chunks/ff1a16fafef87110.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63701 - "GET /_next/static/chunks/90c41c7c7f3a86c5.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63710 - "GET /_next/static/chunks/015fbc3f42eba775.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63706 - "GET /_next/static/chunks/a2dfb6fc5208ab9b.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63702 - "GET /_next/static/chunks/3704bf596703f3e9.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63704 - "GET /_next/static/chunks/8d9ce281e2699520.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63709 - "GET /_next/static/chunks/814c781725ebe977.js HTTP/1.1" 200 OK
+2026-04-09 14:35:55,079 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:35:55,084 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store."shopImageThumbUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-09 14:35:55,084 INFO sqlalchemy.engine.Engine [cached since 1497s ago] ()
+INFO:     127.0.0.1:63702 - "HEAD /dashboard/report HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63706 - "HEAD /dashboard/keywords HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63709 - "HEAD /dashboard/realtime HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63710 - "HEAD /dashboard/ranking HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63704 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-09 14:35:55,093 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:63702 - "GET /dashboard/report/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63709 - "GET /dashboard/keywords/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63710 - "GET /dashboard/realtime/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63706 - "GET /dashboard/ranking/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+2026-04-09 14:35:55,104 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:35:55,105 INFO sqlalchemy.engine.Engine SELECT tracked_keyword.id, tracked_keyword.store_id, tracked_keyword.keyword, tracked_keyword.province, tracked_keyword."businessSector", tracked_keyword.created_at 
+FROM tracked_keyword 
+WHERE tracked_keyword.store_id = ? ORDER BY tracked_keyword.created_at DESC
+2026-04-09 14:35:55,105 INFO sqlalchemy.engine.Engine [cached since 1497s ago] (16,)
+INFO:     127.0.0.1:63702 - "HEAD /dashboard HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63704 - "GET /dashboard/realtime/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63709 - "HEAD / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63706 - "HEAD /dashboard/stores/new HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63701 - "GET /dashboard/realtime/__next._index.txt?_rsc=yp3be HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63710 - "GET /v1/stores/16/ranking/track/info HTTP/1.1" 200 OK
+2026-04-09 14:35:55,108 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:63710 - "GET /__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63702 - "GET /dashboard/stores/new/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63706 - "GET /dashboard/__next._tree.txt?_rsc=15b0w HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63701 - "GET /dashboard/realtime/__next.dashboard.txt?_rsc=yuv3o HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63710 - "GET /dashboard/realtime/__next.dashboard.realtime.txt?_rsc=ma1iw HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63702 - "GET /dashboard/realtime/__next.dashboard.realtime.__PAGE__.txt?_rsc=16n6k HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63706 - "GET /dashboard/report/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63701 - "GET /dashboard/report/__next.dashboard.report.txt?_rsc=i89v7 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63706 - "GET /dashboard/keywords/__next.dashboard.keywords.txt?_rsc=1yzfe HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63710 - "GET /dashboard/report/__next.dashboard.report.__PAGE__.txt?_rsc=154xf HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63701 - "GET /dashboard/keywords/__next.dashboard.keywords.__PAGE__.txt?_rsc=1cec3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63702 - "GET /dashboard/keywords/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63710 - "GET /dashboard/ranking/__next.dashboard.ranking.__PAGE__.txt?_rsc=1kslj HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63706 - "GET /dashboard/stores/new/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63704 - "GET /dashboard/ranking/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63709 - "GET /dashboard/ranking/__next.dashboard.ranking.txt?_rsc=1r4h2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63702 - "GET /_next/static/chunks/4cbd958d754cf630.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63701 - "GET /_next/static/chunks/05588ea2cb26cd88.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63702 - "GET /dashboard/stores/new/__next.dashboard.stores.txt?_rsc=w1loh HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63706 - "GET /dashboard/stores/new/__next.dashboard.stores.new.txt?_rsc=x2fj1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63704 - "GET /dashboard/__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63709 - "GET /dashboard/stores/new/__next.dashboard.stores.new.__PAGE__.txt?_rsc=3x3d0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63701 - "GET /_next/static/chunks/54e700e2f6315f0c.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63702 - "GET /__next._head.txt?_rsc=17vq9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63710 - "GET /__next.%21KGhvbWUp.__PAGE__.txt?_rsc=1mdql HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63706 - "GET /dashboard/__next.dashboard.__PAGE__.txt?_rsc=wgtz3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63704 - "GET /__next.%21KGhvbWUp.txt?_rsc=hqtvw HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63701 - "GET /_next/static/chunks/8cadb965a70429eb.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63709 - "GET /_next/static/chunks/af5682dda9962fb0.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63704 - "GET /_next/static/chunks/1facb14094118c1e.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63706 - "GET /_next/static/chunks/094538bd42ada775.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63702 - "GET /_next/static/chunks/7e0d544622be7d7f.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63710 - "GET /_next/static/chunks/bfaea35e66099690.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63710 - "GET /favicon.ico HTTP/1.1" 200 OK
+2026-04-09 14:36:00,493 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-09 14:36:00,494 INFO sqlalchemy.engine.Engine SELECT store.name AS store_name, store.category AS store_category, store.address AS store_address, store."placeUrl" AS "store_placeUrl", store.phone AS store_phone, store."shopImageUrl" AS "store_shopImageUrl", store."shopImageThumbUrl" AS "store_shopImageThumbUrl", store.keywords AS store_keywords, store.visitor_reviews AS store_visitor_reviews, store.blog_reviews AS store_blog_reviews, store.saves AS store_saves, store.rating AS store_rating, store.scrape_status AS store_scrape_status, store.id AS store_id, store."createdAt" AS "store_createdAt", store."updatedAt" AS "store_updatedAt" 
+FROM store 
+WHERE store.id = ?
+2026-04-09 14:36:00,494 INFO sqlalchemy.engine.Engine [cached since 1495s ago] (16,)
+INFO:     Shutting down
+INFO:     Waiting for connections to close. (CTRL+C to force quit)
+[랭킹 재시도] '대전은행동맛집' 첫 시도 빈 결과 → 1회 자동 재시도
+[16] 랭킹 조회 에러: 검색 결과를 가져오지 못했습니다. 잠시 후 다시 시도해주세요. (네이버 일시적 응답 없음)
+2026-04-09 14:36:23,511 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:63737 - "GET /v1/stores/16/ranking/realtime?keyword=%EB%8C%80%EC%A0%84%EC%9D%80%ED%96%89%EB%8F%99%EB%A7%9B%EC%A7%91&province=%EC%84%9C%EC%9A%B8 HTTP/1.1" 500 Internal Server Error
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [69450]

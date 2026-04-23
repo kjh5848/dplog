@@ -338,44 +338,17 @@ async def auto_diagnose(req: DeepScrapeRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 # --------------- NEXT.JS UI MOUNT ---------------
-from fastapi.responses import FileResponse
-from fastapi import HTTPException
-import os
+from fastapi.templating import Jinja2Templates
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
-@app.get("/{full_path:path}")
-async def serve_nextjs_ui(request: Request, full_path: str):
-    """
-    Next.js 정적 빌드 파일(out 폴더)을 서빙하는 Catch-all 라우터.
-    API 요청이 아닌 모든 경로를 처리합니다.
-    """
-    if full_path.startswith("api/") or full_path.startswith("v1/"):
-        raise HTTPException(status_code=404, detail="API route not found")
+app.mount("/static", StaticFiles(directory=TEMPLATES_DIR), name="static")
 
-    file_path = os.path.join(UI_DIR, full_path)
-    
-    # 1. 파일이 정확히 존재하면 응답 (예: _next/static/css/... JS/CSS/이미지 등)
-    if os.path.isfile(file_path):
-        return FileResponse(file_path)
-    
-    # 2. Next.js export 는 /dashboard 에 대해 dashboard.html 을 생성함
-    html_path = file_path + ".html"
-    if full_path and os.path.isfile(html_path):
-        return FileResponse(html_path)
-        
-    # 3. / 로 끝나는 경우 index.html
-    index_path = os.path.join(file_path, "index.html")
-    if os.path.isfile(index_path):
-        return FileResponse(index_path)
-    
-    # 4. 전부 없으면 404를 위한 루트 index.html 처리 (SPA Fallback, Next.js 구조상 필수 아님)
-    # Next.js export 에서는 루트 index.html 이 CSR 을 관장하지 않으나, 최후의 보루로 남김
-    root_index = os.path.join(UI_DIR, "index.html")
-    if os.path.isfile(root_index):
-        return FileResponse(root_index)
-        
-    raise HTTPException(status_code=404, detail="Not Found")
+@app.get("/", response_class=HTMLResponse)
+async def serve_ui(request: Request):
+    return templates.TemplateResponse(request=request, name="index.html")
 
 if __name__ == "__main__":
     import uvicorn
     # 터미널에서 python preview_server.py 로도 구동할 수 있게 지원
-    uvicorn.run("preview_server:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("preview_server:app", host="0.0.0.0", port=8001, reload=True)

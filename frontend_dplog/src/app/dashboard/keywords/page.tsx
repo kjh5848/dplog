@@ -14,11 +14,12 @@ import {
   Users,
   Tag,
   MapPin,
+  RefreshCw,
 } from 'lucide-react';
 import Link from 'next/link';
 
 // ───────────────────────────────────────────
-// 시드 키워드 자동 조합 엔진 (~20개 생성)
+// 시드 키워드 자동 조합 엔진 (랜덤 추천 풀 생성)
 // ───────────────────────────────────────────
 function generatePresets(store: Store): string[] {
   // ① 공식 대표 키워드 (DB keywords 컬럼 — 가장 높은 우선순위)
@@ -33,10 +34,15 @@ function generatePresets(store: Store): string[] {
   const gu   = addrTokens.find(t => t.endsWith('구') || t.endsWith('군')) || '';
   const dong = addrTokens.find(t => t.endsWith('동') || t.endsWith('읍') || t.endsWith('면')) || '';
 
-  // ③ 카테고리 — 가장 하위 카테고리만 추출
+  // ③ 카테고리 — 가장 하위 카테고리만 추출 및 블랙리스트 정제
   const rawCategory = store.category || '';
-  const category = rawCategory.split('>').pop()?.trim() ||
+  let category = rawCategory.split('>').pop()?.trim() ||
                    rawCategory.split(',')[0]?.trim() || rawCategory;
+                   
+  const blacklist = ['기타', '배달', '포장', '종합소매업', '소매업', '도매업', '전문대행', '일반음식점', '생활용품', '잡화'];
+  if (blacklist.some(b => category.includes(b))) {
+    category = '맛집'; // 무의미한 업종일 경우 범용 키워드로 강제 대체
+  }
 
   // ④ 지역 + 업종 조합 패턴 생성
   const combos: string[] = [];
@@ -46,26 +52,43 @@ function generatePresets(store: Store): string[] {
     if (si && gu) combos.push(`${si} ${gu} ${category}`);
     if (si)   combos.push(`${si} ${category}`);
 
-    combos.push(`${category} 맛집`);
-    combos.push(`${category} 추천`);
-    combos.push(`${category} 맛집 추천`);
+    // 다양한 사용자 의도 (Intents)
+    const intents = [
+      '맛집', '추천', '맛집 추천', '핫플', '가볼만한곳', 
+      '데이트', '데이트 코스', '모임', '회식장소', '점심', '점심추천', 
+      '가성비', '가성비 좋은', '분위기 좋은', '예쁜', 
+      '주차가능', '부모님 모시고', '룸식당', '프라이빗',
+      '혼밥', '숨은맛집', '웨이팅'
+    ];
+
+    intents.forEach(intent => {
+      // 카테고리 단독 조합
+      combos.push(`${category} ${intent}`);
+      if (intent.length > 2) combos.push(`${intent} ${category}`);
+
+      // 구 조합
+      if (gu) {
+        combos.push(`${gu} ${category} ${intent}`);
+        combos.push(`${gu} ${intent}`);
+        combos.push(`${gu} 핫플 ${category}`);
+      }
+      
+      // 동 조합
+      if (dong) {
+        combos.push(`${dong} ${category} ${intent}`);
+        combos.push(`${dong} ${intent}`);
+        combos.push(`${dong} 근처 ${category}`);
+        combos.push(`${dong} 근처 ${intent}`);
+      }
+      
+      // 시 단위 조합 (너무 넓을 수 있으므로 일부만)
+      if (si && (intent === '맛집' || intent === '가볼만한곳' || intent === '데이트')) {
+        combos.push(`${si} ${category} ${intent}`);
+      }
+    });
+
     combos.push(`${category} 잘하는 곳`);
     combos.push(`${category} 유명한 곳`);
-
-    if (gu) {
-      combos.push(`${gu} ${category} 맛집`);
-      combos.push(`${gu} ${category} 추천`);
-      combos.push(`${gu} 맛집`);
-    }
-    if (dong) {
-      combos.push(`${dong} ${category} 맛집`);
-      combos.push(`${dong} 맛집`);
-      combos.push(`${dong} 근처 ${category}`);
-    }
-    if (si) {
-      combos.push(`${si} ${category} 맛집`);
-      combos.push(`${si} ${category} 추천`);
-    }
 
     combos.push(category);
   }
@@ -82,7 +105,7 @@ function generatePresets(store: Store): string[] {
     }
   }
 
-  return result.slice(0, 22);
+  return result;
 }
 
 
@@ -119,16 +142,97 @@ function MetaStat({
 export default function GoldenKeywordsPage() {
   const [store, setStore]               = useState<Store | null>(null);
   const [isLoading, setIsLoading]       = useState(true);
-  const [presetKeyword, setPresetKeyword] = useState<string>('');
+  const [presetKeywords, setPresetKeywords] = useState<string[]>([]);
+
+  const [allPresets, setAllPresets] = useState<string[]>([]);
+  const [displayedPresets, setDisplayedPresets] = useState<string[]>([]);
+  const [keywordVols, setKeywordVols] = useState<Record<string, number>>({});
+  const [isFetchingVols, setIsFetchingVols] = useState(false);
+
+  const refreshPresets = async (source = allPresets, currentStore = store) => {
+    if (!source || source.length === 0 || !currentStore) return;
+    
+    // 현재 화면에 떠있는 키워드를 제외한 새로운 풀(Pool) 생성
+    let availablePool = source.filter(k => !displayedPresets.includes(k));
+    
+    // 만약 뽑을 키워드가 10개 미만으로 남았다면, 풀을 다시 전체로 초기화 (무한 루프 방지)
+    if (availablePool.length < 10) {
+      availablePool = [...source];
+    }
+    
+    // 남은 풀에서 랜덤으로 셔플 후 10개 추출
+    const shuffled = [...availablePool].sort(() => 0.5 - Math.random());
+    const selected = shuffled.slice(0, 10);
+    setDisplayedPresets(selected);
+
+    setIsFetchingVols(true);
+    try {
+      const missingKeys: string[] = [];
+      const newVols = { ...keywordVols };
+      const now = Date.now();
+      const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+
+      selected.forEach(kw => {
+        const cached = localStorage.getItem(`dplog_vol_${kw}`);
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            if (now - parsed.ts < THIRTY_DAYS) {
+              newVols[kw] = parsed.vol;
+              return;
+            }
+          } catch(e) {}
+        }
+        missingKeys.push(kw);
+      });
+
+      if (missingKeys.length > 0) {
+        // API 요청 (상대경로로 백엔드 프록시가 잡혀있으므로 /v1 사용)
+        const res = await fetch(`/v1/stores/${currentStore.id}/keywords/stats`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ keywords: missingKeys })
+        });
+        
+        if (res.ok) {
+          const stats = await res.json();
+          stats.forEach((item: any) => {
+            const vol = item.total_vol;
+            newVols[item.keyword] = vol;
+            localStorage.setItem(`dplog_vol_${item.keyword}`, JSON.stringify({ ts: now, vol }));
+          });
+        }
+      }
+      setKeywordVols(newVols);
+    } catch (e) {
+      console.error('검색량 캐싱 및 가져오기 에러:', e);
+    } finally {
+      setIsFetchingVols(false);
+    }
+  };
 
   useEffect(() => {
     storeApi.getMyStores()
       .then(list => {
-        if (list.length > 0) setStore(list[0]);
+        if (list.length > 0) {
+          const s = list[0];
+          setStore(s);
+          const generated = generatePresets(s);
+          setAllPresets(generated);
+          // 비동기로 호출
+          refreshPresets(generated, s);
+        }
       })
       .catch(console.error)
       .finally(() => setIsLoading(false));
   }, []);
+
+  /** 프리셋 키워드 토글 선택 (단일 선택으로 제한) */
+  const togglePreset = (kw: string) => {
+    setPresetKeywords(prev =>
+      prev.includes(kw) ? [] : [kw]
+    );
+  };
 
   // ── 로딩 ──
   if (isLoading) {
@@ -163,7 +267,7 @@ export default function GoldenKeywordsPage() {
     );
   }
 
-  const presets = store ? generatePresets(store) : [];
+  // const presets = store ? generatePresets(store) : [];
 
   return (
     <div className="space-y-6 w-full">
@@ -249,21 +353,79 @@ export default function GoldenKeywordsPage() {
             )}
 
 
-            {/* ── 추천 시드 키워드 프리셋 ── */}
+            {/* ── 추천 시드 키워드 프리셋 (단일 선택) ── */}
             <div>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
-                추천 시드 키워드 — 클릭하면 입력창에 자동 입력됩니다
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {presets.map((preset, i) => (
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    추천 자동완성 키워드 (단일 선택)
+                  </h3>
                   <button
-                    key={i}
-                    onClick={() => setPresetKeyword(preset)}
-                    className="group relative px-3.5 py-1.5 bg-white dark:bg-black border border-slate-200 dark:border-zinc-800 hover:border-orange-500 dark:hover:border-orange-500 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 transition-all duration-200 hover:shadow-[0_0_14px_rgba(249,115,22,0.18)] hover:text-orange-600 dark:hover:text-orange-400"
+                    onClick={() => refreshPresets()}
+                    className="p-1 hover:bg-slate-100 dark:hover:bg-white/5 rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+                    title="다른 키워드 추천받기"
                   >
-                    {preset}
+                    <RefreshCw className="size-3.5" />
                   </button>
-                ))}
+                </div>
+                <div className="flex gap-2">
+                  {presetKeywords.length > 0 && (
+                    <button
+                      onClick={() => setPresetKeywords([])}
+                      className="text-xs text-slate-400 hover:text-red-500 transition-colors px-2 py-1 rounded-lg hover:bg-red-50"
+                    >
+                      선택 해제
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      const allSelected = displayedPresets.every(p => presetKeywords.includes(p));
+                      if (allSelected) {
+                        setPresetKeywords(prev => prev.filter(p => !displayedPresets.includes(p)));
+                      } else {
+                        const newPresets = new Set([...presetKeywords, ...displayedPresets]);
+                        setPresetKeywords(Array.from(newPresets));
+                      }
+                    }}
+                    className="text-xs text-slate-400 hover:text-orange-500 transition-colors px-2 py-1 rounded-lg hover:bg-orange-50"
+                  >
+                    {displayedPresets.every(p => presetKeywords.includes(p)) ? '화면 해제' : '화면 전체 선택'}
+                  </button>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {displayedPresets.map((preset, i) => {
+                  const isSelected = presetKeywords.includes(preset);
+                  const vol = keywordVols[preset];
+                  const isLoadingVol = isFetchingVols && vol === undefined;
+                  const volDisplay = vol !== undefined 
+                    ? (vol >= 10000 ? `${(vol/10000).toFixed(1).replace('.0','')}만` : vol.toLocaleString())
+                    : null;
+
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => togglePreset(preset)}
+                      className={`group relative flex items-center gap-1.5 px-3.5 py-1.5 border rounded-xl text-sm font-medium transition-all duration-200 ${
+                        isSelected
+                          ? 'bg-orange-500 text-white border-orange-500 shadow-md shadow-orange-200/50'
+                          : 'bg-white dark:bg-black border-slate-200 dark:border-zinc-800 hover:border-orange-500 dark:hover:border-orange-500 text-slate-700 dark:text-slate-300 hover:shadow-[0_0_14px_rgba(249,115,22,0.18)] hover:text-orange-600 dark:hover:text-orange-400'
+                      }`}
+                    >
+                      {isSelected && <span>✓</span>}
+                      <span>{preset}</span>
+                      
+                      {/* 검색량 뱃지 -> (검색량) 포맷으로 변경 */}
+                      {isLoadingVol ? (
+                        <Loader2 className={`w-3 h-3 animate-spin ${isSelected ? 'text-white' : 'text-orange-400'}`} />
+                      ) : volDisplay ? (
+                        <span className={`text-[11px] font-bold ${isSelected ? 'text-white/80' : 'text-orange-500'}`}>
+                          ({volDisplay})
+                        </span>
+                      ) : null}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </>
@@ -275,7 +437,7 @@ export default function GoldenKeywordsPage() {
         <GoldenKeywords
           storeId={store.id}
           storeName={store.name}
-          presetKeyword={presetKeyword}
+          presetKeywords={presetKeywords}
         />
       )}
     </div>

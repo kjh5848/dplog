@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Loader2, Store as StoreIcon } from 'lucide-react';
-import { RankingDashboard } from '@/features/ranking';
+import { RankingDashboard } from '@/widgets/ranking';
 import * as storeApi from '@/entities/store/api/storeApi';
 import type { Store as StoreType } from '@/entities/store/model/types';
 

@@ -5,8 +5,15 @@ import { DashboardStoreProfile } from './components/DashboardStoreProfile';
 import { DashboardBriefing } from './components/DashboardBriefing';
 import { DashboardActionTasks } from './components/DashboardActionTasks';
 import { DashboardCurationReport } from './components/DashboardCurationReport';
+import { LocalPortalHub } from './components/LocalPortalHub';
 
 export default function DashboardClient() {
+  const isLocalMode = process.env.NEXT_PUBLIC_APP_MODE === 'local';
+
+  if (isLocalMode) {
+    return <LocalPortalHub />;
+  }
+
   const data = {
     shopName: "커리플라",
     shopAddress: "부산 연제구 연제로 21 연제힐스테이트 상가 1동 102호",

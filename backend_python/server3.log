@@ -1,0 +1,20 @@
+INFO:     Started server process [53144]
+INFO:     Waiting for application startup.
+2026-04-07 18:09:55,278 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-07 18:09:55,279 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("store_review_tag")
+2026-04-07 18:09:55,279 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-04-07 18:09:55,279 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("store_recent_review")
+2026-04-07 18:09:55,279 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-04-07 18:09:55,279 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("store")
+2026-04-07 18:09:55,279 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-04-07 18:09:55,279 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("keyword_task")
+2026-04-07 18:09:55,279 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-04-07 18:09:55,280 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8003 (Press CTRL+C to quit)
+2026-04-07 18:09:56,807 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-04-07 18:09:56,811 INFO sqlalchemy.engine.Engine SELECT store.name, store.category, store.address, store."placeUrl", store.phone, store."shopImageUrl", store.keywords, store.visitor_reviews, store.blog_reviews, store.saves, store.rating, store.scrape_status, store.id, store."createdAt", store."updatedAt" 
+FROM store ORDER BY store."createdAt" DESC
+2026-04-07 18:09:56,811 INFO sqlalchemy.engine.Engine [generated in 0.00013s] ()
+INFO:     127.0.0.1:50966 - "GET /v1/stores/me HTTP/1.1" 200 OK
+2026-04-07 18:09:56,813 INFO sqlalchemy.engine.Engine ROLLBACK

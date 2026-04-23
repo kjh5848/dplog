@@ -18,6 +18,16 @@ export interface StoreRecentReview {
   snippet: string;
 }
 
+export interface StoreMenu {
+  id: number;
+  name: string;
+  price: string;
+  description?: string;
+  imgUrl?: string;
+  /** 대표메뉴 여부 */
+  is_representative?: boolean;
+}
+
 /** 가게 정보 */
 export interface Store {
   /** 가게 고유 ID */
@@ -56,6 +66,8 @@ export interface Store {
   review_tags?: StoreReviewTag[];
   /** 최근 텍스트 리뷰 말풍선 목록 */
   recent_reviews?: StoreRecentReview[];
+  /** 메뉴 목록 (딥스크래핑 수집) */
+  menus?: StoreMenu[];
   /** 추출된 다중 이미지 URL 목록 */
   images?: string[];
 }

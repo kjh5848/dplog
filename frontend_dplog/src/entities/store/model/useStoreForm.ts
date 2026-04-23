@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import type { StoreCreateRequest, StoreUpdateRequest, Store } from './types';
+import type { StoreCreateRequest, Store } from './types';
 import * as storeApi from '../api/storeApi';
 import { ApiError } from '@/shared/api';
 
@@ -69,22 +69,12 @@ export function useStoreForm(initialData?: Store) {
   const validate = useCallback((): boolean => {
     const newErrors: FormErrors = {};
 
-    const isEditMode = !!initialData;
-
-    if (!isEditMode) {
-      // 신규 등록: URL 필수
-      if (!form.placeUrl.trim()) {
-        newErrors.placeUrl = '네이버 플레이스 URL을 입력해주세요.';
-      } else if (form.placeUrl.length > 500) {
-        newErrors.placeUrl = '플레이스 URL은 500자 이내여야 합니다.';
-      } else if (!form.placeUrl.includes('place.naver.com') && !form.placeUrl.includes('naver.me')) {
-        newErrors.placeUrl = '올바른 네이버 플레이스 URL(place.naver.com 또는 naver.me)을 입력해주세요.';
-      }
-    } else {
-      // 수정 모드: 기존 항목들 필수 (Next.js 로직 호환성 유지)
-      if (!form.name.trim()) newErrors.name = '가게명은 필수입니다.';
-      if (!form.category.trim()) newErrors.category = '카테고리를 선택해주세요.';
-      if (!form.address.trim()) newErrors.address = '주소는 필수입니다.';
+    if (!form.placeUrl.trim()) {
+      newErrors.placeUrl = '네이버 플레이스 URL을 입력해주세요.';
+    } else if (form.placeUrl.length > 500) {
+      newErrors.placeUrl = '플레이스 URL은 500자 이내여야 합니다.';
+    } else if (!form.placeUrl.includes('place.naver.com') && !form.placeUrl.includes('naver.me')) {
+      newErrors.placeUrl = '올바른 네이버 플레이스 URL(place.naver.com 또는 naver.me)을 입력해주세요.';
     }
 
     if (form.phone && form.phone.length > 20) {
@@ -135,50 +125,6 @@ export function useStoreForm(initialData?: Store) {
     }
   }, [form, validate]);
 
-  /** 가게 수정 */
-  const submitUpdate = useCallback(
-    async (storeId: number): Promise<Store | null> => {
-      if (!validate()) return null;
-      setIsLoading(true);
-      setApiError(null);
-
-      try {
-        const request: StoreUpdateRequest = {
-          name: form.name.trim(),
-          category: form.category.trim(),
-          address: form.address.trim(),
-          placeUrl: form.placeUrl.trim() || undefined,
-          phone: form.phone.trim() || undefined,
-        };
-        const store = await storeApi.updateStore(storeId, request);
-        return store;
-      } catch (error) {
-        if (error instanceof ApiError) {
-          if (error.details) {
-            const fieldErrors: FormErrors = {};
-            for (const [field, message] of Object.entries(error.details)) {
-              if (field in form) {
-                fieldErrors[field as keyof FormErrors] = message;
-              }
-            }
-            setErrors(fieldErrors);
-          }
-          setApiError(error.message);
-        } else {
-          setApiError(
-            error instanceof Error
-              ? error.message
-              : '가게 수정에 실패했습니다.',
-          );
-        }
-        return null;
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [form, validate],
-  );
-
   /** 폼 초기화 */
   const resetForm = useCallback(() => {
     setForm(INITIAL_FORM_STATE);
@@ -194,7 +140,6 @@ export function useStoreForm(initialData?: Store) {
     updateField,
     validate,
     submitCreate,
-    submitUpdate,
     resetForm,
   };
 }

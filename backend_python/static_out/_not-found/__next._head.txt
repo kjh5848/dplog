@@ -1,0 +1,5 @@
+1:"$Sreact.fragment"
+2:I[90484,[],"ViewportBoundary"]
+3:I[90484,[],"MetadataBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"pYGaIOrqw_dQPIxD7UUSx","rsc":["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"D-PLOG | 데이터 자생력 기반 외식업 성장 솔루션"}],["$","meta","1",{"name":"description","content":"비싼 월 대행료 없이도 매출이 오르는 법, 사장님의 데이터 자생력에 있습니다."}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}

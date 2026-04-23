@@ -51,7 +51,7 @@ graph TD
     APP -->|"4. 구동 시 DB 로드"| DB
     APP -->|"5. 켤 때마다 버전 체크"| L
     L -->|"6. 최신 버전 응답"| APP
-    APP -.->|"7. 구버전 다운로드 유도"| L
+    APP -.->|"7. 새 버전 다운로드 유도"| L
 
     classDef cloud fill:#f9f0ff,stroke:#d0bdf4,stroke-width:2px;
     classDef client fill:#e6f7ff,stroke:#91d5ff,stroke-width:2px;

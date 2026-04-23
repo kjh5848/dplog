@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { cn } from '@/shared/lib/utils';
 import { 
   LayoutDashboard, 
@@ -20,6 +20,8 @@ import {
 import Link from 'next/link';
 import { useAuthStore } from '@/entities/auth/model/useAuthStore';
 import { usePathname, useRouter } from 'next/navigation';
+import { LicenseGuard } from '@/shared/components/LicenseGuard';
+import axios from 'axios';
 
 const SidebarItem = ({ icon: Icon, label, href, active, isCollapsed }: any) => (
   <Link 
@@ -45,8 +47,21 @@ export default function DashboardLayout({
 }) {
   const { isLoggedIn, user, logout } = useAuthStore();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [storeName, setStoreName] = useState<string>('');
   const pathname = usePathname();
   const router = useRouter();
+
+  // 가게 이름 로드
+  useEffect(() => {
+    axios.get('/v1/stores/me')
+      .then(res => {
+        const stores = res.data;
+        if (stores && stores.length > 0) {
+          setStoreName(stores[0].name);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -54,9 +69,10 @@ export default function DashboardLayout({
   };
 
   return (
-    <div className="flex h-screen w-full bg-white dark:bg-[#050505] text-slate-900 dark:text-white overflow-hidden">
-      {/* Sidebar */}
-      <aside className={cn(
+    <LicenseGuard>
+      <div className="flex h-screen w-full bg-white dark:bg-[#050505] text-slate-900 dark:text-white overflow-hidden">
+        {/* Sidebar */}
+        <aside className={cn(
         "shrink-0 border-r border-slate-200 dark:border-white/10 flex flex-col py-6 backdrop-blur-xl bg-white/50 dark:bg-black/20 z-30 transition-all duration-300",
         isCollapsed ? "w-20 px-3" : "w-64 px-6"
       )}>
@@ -110,17 +126,19 @@ export default function DashboardLayout({
         <div className="pt-6 border-t border-slate-200 dark:border-white/10 space-y-2 flex flex-col">
           <SidebarItem icon={Settings} label="설정" href="#" isCollapsed={isCollapsed} />
           <SidebarItem icon={HelpCircle} label="도움말" href="#" isCollapsed={isCollapsed} />
-          <button 
-            onClick={handleLogout}
-            className={cn(
-              "flex items-center gap-3 py-3 rounded-xl transition-all duration-300 w-full text-slate-500 hover:bg-red-50 dark:hover:bg-red-900/10 hover:text-red-600 mt-2",
-              isCollapsed ? "px-3 justify-center" : "px-4"
-            )}
-            title="로그아웃"
-          >
-            <LogOut className="size-5 shrink-0" />
-            {!isCollapsed && <span className="text-sm">로그아웃</span>}
-          </button>
+          {process.env.NEXT_PUBLIC_APP_MODE !== 'local' && (
+            <button 
+              onClick={handleLogout}
+              className={cn(
+                "flex items-center gap-3 py-3 rounded-xl transition-all duration-300 w-full text-slate-500 hover:bg-red-50 dark:hover:bg-red-900/10 hover:text-red-600 mt-2",
+                isCollapsed ? "px-3 justify-center" : "px-4"
+              )}
+              title="로그아웃"
+            >
+              <LogOut className="size-5 shrink-0" />
+              {!isCollapsed && <span className="text-sm">로그아웃</span>}
+            </button>
+          )}
         </div>
       </aside>
 
@@ -153,7 +171,7 @@ export default function DashboardLayout({
             </button>
             <div className="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-white/10">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold">{isLoggedIn ? user?.nickname : '게스트'}님</p>
+                <p className="text-sm font-bold">{storeName ? `${storeName} 대표님` : (user?.nickname || '사장') + '님'}</p>
                 <p className="text-xs text-slate-500">{isLoggedIn ? 'Standard Plan' : '체험 중'}</p>
               </div>
               <div className="size-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-500/20 cursor-pointer hover:scale-105 transition-transform">
@@ -168,6 +186,7 @@ export default function DashboardLayout({
           {children}
         </div>
       </main>
-    </div>
+      </div>
+    </LicenseGuard>
   );
 }

@@ -33,3 +33,16 @@
   1. `cd frontend_dplog && npm run build` 명령어를 싱행하여 프론트엔드 변경 사항을 `out/` 폴더로 다시 정적 빌드(컴파일)함.
   2. 빌드 직후 브라우저(`localhost:8000`)를 강력 새로고침하자 정상적으로 수정된 UI가 렌더링됨.
 - **교훈(Takeaway)**: Next.js 코드를 한 줄이라도 수정했다면 **무조건 `npm run build`를 돌려야만** 파이썬 백엔드가 변경 사항을 감지하여 브라우저에 쏠 수 있다. `npm run dev`를 띄우거나 Next.js 캐시 탓을 하지 말고 아키텍처 흐름(Next.js Build -> FastAPI Static Serve)을 가슴에 새길 것.
+
+---
+
+## [ISSUE-004] 데스크탑 앱 중복 실행 방지(Single Instance) 실패 및 창 겹침 현상
+- **발생일**: 2026-04-22
+- **증상**: 데스크탑 런처(테스트용 `test_desktop.sh` 등)를 여러 번 실행하면 기존에 띄워둔 D-PLOG 창이 닫히거나 포커스되지 않고, 똑같은 크롬 앱 창이 여러 개 중복해서 뜨는 현상이 발생함.
+- **근본 원인(Root Cause)**: 
+  1. 초기에는 `pkill`이나 `AppleScript`로 기존 크롬을 강제 종료하려 했으나, Mac/OS 권한 문제 및 유저의 '메인 인터넷 브라우저'까지 꺼버리는 위험성 때문에 폐기.
+  2. 프론트엔드(`layout.tsx`)에서 `BroadcastChannel`을 활용해 "새 창이 열리면 기존 창이 `window.close()`로 자폭"하도록 설계함. 그러나 최신 크롬(V8) 보안 정책상, JS 코드(`window.open`)로 연 창이 아니면 `window.close()` 명령이 백그라운드에서 완전히 무시(Block)됨.
+- **해결책(Resolution)**: 
+  - 백엔드 `main.py`의 브라우저 실행 옵션에 `--user-data-dir=~/.dplog/chrome_profile` 인자를 추가하여 D-PLOG 전용 독립 프로필을 부여.
+  - 이 옵션을 적용하면, 크롬은 내부적으로 해당 프로필에 대한 **네이티브 Single Instance(중복 실행 방지) 기능**을 자동 작동시킴. 즉, 같은 프로필의 앱을 두 번 실행해도 새 창이 뜨지 않고 **기존 창을 화면 맨 앞으로 포커스(Bring to front)** 해 줌.
+- **교훈(Takeaway)**: 웹앱(Chrome App Mode) 래핑 시 중복 실행(Mutex) 문제를 자바스크립트 우회나 프로세스 킬(`pkill`) 등 위험한 외부 방식으로 풀려 하지 말고, **크롬 자체의 격리 프로필 아키텍처가 제공하는 네이티브 OS 라우팅**에 온전히 맡길 것.

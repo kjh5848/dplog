@@ -127,8 +127,30 @@ export const useAuthStore = create<AuthState>()(
       initAuth: async () => {
         const { accessToken, refreshToken } = get();
 
-        // ── Dev Auto-Login: 개발 환경 자동 로그인 ──
-        // 개발 환경이고 토큰이 없으면 백엔드 Dev Login 엔드포인트로 자동 로그인
+        // ── 로컬 앱 모드 (Single-Tenant) 자동 승인 ──
+        const isLocalAppMode = process.env.NEXT_PUBLIC_APP_MODE === 'local';
+        if (isLocalAppMode) {
+          console.log('[Auth] 💻 Local App Mode: 가상의 Local Owner 세션을 즉시 주입합니다.');
+          setAuthCookie();
+          set({
+            isLoggedIn: true,
+            accessToken: 'dummy-local-access-token',
+            refreshToken: 'dummy-local-refresh-token',
+            user: {
+              id: 'local-1',
+              email: 'local@dplog.co.kr',
+              nickname: 'Local Owner',
+              name: '사장님',
+              provider: 'LOCAL',
+              providerId: 'local-1',
+              createdAt: new Date().toISOString(),
+            },
+            isInitialized: true,
+          });
+          return;
+        }
+
+        // ── Dev Auto-Login: 개발 환경 자동 로그인 (SaaS 모드 개발 시) ──
         const isDev = process.env.NODE_ENV === 'development';
 
         if (isDev && !accessToken && !refreshToken) {

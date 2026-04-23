@@ -47,6 +47,19 @@ class StoreRecentReview(SQLModel, table=True):
     
     store: Optional["Store"] = Relationship(back_populates="recent_reviews")
 
+class StoreMenu(SQLModel, table=True):
+    __tablename__ = "store_menu" # type: ignore
+    
+    id: Optional[int] = Field(default=None, primary_key=True)
+    store_id: int = Field(foreign_key="store.id", index=True)
+    name: str = Field(max_length=200) # 메뉴명
+    price: str = Field(default="", max_length=100) # 표시 가격 텍스트 (예: "15,000원")
+    description: Optional[str] = Field(default=None, max_length=1000) # 메뉴 설명
+    imgUrl: Optional[str] = Field(default=None, max_length=2000) # 메뉴 사진
+    is_representative: bool = Field(default=False) # 대표메뉴 여부
+    
+    store: Optional["Store"] = Relationship(back_populates="menus")
+
 # 2. 데이터베이스 테이블 (Table)
 class Store(StoreBase, table=True):
     __tablename__ = "store" # type: ignore
@@ -56,9 +69,10 @@ class Store(StoreBase, table=True):
     updatedAt: datetime = Field(default_factory=get_utc_now)
     
     # Relationships
-    review_tags: List[StoreReviewTag] = Relationship(back_populates="store", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
-    recent_reviews: List[StoreRecentReview] = Relationship(back_populates="store", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
-    tracked_keywords: List["TrackedKeyword"] = Relationship(back_populates="store", sa_relationship_kwargs={"cascade": "all, delete-orphan"})
+    review_tags: List[StoreReviewTag] = Relationship(back_populates="store", sa_relationship_kwargs={"cascade": "all, delete-orphan", "lazy": "selectin"})
+    recent_reviews: List[StoreRecentReview] = Relationship(back_populates="store", sa_relationship_kwargs={"cascade": "all, delete-orphan", "lazy": "selectin"})
+    menus: List[StoreMenu] = Relationship(back_populates="store", sa_relationship_kwargs={"cascade": "all, delete-orphan", "lazy": "selectin"})
+    tracked_keywords: List["TrackedKeyword"] = Relationship(back_populates="store", sa_relationship_kwargs={"cascade": "all, delete-orphan", "lazy": "selectin"})
 
 # 3. HTTP 요청(Request) DTO 스키마
 class StoreCreateRequest(StoreBase):
@@ -77,6 +91,7 @@ class StoreDetailResponse(StoreBase):
     updatedAt: datetime
     review_tags: List[StoreReviewTag] = []
     recent_reviews: List[StoreRecentReview] = []
+    menus: List[StoreMenu] = []
 
 class StorePublic(StoreBase):
     id: int
@@ -96,6 +111,14 @@ class KeywordTask(SQLModel, table=True):
     created_at: datetime = Field(default_factory=get_utc_now)
     completed_at: Optional[datetime] = None
     error_message: Optional[str] = None
+
+# 라이선스 폐기(Burn) 블랙리스트 관리
+class BlacklistedLicense(SQLModel, table=True):
+    __tablename__ = "blacklisted_license" # type: ignore
+    
+    id: Optional[int] = Field(default=None, primary_key=True)
+    license_id: str = Field(index=True, unique=True, max_length=100) # 폐기된 입장코드의 고유 ID
+    burned_at: datetime = Field(default_factory=get_utc_now) # 가게 폭파 시각
 
 # 5. 순위 추적 (Tracking) 관련 모델
 class TrackedKeyword(SQLModel, table=True):
@@ -145,3 +168,4 @@ class TrackInfoResponse(SQLModel):
 class ChartRequest(SQLModel):
     trackInfoIds: List[int]
     startDate: Optional[str] = None
+    interval: Optional[str] = "daily" # "daily" | "hourly"

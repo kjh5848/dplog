@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[86385,["5408","static/chunks/5408-7775222558bf189a.js","3804","static/chunks/app/dashboard/report/page-1728edc2fd907550.js"],"AiReportDashboard"]
+3:I[90484,[],"OutletBoundary"]
+4:"$Sreact.suspense"
+0:{"buildId":"pYGaIOrqw_dQPIxD7UUSx","rsc":["$","$1","c",{"children":[["$","div",null,{"className":"w-full h-full min-h-screen bg-transparent p-4 lg:p-8","children":["$","$L2",null,{}]}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+5:null

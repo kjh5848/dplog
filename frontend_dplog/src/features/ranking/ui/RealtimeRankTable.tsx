@@ -20,7 +20,7 @@ import {
   MousePointerClick,
   Lightbulb
 } from 'lucide-react';
-import type { RealtimeRank } from '../model/types';
+import type { RealtimeRank } from '@/entities/ranking/model/types';
 
 /**
  * 실시간 순위 테이블

@@ -177,7 +177,7 @@ async def generate_scored_keywords(base_keyword: str, target_store_name: str = N
     print(f"[스코어링 엔진] 2. {len(raw_keywords)}개의 키워드에 대해 광고 API 볼륨/클릭률 조회 시작")
     # raw_keywords 는 [{"keyword": "A", "parent": "B", "depth": 1}, ...] 형태의 객체 리스트
     kw_strings = [item["keyword"] for item in raw_keywords]
-    stats = get_keyword_stats(kw_strings)
+    stats = await get_keyword_stats(kw_strings)
     
     # 2.5. 모바일 노출 검사
     exposure_dict = {}
@@ -264,7 +264,10 @@ async def generate_scored_keywords(base_keyword: str, target_store_name: str = N
     
     for stat in expanded_stats:
         vol = stat.get('total_vol', 0)
-        # 하드코딩 매직 넘버 보정: 네이버 통합검색은 최소 조회수가 10임.
+        # 하드코딩 매직 넘버 보정: 네이버 통합검색은 최소 조회수가 10임. 검색량 100 미만은 무조건 폐기
+        if vol < 100:
+            continue
+            
         if vol >= 5000:
             high_temp.append(stat)
         elif 500 <= vol < 5000:

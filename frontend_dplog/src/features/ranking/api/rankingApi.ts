@@ -10,7 +10,7 @@ import type {
   TrackInfo,
   TrackChartResponse,
   TrackState,
-} from '../model/types';
+} from '@/entities/ranking/model/types';
 
 // ─── #1 실시간 순위 조회 ──────────────────────────────────────
 
@@ -58,10 +58,11 @@ export async function getTrackChart(
   storeId: number,
   trackInfoIds: number[],
   startDate: string | null = null,
+  interval: 'daily' | 'hourly' = 'daily',
 ): Promise<TrackChartResponse> {
   return post<TrackChartResponse>(
     `/v1/stores/${storeId}/ranking/track/chart`,
-    { trackInfoIds, startDate },
+    { trackInfoIds, startDate, interval },
   );
 }
 

@@ -31,9 +31,9 @@ def get_header(method, uri):
         'X-Signature': signature
     }
 
-def get_keyword_stats(keywords_list: list) -> list:
+async def get_keyword_stats(keywords_list: list) -> list:
     """
-    대량의 키워드를 5개씩 Chunk 단위로 잘라 네이버 검색광고 API를 병합 호출합니다.
+    대량의 키워드를 5개씩 Chunk 단위로 잘라 네이버 검색광고 API를 비동기 병합 호출합니다.
     """
     if not keywords_list:
         return []
@@ -49,18 +49,18 @@ def get_keyword_stats(keywords_list: list) -> list:
     chunk_size = 5
     chunks = [keywords_list[i:i + chunk_size] for i in range(0, len(keywords_list), chunk_size)]
     
-    with httpx.Client(timeout=10.0) as client:
+    async with httpx.AsyncClient(timeout=10.0) as client:
         for chunk in chunks:
             hint_keywords = ",".join([kw.replace(" ", "") for kw in chunk])
             params = {'hintKeywords': hint_keywords, 'showDetail': '1'}
             try:
-                res = client.get(url, headers=headers, params=params)
+                res = await client.get(url, headers=headers, params=params)
                 if res.status_code == 200:
                     data = res.json()
                     if 'keywordList' in data:
                         for item in data['keywordList']:
                             rel_kw = item.get('relKeyword', "")
-                            # 입력한 키워드 묶음(chunk) 중에 매칭되는 것만 담음 (네이버는 자기 맘대로 연관키워드를 더 뱉어내기도 함)
+                            # 입력한 키워드 묶음(chunk) 중에 매칭되는 것만 담음
                             matched = False
                             for ck in chunk:
                                 if ck.replace(" ","") == rel_kw.replace(" ",""):
@@ -98,11 +98,11 @@ def get_keyword_stats(keywords_list: list) -> list:
                                 "comp_level": item.get('compIdx', '보통'),
                                 "ads_count": item.get('plAvgDepth', 0)
                             })
-                time.sleep(0.1) # Throttling 방지
             except Exception as e:
                 print(f"[네이버 광고 API 에러] Chunk 조회 실패: {e}")
                 
     return all_results
 
 if __name__ == "__main__":
-    print(get_keyword_stats(["시청고기집", "미남스시"]))
+    import asyncio
+    print(asyncio.run(get_keyword_stats(["시청고기집", "미남스시"])))

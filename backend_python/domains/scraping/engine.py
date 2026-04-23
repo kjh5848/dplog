@@ -83,11 +83,11 @@ class ScrapingEngine:
         return place_id_clean, details
 
     @staticmethod
-    def fetch_keyword_ads_stats(keywords: list[str]):
+    async def fetch_keyword_ads_stats(keywords: list[str]):
         """
         네이버 검색광고 API를 통해 다수 키워드의 트래픽(월간 검색량 등) 조회
         """
-        return get_keyword_stats(keywords)
+        return await get_keyword_stats(keywords)
 
     @staticmethod
     async def discover_golden_keywords(base_keyword: str, target_store_name: str, target_lat: float, target_lon: float, target_placeUrl: str = None) -> dict:
