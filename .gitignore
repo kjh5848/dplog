@@ -59,3 +59,9 @@ build/
 out/
 dist/
 .env*
+
+# Native App Build Artifacts
+*.app
+*.app/
+*.build/
+*.dist/
