@@ -7,6 +7,7 @@ import pyperclip
 import platform
 from dotenv import load_dotenv
 from playwright.async_api import async_playwright
+from playwright_stealth import stealth
 
 # ──────────────────────────────────────────────
 # 환경 설정
@@ -22,6 +23,19 @@ NAVER_PW = os.getenv("NAVER_PW")
 # OS별 키보드 수식어 키 (Mac: Meta, Windows/Linux: Control)
 MODIFIER = "Meta" if platform.system() == "Darwin" else "Control"
 
+import random
+
+async def human_paste(page, text: str):
+    """사람이 타이핑하는 것처럼 텍스트를 끊어서 붙여넣는다 (한국어 IME 문제 방지)"""
+    idx = 0
+    while idx < len(text):
+        chunk_size = random.randint(4, 12)
+        chunk = text[idx:idx+chunk_size]
+        pyperclip.copy(chunk)
+        await page.keyboard.press(f"{MODIFIER}+v")
+        await asyncio.sleep(random.uniform(0.1, 0.35))
+        idx += chunk_size
+
 # ──────────────────────────────────────────────
 # 원고 파서 — blog_draft.md → 구조화된 세그먼트 리스트
 # ──────────────────────────────────────────────
@@ -36,6 +50,8 @@ def parse_draft(draft_path: str):
         - segments (list[dict]): 본문 세그먼트 리스트
           각 세그먼트 형태:
             {'type': 'text',  'content': '본문 텍스트'}
+            {'type': 'heading', 'level': 2, 'content': '소제목'}
+            {'type': 'quote', 'content': '인용문 텍스트'}
             {'type': 'image', 'alt': '설명', 'filename': '파일명.jpeg'}
             {'type': 'hr'}  (구분선)
             {'type': 'url',   'url': 'https://...', 'label': '텍스트'}
@@ -80,7 +96,36 @@ def parse_draft(draft_path: str):
             flush_text()
             segments.append({"type": "hr"})
             continue
+
+        heading_match = re.match(r'^(#{2,3})\s+(.+)$', stripped)
+        if heading_match:
+            flush_text()
+            segments.append({
+                "type": "heading",
+                "level": len(heading_match.group(1)),
+                "content": heading_match.group(2),
+            })
+            continue
+
+        quote_match = re.match(r'^>\s?(.*)$', stripped)
+        if quote_match:
+            flush_text()
+            segments.append({
+                "type": "quote",
+                "content": quote_match.group(1),
+            })
+            continue
         
+        # 지도 마크다운: ![map](장소명)
+        map_match = re.match(r'^!\[map\]\((.*?)\)$', stripped)
+        if map_match:
+            flush_text()
+            segments.append({
+                "type": "map",
+                "name": map_match.group(1),
+            })
+            continue
+
         # 이미지 마크다운: ![alt](<filename>) 또는 ![alt](filename)
         img_match = re.match(r'^!\[(.*?)\]\(<?(.*?)>?\)$', stripped)
         if img_match:
@@ -193,35 +238,148 @@ async def upload_image(page, editor_frame, image_path: str):
 # 서식 유틸리티 — 볼드, 인용문, 구분선
 # ──────────────────────────────────────────────
 
-async def type_line_with_bold(page, line: str):
-    """마크다운 **볼드** 구문이 포함된 한 줄을 서식 적용하며 입력한다.
+async def type_line_with_inline_styles(page, line: str):
+    """마크다운 **볼드**, __밑줄__ 구문이 포함된 한 줄을 서식 적용하며 입력한다.
     
-    예: "📍 **통문어 숯불닭발 철이네**" → 📍 는 일반, 통문어~철이네는 볼드
+    예: "쾌적한 **분위기**와 __가족외식__" → 각각 볼드/밑줄로 입력
     """
-    # **볼드** 패턴으로 분할
-    parts = re.split(r'(\*\*.*?\*\*)', line)
+    parts = re.split(r'(\*\*.*?\*\*|__.*?__)', line)
     
     for part in parts:
         if not part:
             continue
         
         if part.startswith("**") and part.endswith("**"):
-            # 볼드 ON → 텍스트 입력 → 볼드 OFF
             bold_text = part[2:-2]
             await page.keyboard.press(f"{MODIFIER}+b")
             await asyncio.sleep(0.15)
-            
             pyperclip.copy(bold_text)
             await page.keyboard.press(f"{MODIFIER}+v")
             await asyncio.sleep(0.4)
-            
-            await page.keyboard.press(f"{MODIFIER}+b")  # 볼드 해제
+            await page.keyboard.press(f"{MODIFIER}+b")
             await asyncio.sleep(0.15)
-        else:
-            # 일반 텍스트
-            pyperclip.copy(part)
+        elif part.startswith("__") and part.endswith("__"):
+            underline_text = part[2:-2]
+            await page.keyboard.press(f"{MODIFIER}+u")
+            await asyncio.sleep(0.15)
+            pyperclip.copy(underline_text)
             await page.keyboard.press(f"{MODIFIER}+v")
             await asyncio.sleep(0.4)
+            await page.keyboard.press(f"{MODIFIER}+u")
+            await asyncio.sleep(0.15)
+        else:
+            await human_paste(page, part)
+
+
+async def type_line_with_bold(page, line: str):
+    """기존 호출 호환용 래퍼."""
+    await type_line_with_inline_styles(page, line)
+
+
+async def select_current_line(page):
+    await page.keyboard.press("Home")
+    await page.keyboard.down("Shift")
+    await page.keyboard.press("End")
+    await page.keyboard.up("Shift")
+    await asyncio.sleep(0.2)
+
+
+async def apply_heading(page, editor_frame, level: str = "heading2"):
+    """현재 줄에 네이버 스마트에디터 제목/소제목 스타일을 적용한다."""
+    await select_current_line(page)
+    paragraph_btn_selectors = [
+        'button[data-name="paragraph"]',
+        '.se-toolbar-item-paragraph',
+        '.se-text-paragraph-button',
+    ]
+
+    opened = False
+    for sel in paragraph_btn_selectors:
+        try:
+            btn = editor_frame.locator(sel).first
+            if await btn.is_visible(timeout=2000):
+                await btn.click()
+                opened = True
+                print(f"✅ 문단 드롭다운 열림: {sel}")
+                break
+        except:
+            continue
+
+    if not opened:
+        print("⚠️ 문단 드롭다운을 찾지 못했습니다.")
+        return False
+
+    await asyncio.sleep(0.5)
+    heading_selectors = {
+        "heading2": ['[data-value="heading2"]', ':text("제목")', '.se-item-heading2'],
+        "heading3": ['[data-value="heading3"]', ':text("소제목")', '.se-item-heading3'],
+    }
+
+    for sel in heading_selectors.get(level, []):
+        try:
+            item = editor_frame.locator(sel).first
+            if await item.is_visible(timeout=2000):
+                await item.click()
+                print(f"✅ {level} 적용 완료")
+                await asyncio.sleep(0.4)
+                return True
+        except:
+            continue
+
+    print(f"⚠️ {level} 메뉴 항목을 찾지 못했습니다.")
+    await page.keyboard.press("Escape")
+    return False
+
+
+async def write_heading_segment(page, editor_frame, text: str, level: int):
+    await type_line_with_inline_styles(page, text)
+    heading_level = "heading2" if level == 2 else "heading3"
+    applied = await apply_heading(page, editor_frame, heading_level)
+    if not applied:
+        await page.keyboard.press(f"{MODIFIER}+b")
+        print(f"⚠️ {heading_level} 폴백: 굵은 문단으로 처리")
+    await page.keyboard.press("End")
+    await page.keyboard.press("Enter")
+    await asyncio.sleep(0.4)
+    return applied
+
+
+async def insert_quotation(page, editor_frame, text: str):
+    """툴바 인용구 컴포넌트로 인용문을 삽입하고, 실패하면 시각적 인용문으로 폴백한다."""
+    quote_btn_selectors = [
+        'button[data-name="quotation"]',
+        '.se-toolbar-item-quotation',
+        'button[title*="인용"]',
+    ]
+
+    quote_btn = None
+    for sel in quote_btn_selectors:
+        try:
+            btn = editor_frame.locator(sel).first
+            if await btn.is_visible(timeout=2000):
+                quote_btn = btn
+                print(f"✅ 인용구 버튼 발견: {sel}")
+                break
+        except:
+            continue
+
+    if quote_btn is None:
+        print("⚠️ 인용구 버튼을 찾지 못했습니다. 텍스트 인용문으로 폴백합니다.")
+        await type_line_with_inline_styles(page, f"❝ {text} ❞")
+        await page.keyboard.press("Enter")
+        await asyncio.sleep(0.4)
+        return False
+
+    await quote_btn.click()
+    await asyncio.sleep(1)
+    await type_line_with_inline_styles(page, text)
+    await asyncio.sleep(0.5)
+    await page.keyboard.press("ArrowDown")
+    await asyncio.sleep(0.3)
+    await page.keyboard.press("Enter")
+    await asyncio.sleep(0.3)
+    print(f"✅ 인용문 삽입 완료: {text[:30]}...")
+    return True
 
 
 async def insert_horizontal_line(page, editor_frame):
@@ -282,6 +440,69 @@ async def insert_horizontal_line(page, editor_frame):
     return True
 
 # ──────────────────────────────────────────────
+# 장소(지도) 자동 첨부
+# ──────────────────────────────────────────────
+
+async def insert_map(page, editor_frame, map_name: str):
+    """에디터에 장소(지도)를 자동 첨부한다."""
+    print(f"🗺️ 장소(지도) 첨부 시도: {map_name}")
+    # 1. 상단 툴바 '장소' 버튼 클릭
+    place_btn_selectors = [
+        'button[data-name="place"]',
+        '.se-toolbar-item-place',
+        '.se-place-toolbar-button',
+    ]
+    place_clicked = False
+    for sel in place_btn_selectors:
+        try:
+            btn = editor_frame.locator(sel).first
+            if await btn.is_visible(timeout=2000):
+                await btn.click()
+                place_clicked = True
+                break
+        except:
+            continue
+
+    if not place_clicked:
+        print("❌ 장소 버튼을 찾지 못했습니다.")
+        return False
+
+    await asyncio.sleep(1.5)
+
+    context_frame = page
+    try:
+        search_input = context_frame.locator("input[placeholder*='장소'], input.search_input, .se-place-search-input").first
+        if not await search_input.is_visible(timeout=3000):
+            context_frame = editor_frame
+            search_input = context_frame.locator("input[placeholder*='장소'], input.search_input, .se-place-search-input").first
+
+        await search_input.click()
+        await asyncio.sleep(0.5)
+
+        # 장소명 입력
+        pyperclip.copy(map_name)
+        await context_frame.keyboard.press(f"{MODIFIER}+v")
+        await asyncio.sleep(0.5)
+        await context_frame.keyboard.press("Enter")
+        await asyncio.sleep(2.0)
+
+        # 검색 결과 텍스트를 포함하는 추가 버튼 (보통 목록의 첫번째)
+        add_btn = context_frame.locator("button:has-text('추가'), .btn_add, .place_add_btn").first
+        await add_btn.click(timeout=3000)
+        await asyncio.sleep(0.5)
+
+        # 확인 버튼 클릭
+        confirm_btn = context_frame.locator("button:has-text('확인'), button:has-text('완료'), .btn_confirm").first
+        await confirm_btn.click(timeout=3000)
+        await asyncio.sleep(1)
+        print(f"✅ 장소 첨부 성공: {map_name}")
+        return True
+    except Exception as e:
+        print(f"❌ 장소 첨부 실패: {str(e)[:50]}")
+        await page.keyboard.press("Escape")
+        return False
+
+# ──────────────────────────────────────────────
 # 본문 입력 엔진 — 세그먼트별 분기 처리
 # ──────────────────────────────────────────────
 
@@ -304,9 +525,9 @@ async def write_body_segments(page, editor_frame, segments: list, asset_dir: str
                     await asyncio.sleep(0.2)
                     continue
                 
-                # **볼드** 구문 포함 여부 확인
-                if "**" in stripped:
-                    await type_line_with_bold(page, stripped)
+                # **볼드**, __밑줄__ 구문 포함 여부 확인
+                if "**" in stripped or "__" in stripped:
+                    await type_line_with_inline_styles(page, stripped)
                 else:
                     # URL이 섞인 텍스트 처리
                     url_match = re.search(r"(https?://\S+)", stripped)
@@ -323,14 +544,22 @@ async def write_body_segments(page, editor_frame, segments: list, asset_dir: str
                                     print(f"🔗 URL 임베딩 대기: {part[:40]}...")
                                     await asyncio.sleep(3.5)
                     else:
-                        pyperclip.copy(stripped)
-                        await page.keyboard.press(f"{MODIFIER}+v")
-                        await asyncio.sleep(0.8)
+                        await human_paste(page, stripped)
                 
                 await page.keyboard.press("Enter")
                 await asyncio.sleep(0.3)
             
             print(f"{progress} 📝 텍스트 입력 완료 ({len(seg['content'])}자)")
+
+        # ── 제목/소제목 세그먼트 ──
+        elif seg_type == "heading":
+            await write_heading_segment(page, editor_frame, seg["content"], seg["level"])
+            print(f"{progress} 🧭 제목 서식 입력 완료 (H{seg['level']})")
+
+        # ── 인용문 세그먼트 ──
+        elif seg_type == "quote":
+            await insert_quotation(page, editor_frame, seg["content"])
+            print(f"{progress} 💬 인용문 입력 완료")
         
         # ── 이미지 세그먼트 ──
         elif seg_type == "image":
@@ -347,6 +576,16 @@ async def write_body_segments(page, editor_frame, segments: list, asset_dir: str
             else:
                 print(f"{progress} ⚠️ [{seg['alt']}] 이미지 삽입 실패 — 건너뜀")
         
+        # ── 지도 세그먼트 ──
+        elif seg_type == "map":
+            success = await insert_map(page, editor_frame, seg["name"])
+            if success:
+                await page.keyboard.press("Escape")
+                await asyncio.sleep(0.3)
+                await page.keyboard.press("End")
+                await page.keyboard.press("Enter")
+                await asyncio.sleep(0.5)
+
         # ── 구분선 세그먼트 ──
         elif seg_type == "hr":
             await insert_horizontal_line(page, editor_frame)
@@ -427,6 +666,7 @@ async def open_naver_homepage(store_name: str = "철이네"):
             "Object.defineProperty(navigator, 'webdriver', {get: () => undefined});"
         )
         page = await context.new_page()
+        await stealth(page)
         
         # ── 3. 에디터 접근 및 로그인 ──
         print("🌐 네이버 블로그 에디터 접근을 시도합니다...")
