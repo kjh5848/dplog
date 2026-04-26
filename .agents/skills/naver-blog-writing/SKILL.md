@@ -17,7 +17,8 @@ Use this skill before creating or revising `blog_draft.md` for a Naver Blog post
 
 1. Inspect the store `media_index.md` and use only media whose role matches the paragraph.
 2. Write with Naver-friendly structure: `##` headings, `###` subheadings, `>` quotes, `**bold**`, and `__underline__`.
-3. Arrange image/GIF blocks by consecutive count:
+   - Do not use `---`/dashed separator lines for section breaks. Use a short `>` quote instead.
+3. Arrange image/GIF blocks by consecutive count. For live Naver publishing, keep intended media together as consecutive image/GIF lines so the publisher can pass the group to SmartEditor and let Naver's native image alignment handle placement:
    - 1 item: single image
    - 2 or 4 items: 2-column grid
    - 3 items: 3-column grid

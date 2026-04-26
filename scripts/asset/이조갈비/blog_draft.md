@@ -7,7 +7,7 @@
 
 ![외부 간판](/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts/asset/이조갈비/이미지/img_008.jpeg)
 
----
+> 첫인상은 과한 장식보다 깔끔한 동선과 대기 공간이 먼저 보였습니다.
 
 ## 대연동 이조갈비 첫인상
 
@@ -23,7 +23,7 @@
 ![야외 대기석 담요](/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts/asset/이조갈비/이미지/img_012.jpeg)
 ![골목에서 본 이조갈비](/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts/asset/이조갈비/이미지/img_042.jpeg)
 
----
+> 입구부터 대기석까지 정돈된 분위기라 가족과 함께 오기에도 부담이 적어 보였습니다.
 
 ## 내부와 주문 방식
 
@@ -32,7 +32,7 @@
 ![깔끔한 테이블](/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts/asset/이조갈비/이미지/img_006.jpeg)
 ![내부 전경](/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts/asset/이조갈비/이미지/img_041.jpeg)
 
----
+> 내부는 환기와 좌석 간격이 편했고, 태블릿 주문이라 흐름도 깔끔했습니다.
 
 ## 메뉴판과 기본 상차림
 
@@ -75,7 +75,7 @@
 
 ![기본 상차림 GIF](/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts/asset/이조갈비/GIF/vid_001.gif)
 
----
+> 기본 상차림은 반찬 수보다 조합이 좋았고, 고기 맛을 받쳐주는 구성이었습니다.
 
 ## 숯불 갈비와 서비스
 
@@ -88,7 +88,7 @@
 ![그릴 자국](/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts/asset/이조갈비/이미지/img_018.jpeg)
 ![노릇한 갈비 GIF](/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts/asset/이조갈비/GIF/vid_012.gif)
 
----
+> 고기는 직원분이 필요한 순간에 봐줘서 굽는 부담이 적고 식사 흐름이 편했습니다.
 
 ## 한입 조합과 냉면 마무리
 
@@ -107,14 +107,14 @@
 ![상추 갈비쌈](/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts/asset/이조갈비/이미지/img_022.jpeg)
 ![갈비 밥쌈](/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts/asset/이조갈비/이미지/img_024.jpeg)
 
----
+> 갈비는 쌈과 냉면까지 같이 먹을 때 만족도가 더 또렷했습니다.
 
 갈비의 영원한 단짝인 시원한 물냉면으로 입안을 깔끔하게 정리했습니다. 살얼음이 살짝 남아 있는 육수에 면을 풀어 먹으니 숯불갈비 뒤끝을 개운하게 잡아주어, 식사의 마무리로 아쉬움이 없는 조합이었습니다.
 
 ![물냉면](/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts/asset/이조갈비/이미지/img_013.jpeg)
 ![물냉면 GIF](/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts/asset/이조갈비/GIF/vid_013.gif)
 
----
+> 전체적으로 깔끔한 공간, 친절한 응대, 숯불갈비의 기본기가 균형 있게 맞았습니다.
 
 ## 이조갈비 방문 정리
 
@@ -124,7 +124,7 @@
 
 가족 식사나 조용한 모임 장소를 찾고 있다면 후보에 올려도 괜찮겠습니다. 근처에 가실 일이 있다면 꼭 한번 들러보시길 바랍니다.
 
-![map](이조갈비)
-
 ![카운터 결제](/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts/asset/이조갈비/이미지/img_043.jpeg)
 ![매장 나가는 길](/Users/nomadlab/Desktop/김주혁/workspace/eo-website/dplog/scripts/asset/이조갈비/이미지/img_009.jpeg)
+
+![map](이조갈비 부산 남구 수영로 185)
