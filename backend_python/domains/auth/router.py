@@ -3,6 +3,7 @@ from pydantic import BaseModel
 import jwt
 import hashlib
 import os
+import shutil
 from sqlmodel import select, delete
 from sqlmodel.ext.asyncio.session import AsyncSession
 from core.database import get_db
@@ -108,6 +109,9 @@ async def burn_license(req: LicenseBurnRequest, session: AsyncSession = Depends(
         res = await session.execute(stmt)
         stores = res.scalars().all()
         for store in stores:
+            image_dir = os.path.join(BASE_DIR, "static", "images", "stores", str(store.id))
+            if os.path.isdir(image_dir):
+                shutil.rmtree(image_dir)
             # KeywordTask 수동 삭제 (Relationship Cascade 없음)
             await session.execute(delete(KeywordTask).where(KeywordTask.store_id == store.id))
             # Store 삭제 (나머지 Cascade)

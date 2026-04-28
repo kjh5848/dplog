@@ -19,7 +19,7 @@ import { mockTrackInfoList, mockTrackState, mockRealtimeRanks, generateMockChart
 export function useRankingViewModel(storeId: number) {
   // ─── 검색 조건 상태 ─────────────────────────────────────────
   const [realtimeKeyword, setRealtimeKeyword] = useState('');
-  const [realtimeProvince, setRealtimeProvince] = useState('서울');
+  const [realtimeProvince, setRealtimeProvince] = useState('');
   const [realtimeLat, setRealtimeLat] = useState<number | undefined>();
   const [realtimeLon, setRealtimeLon] = useState<number | undefined>();
   const [cachedRealtimeData, setCachedRealtimeData] = useState<RealtimeRank[] | undefined>();
@@ -28,11 +28,9 @@ export function useRankingViewModel(storeId: number) {
   useEffect(() => {
     if (storeId > 0) {
       const savedKw = localStorage.getItem(`dplog_rt_kw_${storeId}`);
-      const savedProv = localStorage.getItem(`dplog_rt_prov_${storeId}`);
       const savedData = localStorage.getItem(`dplog_rt_data_${storeId}`);
       
       if (savedKw) setRealtimeKeyword(savedKw);
-      if (savedProv) setRealtimeProvince(savedProv);
       if (savedData) {
         try {
           setCachedRealtimeData(JSON.parse(savedData));
@@ -288,7 +286,11 @@ export function useRankingViewModel(storeId: number) {
       }
       if (province !== undefined) {
          setRealtimeProvince(province);
-         localStorage.setItem(`dplog_rt_prov_${storeId}`, province);
+         if (province.trim()) {
+            localStorage.setItem(`dplog_rt_prov_${storeId}`, province);
+         } else {
+            localStorage.removeItem(`dplog_rt_prov_${storeId}`);
+         }
       }
       if (lat !== undefined) setRealtimeLat(lat);
       if (lon !== undefined) setRealtimeLon(lon);

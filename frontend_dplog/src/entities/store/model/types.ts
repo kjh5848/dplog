@@ -42,6 +42,10 @@ export interface Store {
   placeUrl?: string;
   /** 전화번호 */
   phone?: string;
+  /** 가게 위도 */
+  latitude?: number;
+  /** 가게 경도 */
+  longitude?: number;
   /** 가게 이미지 URL (내순이 연동 시 자동 수집) */
   shopImageUrl?: string;
   /** 정규화/썸네일 적용된 로컬 이미지 캐시 URL */
@@ -84,6 +88,10 @@ export interface StoreCreateRequest {
   placeUrl?: string;
   /** 전화번호 (선택, 20자 이내) */
   phone?: string;
+  /** 가게 위도 */
+  latitude?: number;
+  /** 가게 경도 */
+  longitude?: number;
 }
 
 /** 가게 수정 요청 (부분 수정 지원 — null 필드는 기존 값 유지) */
@@ -98,6 +106,10 @@ export interface StoreUpdateRequest {
   placeUrl?: string;
   /** 전화번호 */
   phone?: string;
+  /** 가게 위도 */
+  latitude?: number;
+  /** 가게 경도 */
+  longitude?: number;
 }
 
 // ─── 키워드 관련 타입 ──────────────────────────────────────────

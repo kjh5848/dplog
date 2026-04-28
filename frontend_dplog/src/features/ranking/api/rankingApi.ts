@@ -21,12 +21,17 @@ import type {
 export async function getRealtime(
   storeId: number,
   keyword: string,
-  province: string = '서울',
+  province: string = '',
   lat?: number,
   lon?: number,
 ): Promise<RealtimeRank[]> {
+  const params: Record<string, string | number> = { keyword };
+  if (province.trim()) params.province = province;
+  if (lat !== undefined) params.lat = lat;
+  if (lon !== undefined) params.lon = lon;
+
   return get<RealtimeRank[]>(`/v1/stores/${storeId}/ranking/realtime`, {
-    params: { keyword, province, lat, lon },
+    params,
     timeout: 120000, // 최대 스크래핑 대기 시간 (2분) 허용
   });
 }

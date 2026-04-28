@@ -2,5 +2,5 @@
 2:"$Sreact.suspense"
 3:I[99286,["9304","static/chunks/9304-1f940d490ea5c972.js","9564","static/chunks/9564-581cfb94ad3948b7.js","8862","static/chunks/8862-2363de3796c5abda.js","9286","static/chunks/9286-9440c1530b2d1f26.js","8866","static/chunks/app/(auth)/kakao/callback/page-5249f2c62222fe6c.js"],"default"]
 4:I[90484,[],"OutletBoundary"]
-0:{"buildId":"pYGaIOrqw_dQPIxD7UUSx","rsc":["$","$1","c",{"children":[["$","$2",null,{"fallback":["$","div",null,{"className":"flex items-center justify-center min-h-screen","children":["$","div",null,{"className":"text-white","children":"인증 처리 중..."}]}],"children":["$","$L3",null,{}]}],null,["$","$L4",null,{"children":["$","$2",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
+0:{"buildId":"ZEW_GMLfWVTWXQJJP7ejZ","rsc":["$","$1","c",{"children":[["$","$2",null,{"fallback":["$","div",null,{"className":"flex items-center justify-center min-h-screen","children":["$","div",null,{"className":"text-white","children":"인증 처리 중..."}]}],"children":["$","$L3",null,{}]}],null,["$","$L4",null,{"children":["$","$2",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"loading":null,"isPartial":false}
 5:null

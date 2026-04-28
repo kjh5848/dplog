@@ -76,12 +76,15 @@ const portalItems = [
   },
 ];
 
+const availableItems = portalItems.filter((item) => !item.isUpcoming);
+const upcomingItems = portalItems.filter((item) => item.isUpcoming);
+
 export function LocalPortalHub() {
   const router = useRouter();
 
   const handleCardClick = (href: string, isUpcoming?: boolean) => {
     if (isUpcoming) {
-      alert('준비중인 기능입니다! (업데이트 예정)');
+      alert('준비중인 기능입니다.');
       return;
     }
     router.push(href);
@@ -98,11 +101,17 @@ export function LocalPortalHub() {
         </p>
       </div>
 
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-sm font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+          사용 가능
+        </h2>
+      </div>
+
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        {portalItems.map((item, idx) => (
-          <div 
+        {availableItems.map((item, idx) => (
+          <div
             onClick={() => handleCardClick(item.href, item.isUpcoming)}
-            key={item.title} 
+            key={item.title}
             className={item.colSpan}
           >
             <motion.div
@@ -112,14 +121,46 @@ export function LocalPortalHub() {
             >
               {item.isUpcoming && (
                 <div className="absolute top-4 right-4 bg-slate-100 text-slate-500 text-xs font-bold px-3 py-1 rounded-full">
-                  출시 예정
+                  준비중
                 </div>
               )}
-              
+
               <div className={`size-12 md:size-14 rounded-[18px] flex items-center justify-center mb-auto ${item.color}`}>
                 <item.icon className="size-6 md:size-7" strokeWidth={2.5} />
               </div>
               <h2 className={`text-lg md:text-xl font-bold tracking-tight ${item.isUpcoming ? 'text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-100'}`}>
+                {item.title}
+              </h2>
+            </motion.div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-10 mb-4 flex items-center justify-between">
+        <h2 className="text-sm font-black text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+          준비중
+        </h2>
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        {upcomingItems.map((item, idx) => (
+          <div
+            onClick={() => handleCardClick(item.href, item.isUpcoming)}
+            key={item.title}
+            className={item.colSpan}
+          >
+            <motion.div
+              whileHover={{ y: -4, boxShadow: "0 10px 40px -10px rgba(0,0,0,0.08)" }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[28px] p-6 lg:p-8 flex flex-col h-40 md:h-52 cursor-pointer transition-colors hover:border-slate-200 dark:hover:border-slate-700 shadow-sm relative grayscale-[30%]"
+            >
+              <div className="absolute top-4 right-4 bg-slate-100 text-slate-500 text-xs font-bold px-3 py-1 rounded-full">
+                준비중
+              </div>
+              <div className={`size-12 md:size-14 rounded-[18px] flex items-center justify-center mb-auto ${item.color}`}>
+                <item.icon className="size-6 md:size-7" strokeWidth={2.5} />
+              </div>
+              <h2 className="text-lg md:text-xl font-bold tracking-tight text-slate-400 dark:text-slate-500">
                 {item.title}
               </h2>
             </motion.div>

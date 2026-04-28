@@ -17,9 +17,13 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
+from core.app_info import APP_VERSION
 from core.database import init_db
 from domains.stores.router import router as stores_router
 from domains.auth.router import router as auth_router
+from domains.system.router import router as system_router
+from core.runtime_paths import get_browser_profile_dir, get_static_media_dir, seed_static_media
+from domains.scraping.browser_launcher import find_chromium_executable
 
 # ---------------------------------------------------------
 # 1. 포트 자동 할당 및 브라우저 런처 (Chrome App Mode)
@@ -48,24 +52,17 @@ GLOBAL_PORT = int(os.getenv("PORT", 45123))
 def open_browser_app_mode(port):
     time.sleep(1.5)  # 서버 구동 대기
     url = f"http://127.0.0.1:{port}"
-    chrome_path_mac = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-    chrome_path_win = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
-    chrome_path_win_x86 = r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
     # 독립적인 크롬 프로필을 사용하여 쿠키 격리 및 네이티브 Single Instance(중복 실행 방지) 적용
-    profile_dir = os.path.expanduser("~/.dplog/chrome_profile")
+    profile_dir = str(get_browser_profile_dir())
     
-    cmd = None
-    if os.path.exists(chrome_path_mac):
-        cmd = [chrome_path_mac, f"--app={url}", f"--user-data-dir={profile_dir}", "--no-first-run", "--no-default-browser-check"]
-    elif os.path.exists(chrome_path_win):
-        cmd = [chrome_path_win, f"--app={url}", f"--user-data-dir={profile_dir}", "--no-first-run", "--no-default-browser-check"]
-    elif os.path.exists(chrome_path_win_x86):
-        cmd = [chrome_path_win_x86, f"--app={url}", f"--user-data-dir={profile_dir}", "--no-first-run", "--no-default-browser-check"]
-    else:
+    browser_path = find_chromium_executable()
+    if not browser_path:
         # 크롬이 정규 경로에 없을 경우 기본 브라우저 실행
         import webbrowser
         webbrowser.open(url)
         return
+
+    cmd = [browser_path, f"--app={url}", f"--user-data-dir={profile_dir}", "--no-first-run", "--no-default-browser-check"]
         
     try:
         subprocess.Popen(cmd)
@@ -85,8 +82,8 @@ async def lifespan(app: FastAPI):
     try:
         async with AsyncSession(engine) as session:
             stmt = select(Store).where(Store.scrape_status == "PENDING")
-            result = await session.execute(stmt)
-            pending_stores = result.scalars().all()
+            result = await session.exec(stmt)
+            pending_stores = result.all()
             for store in pending_stores:
                 store.scrape_status = "FAILED"
             if pending_stores:
@@ -113,13 +110,14 @@ app.add_middleware(
 
 app.include_router(stores_router, prefix="/v1/stores")
 app.include_router(auth_router, prefix="/v1/auth")
+app.include_router(system_router, prefix="/v1/system")
 
 @app.get("/api/check-update")
 async def check_update():
     """
     AWS Lightsail의 중앙 서버와 통신하여 현재 데스크탑 앱의 버전이 최신인지 확인합니다.
     """
-    current_version = "1.0.0"
+    current_version = APP_VERSION
     
     # [TODO] 향후 AWS Lightsail API가 구축되면 활성화
     # try:
@@ -157,9 +155,8 @@ if os.path.isdir(FRONTEND_OUT_DIR):
     if os.path.isdir(next_assets_dir):
         app.mount("/_next", StaticFiles(directory=next_assets_dir), name="next-static")
 
-    static_media_dir = os.path.join(BASE_DIR, "static")
-    if not os.path.exists(static_media_dir):
-        os.makedirs(static_media_dir, exist_ok=True)
+    static_media_dir = str(get_static_media_dir())
+    seed_static_media(os.path.join(BASE_DIR, "static"))
     app.mount("/static", StaticFiles(directory=static_media_dir), name="static-media")
 
     @app.api_route("/{full_path:path}", methods=["GET", "HEAD"], response_class=FileResponse)

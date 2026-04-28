@@ -42,7 +42,7 @@ export const RealtimeRankingDashboard = () => {
             실시간 순위 조회
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-            특정 키워드와 플레이스 URL로 실시간 노출 순위를 검색해보세요
+            지역명이 포함된 키워드로 네이버 플레이스 실시간 노출 순위를 검색해보세요
           </p>
         </div>
       </div>
@@ -97,8 +97,8 @@ export const RealtimeRankingDashboard = () => {
           <RealtimeRankTable
             ranks={realtimeRanks}
             isLoading={isLoadingRealtime}
-            onSearch={(kw, prov, lat, lon) => {
-              actions.fetchRealtime(kw, prov, lat, lon);
+            onSearch={(kw, prov) => {
+              actions.fetchRealtime(kw, prov);
             }}
             isRegistering={isRegistering}
             onAddTracking={(kw, prov) => {

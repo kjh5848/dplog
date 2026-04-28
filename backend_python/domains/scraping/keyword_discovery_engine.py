@@ -5,6 +5,7 @@ import re
 import asyncio
 from playwright.async_api import async_playwright
 import httpx
+from domains.scraping.browser_launcher import launch_chromium
 
 async def get_autocomplete(keyword: str) -> list[str]:
     """네이버 비공식 자동완성 API를 호출하여 파생 키워드 배열 반환"""
@@ -72,7 +73,7 @@ async def get_mobile_recommendations(keyword: str) -> dict:
     
     try:
         async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
+            browser = await launch_chromium(p, headless=True)
             context = await browser.new_context(
                 user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
                 viewport={'width': 390, 'height': 844}

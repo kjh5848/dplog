@@ -168,7 +168,7 @@ export const TrackingCard = ({ info, isDeleting, onDelete, onEdit, index = 0 }: 
              </>
            ) : (
              <span className="text-sm font-bold text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-md border border-slate-100 dark:border-slate-700">
-               순위권 밖
+               이탈
              </span>
            )}
         </div>

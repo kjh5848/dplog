@@ -2,6 +2,7 @@ import asyncio
 from playwright.async_api import async_playwright
 import time
 import re
+from domains.scraping.browser_launcher import launch_chromium
 
 def _parse_id(s: str):
     import re
@@ -58,6 +59,8 @@ async def scrape_place_details(place_id: str):
         "name": "",
         "category": "",
         "address": "",
+        "latitude": None,
+        "longitude": None,
         "visitor_reviews": 0,
         "blog_reviews": 0,
         "saves": 0,   # 최근 네이버 앱 정책으로 웹 DOM에서 숨겨지는 경우가 많음
@@ -69,31 +72,7 @@ async def scrape_place_details(place_id: str):
     }
 
     async with async_playwright() as p:
-        try:
-            browser = await p.chromium.launch(
-                headless=True,
-                args=['--disable-blink-features=AutomationControlled', '--no-sandbox']
-            )
-        except Exception as e:
-            if "Executable doesn't exist" in str(e):
-                import subprocess
-                import sys
-                print("⚡ [Auto-Fix] Playwright 브라우저 엔진이 누락되었습니다. 자동 설치를 진행합니다 (약 10~30초 소요)...")
-                try:
-                    if getattr(sys, 'frozen', False):
-                        subprocess.run(["playwright", "install", "chromium"], check=True)
-                    else:
-                        subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], check=True)
-                    print("⚡ [Auto-Fix] 크롬 엔진 설치 완료. 브라우저를 재구동합니다.")
-                    browser = await p.chromium.launch(
-                        headless=True,
-                        args=['--disable-blink-features=AutomationControlled', '--no-sandbox']
-                    )
-                except Exception as install_err:
-                    print(f"❌ Playwright 설치 실패 (수동 설치 필요: playwright install chromium): {install_err}")
-                    raise e
-            else:
-                raise
+        browser = await launch_chromium(p, headless=True)
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
             viewport={'width': 390, 'height': 844},
@@ -172,6 +151,24 @@ async def scrape_place_details(place_id: str):
             # HTML 전문 정규식 파싱 (DOM 클래스 변경에 완벽히 대응하는 안정적 방법)
             try:
                 html = await page.content()
+
+                coord_patterns = [
+                    r'"x"\s*:\s*"?([0-9]+\.[0-9]+)"?\s*,\s*"y"\s*:\s*"?([0-9]+\.[0-9]+)"?',
+                    r'"longitude"\s*:\s*"?([0-9]+\.[0-9]+)"?\s*,\s*"latitude"\s*:\s*"?([0-9]+\.[0-9]+)"?',
+                    r'"lng"\s*:\s*"?([0-9]+\.[0-9]+)"?\s*,\s*"lat"\s*:\s*"?([0-9]+\.[0-9]+)"?',
+                ]
+                for pattern in coord_patterns:
+                    coord_match = re.search(pattern, html)
+                    if coord_match:
+                        first = float(coord_match.group(1))
+                        second = float(coord_match.group(2))
+                        if 120 <= first <= 140 and 30 <= second <= 45:
+                            result["longitude"] = first
+                            result["latitude"] = second
+                        elif 30 <= first <= 45 and 120 <= second <= 140:
+                            result["latitude"] = first
+                            result["longitude"] = second
+                        break
                 
                 # 리뷰수 폴백 (og:desc 실패 시 html 정규식으로)
                 if result.get('visitor_reviews', 0) == 0:
@@ -315,6 +312,18 @@ async def scrape_place_details(place_id: str):
                 representative_menus = await page.evaluate('''() => {
                     let results = [];
                     let seen = new Set();
+                    const invalidMenuNames = new Set([
+                        '홈', '소식', '메뉴', '리뷰', '사진', '지도', '주변', '정보',
+                        '전화', '저장', '길찾기', '공유', '알림받기', '마이플레이스'
+                    ]);
+                    const isValidMenu = (name, price, imgUrl) => {
+                        if (!name || name.length <= 1 || name.length >= 50) return false;
+                        if (invalidMenuNames.has(name)) return false;
+                        if (price && name === price) return false;
+                        if (name.includes('원') && /[0-9]/.test(name)) return false;
+                        if (!price && !imgUrl) return false;
+                        return true;
+                    };
                     
                     // 방법 1: 메뉴/대표 섹션 내의 카드형 항목 탐색
                     // 네이버 플레이스는 대표메뉴를 가로 스크롤 카드로 보여줌
@@ -353,7 +362,7 @@ async def scrape_place_details(place_id: str):
                             if (descText) desc = descText;
                         }
                         
-                        if (name && name.length > 1 && name.length < 50 && !seen.has(name)) {
+                        if (isValidMenu(name, price, imgUrl) && !seen.has(name)) {
                             seen.add(name);
                             results.push({name, price, desc, imgUrl, is_representative: true});
                         }
@@ -384,7 +393,7 @@ async def scrape_place_details(place_id: str):
                                 let img = item.querySelector('img');
                                 let imgUrl = (img && img.src && !img.src.includes('data:')) ? img.src : null;
                                 
-                                if (name && name.length > 1 && name.length < 50 && !seen.has(name)) {
+                                if (isValidMenu(name, price, imgUrl) && !seen.has(name)) {
                                     seen.add(name);
                                     results.push({
                                         name, price, desc: '', imgUrl, is_representative: true

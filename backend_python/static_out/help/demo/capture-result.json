@@ -1,0 +1,405 @@
+{
+  "store_id": 1,
+  "store": {
+    "name": "성심당 본점",
+    "category": "베이커리",
+    "address": "대전광역시 중구 대종로480번길 15",
+    "placeUrl": "https://m.place.naver.com/place/11871325",
+    "phone": null,
+    "latitude": 36.3276671,
+    "longitude": 127.4273419,
+    "shopImageUrl": "/static/images/stores/1/orig_0.jpg,/static/images/stores/1/orig_1.jpg,/static/images/stores/1/orig_2.jpg,/static/images/stores/1/orig_3.jpg,/static/images/stores/1/orig_4.jpg",
+    "shopImageThumbUrl": "/static/images/stores/1/thumb_0.jpg,/static/images/stores/1/thumb_1.jpg,/static/images/stores/1/thumb_2.jpg,/static/images/stores/1/thumb_3.jpg,/static/images/stores/1/thumb_4.jpg",
+    "keywords": "보문산메아리,튀김소보로,명란바게트,판타롱부추빵,성심당 베이커리",
+    "visitor_reviews": 71054,
+    "blog_reviews": 36467,
+    "saves": 0,
+    "rating": 4.52,
+    "scrape_status": "COMPLETED",
+    "id": 1,
+    "createdAt": "2026-04-27T07:24:46.065101",
+    "updatedAt": "2026-04-27T07:25:23.111329",
+    "review_tags": [
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 1296,
+        "name": "명란",
+        "id": 1
+      },
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 1285,
+        "name": "샌드위치",
+        "id": 2
+      },
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 1280,
+        "name": "바게트",
+        "id": 3
+      },
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 1255,
+        "name": "명란바게트",
+        "id": 4
+      },
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 1172,
+        "name": "튀김",
+        "id": 5
+      },
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 1083,
+        "name": "튀김소보로",
+        "id": 6
+      },
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 753,
+        "name": "부추빵",
+        "id": 7
+      },
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 734,
+        "name": "소금빵",
+        "id": 8
+      },
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 475,
+        "name": "치즈",
+        "id": 9
+      },
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 469,
+        "name": "고로케",
+        "id": 10
+      },
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 424,
+        "name": "주먹밥",
+        "id": 11
+      },
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 336,
+        "name": "잠봉뵈르",
+        "id": 12
+      },
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 322,
+        "name": "케이크",
+        "id": 13
+      },
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 204,
+        "name": "야끼소바",
+        "id": 14
+      },
+      {
+        "store_id": 1,
+        "category": "메뉴",
+        "count": 193,
+        "name": "식빵",
+        "id": 15
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 13943,
+        "name": "맛",
+        "id": 16
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 10890,
+        "name": "만족도",
+        "id": 17
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 1465,
+        "name": "가격",
+        "id": 18
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 1253,
+        "name": "서비스",
+        "id": 19
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 794,
+        "name": "메뉴",
+        "id": 20
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 749,
+        "name": "대기시간",
+        "id": 21
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 562,
+        "name": "목적",
+        "id": 22
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 423,
+        "name": "음식량",
+        "id": 23
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 203,
+        "name": "주차",
+        "id": 24
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 147,
+        "name": "분위기",
+        "id": 25
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 109,
+        "name": "청결도",
+        "id": 26
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 95,
+        "name": "위치",
+        "id": 27
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 41,
+        "name": "배달",
+        "id": 28
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 30,
+        "name": "예약",
+        "id": 29
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 7,
+        "name": "방역",
+        "id": 30
+      },
+      {
+        "store_id": 1,
+        "category": "특징",
+        "count": 2,
+        "name": "전망",
+        "id": 31
+      }
+    ],
+    "recent_reviews": [
+      {
+        "snippet": "🏡 대전대표 랜드마크 🌟 튀김소보로, 부추빵, 보문산메아리 유명. 빵종류 워낙 다양하고 유행도 놓치지 않는 편이라 선물용이 아니라면 그때그때 끌리는거 사시길 추천해요 🥪 샌드위치는 지하 매장에서 따로 팔아요 👥 주말+한화 홈경기. 오픈직후라 한 10분 기다렸어요 💰 뭐하나 아주특별하진 않아도 가격에 비해 품질좋아요 📱 계열사포함 5%적립 앱설치+가입하셔요 🥡 테이크아웃전문 👀 빵이 오픈진열대긴한데 계속 없어지고 계속 채워져요 🪑 성심당문화원 음료사면 빵먹을수있어요 👩‍🍳 직원분들 친절해요 💸 형제세트10.0 메론빵2.3×2 토요빵3.8 알밤식빵4.0 망고패션2.5 생도나쓰1.7×2 블루베리파이3.0 초코바게트5.0 후렌치파이2.0 소금빵1.5×4 볼케이노3.8 말차튀소3.0메아리6.0×3크롸상6.0",
+        "id": 1,
+        "store_id": 1
+      },
+      {
+        "snippet": "주말 토요일 낮 12시 방문했어요 임산부 프리패스로 웨이팅 없이 바로 들어갔습니다 💖임신부 프리패스 방법 임신확인증 or 산모수첩 지참. 출산예정일 확인 후 신분증과 대조 진행💖 빠르게 입장해서 빵 구경하면서 구입하는데 빵종류 진~짜 많고 다양했어요 빵 좋아하는편이 아님에도 불구하고 12개나 구매했어요 12개 샀는데 34200원 나왔습니다 가성비후덜덜 성심당 방문 처음이라 어떤빵 사야하나 고민되었는데 best 빵 추천되어있는것 보고 따라서 샀어요! 거기에 먹고싶은 빵까지 더 샀습니다 ㅎㅎ 너무 재밌고 좋은 경험이었어요! 빵도 다 맛있어요!!",
+        "id": 2,
+        "store_id": 1
+      },
+      {
+        "snippet": "본점에서 빵류를 사고 쇼핑백을 대 자로 받은 다음 옆 샌드위치정거장에서 샌드위치를 사면 편합니다. 그런데 본점 매장안에 사람이 정말 많은데 줄이 없어 살 수 있는데 좀 충격적이에여. 너무 뒤엉켜서 제 어깨를 누가 집게로 집으심.. 그리거 지하에 우동야에서 차분하게 우동 한그릇 드시는거 추천힙니다!",
+        "id": 3,
+        "store_id": 1
+      }
+    ],
+    "menus": [
+      {
+        "store_id": 1,
+        "name": "전설의 팥빙수",
+        "description": "",
+        "is_representative": true,
+        "id": 1,
+        "price": "6,000원",
+        "imgUrl": null
+      },
+      {
+        "store_id": 1,
+        "name": "튀김소보로",
+        "description": "",
+        "is_representative": true,
+        "id": 2,
+        "price": "1,700원",
+        "imgUrl": "https://search.pstatic.net/common/?autoRotate=true&quality=95&type=f320_320&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20180116_278%2F1516059317138O5aQp_JPEG%2F4zBWXApvaAkjOOUioL2EwKC6.jpg"
+      },
+      {
+        "store_id": 1,
+        "name": "튀소구마",
+        "description": "",
+        "is_representative": true,
+        "id": 3,
+        "price": "1,700원",
+        "imgUrl": null
+      },
+      {
+        "store_id": 1,
+        "name": "판타롱부추빵",
+        "description": "",
+        "is_representative": true,
+        "id": 4,
+        "price": "2,000원",
+        "imgUrl": "https://search.pstatic.net/common/?autoRotate=true&quality=95&type=f320_320&src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20180116_204%2F1516059373940jQkS2_JPEG%2FXidPcPg9_A0moVz9i5NrhM5h.jpg"
+      },
+      {
+        "store_id": 1,
+        "name": "보문산메아리",
+        "description": "",
+        "is_representative": false,
+        "id": 5,
+        "price": "6,000원",
+        "imgUrl": null
+      },
+      {
+        "store_id": 1,
+        "name": "작은메아리",
+        "description": "",
+        "is_representative": false,
+        "id": 6,
+        "price": "3,000원",
+        "imgUrl": null
+      },
+      {
+        "store_id": 1,
+        "name": "성심순크림빵",
+        "description": "",
+        "is_representative": false,
+        "id": 7,
+        "price": "2,500원",
+        "imgUrl": null
+      },
+      {
+        "store_id": 1,
+        "name": "소금빵",
+        "description": "",
+        "is_representative": false,
+        "id": 8,
+        "price": "1,500원",
+        "imgUrl": null
+      },
+      {
+        "store_id": 1,
+        "name": "튀소세트",
+        "description": "",
+        "is_representative": false,
+        "id": 9,
+        "price": "10,000원",
+        "imgUrl": null
+      },
+      {
+        "store_id": 1,
+        "name": "튀소더블",
+        "description": "",
+        "is_representative": false,
+        "id": 10,
+        "price": "20,000원",
+        "imgUrl": null
+      },
+      {
+        "store_id": 1,
+        "name": "반반세트",
+        "description": "",
+        "is_representative": false,
+        "id": 11,
+        "price": "11,000원",
+        "imgUrl": null
+      },
+      {
+        "store_id": 1,
+        "name": "일석이조세트",
+        "description": "",
+        "is_representative": false,
+        "id": 12,
+        "price": "22,000원",
+        "imgUrl": null
+      },
+      {
+        "store_id": 1,
+        "name": "형제세트",
+        "description": "",
+        "is_representative": false,
+        "id": 13,
+        "price": "10,000원",
+        "imgUrl": null
+      },
+      {
+        "store_id": 1,
+        "name": "형제더블세트",
+        "description": "",
+        "is_representative": false,
+        "id": 14,
+        "price": "20,000원",
+        "imgUrl": null
+      },
+      {
+        "store_id": 1,
+        "name": "삼총사",
+        "description": "",
+        "is_representative": false,
+        "id": 15,
+        "price": "10,800원",
+        "imgUrl": null
+      },
+      {
+        "store_id": 1,
+        "name": "메뉴",
+        "description": "",
+        "is_representative": true,
+        "id": 16,
+        "price": "",
+        "imgUrl": null
+      }
+    ]
+  }
+}

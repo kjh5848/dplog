@@ -5,6 +5,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
+from core.runtime_paths import get_db_path, get_user_data_dir
 
 # 향후 배포 및 AWS 중앙 DB 이관을 고려하여, 초기 환경(SaaS 런칭 전 MVP)은 로컬 SQLite를 사용합니다.
 # SQLite는 비동기 드라이버인 aiosqlite 를 사용합니다. (스크래핑 속도가 프레임 드랍을 일으키지 않도록)
@@ -13,10 +14,9 @@ import shutil
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # 로컬 개발/설치형 배포 시에는 file DB를 사용
-# 패키징된 데스크탑 앱 환경을 고려하여, DB를 사용자 홈 디렉토리의 .dplog 폴더에 저장합니다.
-USER_DATA_DIR = os.path.expanduser("~/.dplog")
-os.makedirs(USER_DATA_DIR, exist_ok=True)
-db_path = os.path.join(USER_DATA_DIR, 'dplog.db')
+# 패키징된 데스크탑 앱 환경을 고려하여, DB를 OS별 사용자 데이터 폴더에 저장합니다.
+USER_DATA_DIR = str(get_user_data_dir())
+db_path = str(get_db_path())
 
 # 처음 앱을 실행하여 ~/.dplog/dplog.db가 없다면, 빌드 시 번들에 포함된 dplog.db를 복사해 옵니다.
 bundled_db_path = os.path.join(BASE_DIR, 'dplog.db')
@@ -49,3 +49,10 @@ async def init_db():
     async with engine.begin() as conn:
         # SQLModel로 선언된 모든 테이블을 DB에 밀어넣습니다.
         await conn.run_sync(SQLModel.metadata.create_all)
+        if "sqlite" in DATABASE_URL:
+            result = await conn.exec_driver_sql("PRAGMA table_info(store)")
+            existing_columns = {row[1] for row in result.fetchall()}
+            if "latitude" not in existing_columns:
+                await conn.exec_driver_sql("ALTER TABLE store ADD COLUMN latitude FLOAT")
+            if "longitude" not in existing_columns:
+                await conn.exec_driver_sql("ALTER TABLE store ADD COLUMN longitude FLOAT")

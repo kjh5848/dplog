@@ -18,6 +18,76 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+type StationSeed = {
+  name: string;
+  city: string;
+  lat: number;
+  lon: number;
+  aliases?: string[];
+};
+
+const SUBWAY_STATIONS: StationSeed[] = [
+  { name: '시청역', city: '부산', lat: 35.17982, lon: 129.07699, aliases: ['부산시청역', '부산 시청', '시청역'] },
+  { name: '연산역', city: '부산', lat: 35.18608, lon: 129.08153, aliases: ['부산연산역', '연산역'] },
+  { name: '거제역', city: '부산', lat: 35.18858, lon: 129.07391, aliases: ['부산거제역', '거제역'] },
+  { name: '양정역', city: '부산', lat: 35.17305, lon: 129.07139, aliases: ['부산양정역', '양정역'] },
+  { name: '교대역', city: '부산', lat: 35.19592, lon: 129.08045, aliases: ['부산교대역', '교대역'] },
+  { name: '물만골역', city: '부산', lat: 35.17624, lon: 129.08572, aliases: ['물만골역'] },
+];
+
+function haversineMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const toRad = (value: number) => (value * Math.PI) / 180;
+  const radius = 6371000;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return radius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function inferStationAliases(store: Store): string[] {
+  const aliases = new Set<string>();
+  const officialKeywords = (store.keywords || '')
+    .split(',')
+    .map(k => k.trim())
+    .filter(Boolean);
+
+  officialKeywords.forEach(keyword => {
+    const stationMatch = keyword.match(/([가-힣A-Za-z0-9]+역)/);
+    if (stationMatch?.[1]) {
+      const station = stationMatch[1];
+      aliases.add(station);
+      aliases.add(station.replace(/^부산/, ''));
+      aliases.add(station.replace(/역$/, ''));
+      aliases.add(station.replace(/^부산/, '').replace(/역$/, ''));
+      if (station.startsWith('부산')) {
+        aliases.add(station.replace(/^부산/, '부산 '));
+        aliases.add(station.replace(/^부산/, '부산 ').replace(/역$/, ''));
+      }
+    }
+  });
+
+  if (store.latitude && store.longitude) {
+    SUBWAY_STATIONS
+      .map(station => ({
+        station,
+        distance: haversineMeters(store.latitude!, store.longitude!, station.lat, station.lon),
+      }))
+      .filter(item => item.distance <= 900)
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 3)
+      .forEach(({ station }) => {
+        aliases.add(station.name);
+        station.aliases?.forEach(alias => aliases.add(alias));
+      });
+  }
+
+  return Array.from(aliases)
+    .map(alias => alias.replace(/\s+/g, ' ').trim())
+    .filter(alias => alias.length > 1);
+}
+
 // ───────────────────────────────────────────
 // 시드 키워드 자동 조합 엔진 (랜덤 추천 풀 생성)
 // ───────────────────────────────────────────
@@ -44,53 +114,64 @@ function generatePresets(store: Store): string[] {
     category = '맛집'; // 무의미한 업종일 경우 범용 키워드로 강제 대체
   }
 
+  const categoryAliases = new Set<string>([category]);
+  if (category.includes('한식')) {
+    categoryAliases.add('한식 맛집');
+    categoryAliases.add('밥집');
+    categoryAliases.add('점심');
+  }
+  if (category.includes('카페')) {
+    categoryAliases.add('카페');
+    categoryAliases.add('디저트');
+    categoryAliases.add('데이트 카페');
+  }
+  if (category === '맛집') {
+    categoryAliases.add('식당');
+    categoryAliases.add('밥집');
+  }
+
   // ④ 지역 + 업종 조합 패턴 생성
   const combos: string[] = [];
   if (category) {
-    if (gu)   combos.push(`${gu} ${category}`);
-    if (dong) combos.push(`${dong} ${category}`);
-    if (si && gu) combos.push(`${si} ${gu} ${category}`);
-    if (si)   combos.push(`${si} ${category}`);
+    const localAreas = [dong, gu, si && gu ? `${si} ${gu}` : '', si].filter(Boolean) as string[];
+    const stationAreas = inferStationAliases(store);
+    const highIntentAreas = [...stationAreas, dong, gu].filter(Boolean) as string[];
+
+    localAreas.forEach(area => {
+      categoryAliases.forEach(term => {
+        combos.push(`${area} ${term}`);
+      });
+    });
+
+    stationAreas.forEach(area => {
+      categoryAliases.forEach(term => {
+        combos.push(`${area} ${term}`);
+      });
+      combos.push(`${area} 맛집`);
+      combos.push(`${area} 점심`);
+      combos.push(`${area} 밥집`);
+    });
 
     // 다양한 사용자 의도 (Intents)
     const intents = [
-      '맛집', '추천', '맛집 추천', '핫플', '가볼만한곳', 
-      '데이트', '데이트 코스', '모임', '회식장소', '점심', '점심추천', 
-      '가성비', '가성비 좋은', '분위기 좋은', '예쁜', 
+      '맛집', '추천', '맛집 추천', '핫플', '가볼만한곳',
+      '데이트', '데이트 코스', '모임', '회식장소', '점심', '점심추천',
+      '가성비', '가성비 좋은', '분위기 좋은',
       '주차가능', '부모님 모시고', '룸식당', '프라이빗',
       '혼밥', '숨은맛집', '웨이팅'
     ];
 
     intents.forEach(intent => {
-      // 카테고리 단독 조합
-      combos.push(`${category} ${intent}`);
-      if (intent.length > 2) combos.push(`${intent} ${category}`);
-
-      // 구 조합
-      if (gu) {
-        combos.push(`${gu} ${category} ${intent}`);
-        combos.push(`${gu} ${intent}`);
-        combos.push(`${gu} 핫플 ${category}`);
-      }
-      
-      // 동 조합
-      if (dong) {
-        combos.push(`${dong} ${category} ${intent}`);
-        combos.push(`${dong} ${intent}`);
-        combos.push(`${dong} 근처 ${category}`);
-        combos.push(`${dong} 근처 ${intent}`);
-      }
-      
-      // 시 단위 조합 (너무 넓을 수 있으므로 일부만)
-      if (si && (intent === '맛집' || intent === '가볼만한곳' || intent === '데이트')) {
-        combos.push(`${si} ${category} ${intent}`);
-      }
+      highIntentAreas.forEach(area => {
+        combos.push(`${area} ${category} ${intent}`);
+      });
     });
 
-    combos.push(`${category} 잘하는 곳`);
-    combos.push(`${category} 유명한 곳`);
-
-    combos.push(category);
+    if (dong) {
+      combos.push(`${dong} ${category} 잘하는 곳`);
+      combos.push(`${dong} ${category} 유명한 곳`);
+      combos.push(`${dong} 근처 ${category}`);
+    }
   }
   if (si && gu) combos.push(`${si} ${gu} 맛집`);
   combos.push(store.name);
@@ -99,9 +180,11 @@ function generatePresets(store: Store): string[] {
   const seen = new Set<string>();
   const result: string[] = [];
   for (const kw of [...officialKeywords, ...combos]) {
-    if (!seen.has(kw)) {
-      seen.add(kw);
-      result.push(kw);
+    const compact = kw.replace(/\s+/g, ' ').trim();
+    if (compact.length < 2) continue;
+    if (!seen.has(compact)) {
+      seen.add(compact);
+      result.push(compact);
     }
   }
 
@@ -147,7 +230,51 @@ export default function GoldenKeywordsPage() {
   const [allPresets, setAllPresets] = useState<string[]>([]);
   const [displayedPresets, setDisplayedPresets] = useState<string[]>([]);
   const [keywordVols, setKeywordVols] = useState<Record<string, number>>({});
+  const [officialKeywordVols, setOfficialKeywordVols] = useState<Record<string, number>>({});
   const [isFetchingVols, setIsFetchingVols] = useState(false);
+
+  const fetchKeywordVolumes = async (storeId: number, keywords: string[]) => {
+    const uniqueKeywords = Array.from(new Set(keywords.map(k => k.trim()).filter(Boolean)));
+    if (uniqueKeywords.length === 0) return {};
+
+    const result: Record<string, number> = {};
+    const missingKeys: string[] = [];
+    const now = Date.now();
+    const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
+
+    uniqueKeywords.forEach(kw => {
+      const cached = localStorage.getItem(`dplog_vol_${kw}`);
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (now - parsed.ts < THIRTY_DAYS) {
+            result[kw] = parsed.vol;
+            return;
+          }
+        } catch(e) {}
+      }
+      missingKeys.push(kw);
+    });
+
+    if (missingKeys.length > 0) {
+      const res = await fetch(`/v1/stores/${storeId}/keywords/stats`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ keywords: missingKeys })
+      });
+
+      if (res.ok) {
+        const stats = await res.json();
+        stats.forEach((item: any) => {
+          const vol = item.total_vol;
+          result[item.keyword] = vol;
+          localStorage.setItem(`dplog_vol_${item.keyword}`, JSON.stringify({ ts: now, vol }));
+        });
+      }
+    }
+
+    return result;
+  };
 
   const refreshPresets = async (source = allPresets, currentStore = store) => {
     if (!source || source.length === 0 || !currentStore) return;
@@ -160,50 +287,14 @@ export default function GoldenKeywordsPage() {
       availablePool = [...source];
     }
     
-    // 남은 풀에서 랜덤으로 셔플 후 10개 추출
-    const shuffled = [...availablePool].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, 10);
+    // 품질 우선순위를 유지한 채 다음 10개 후보를 표시합니다.
+    const selected = availablePool.slice(0, 10);
     setDisplayedPresets(selected);
 
     setIsFetchingVols(true);
     try {
-      const missingKeys: string[] = [];
-      const newVols = { ...keywordVols };
-      const now = Date.now();
-      const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
-
-      selected.forEach(kw => {
-        const cached = localStorage.getItem(`dplog_vol_${kw}`);
-        if (cached) {
-          try {
-            const parsed = JSON.parse(cached);
-            if (now - parsed.ts < THIRTY_DAYS) {
-              newVols[kw] = parsed.vol;
-              return;
-            }
-          } catch(e) {}
-        }
-        missingKeys.push(kw);
-      });
-
-      if (missingKeys.length > 0) {
-        // API 요청 (상대경로로 백엔드 프록시가 잡혀있으므로 /v1 사용)
-        const res = await fetch(`/v1/stores/${currentStore.id}/keywords/stats`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ keywords: missingKeys })
-        });
-        
-        if (res.ok) {
-          const stats = await res.json();
-          stats.forEach((item: any) => {
-            const vol = item.total_vol;
-            newVols[item.keyword] = vol;
-            localStorage.setItem(`dplog_vol_${item.keyword}`, JSON.stringify({ ts: now, vol }));
-          });
-        }
-      }
-      setKeywordVols(newVols);
+      const newVols = await fetchKeywordVolumes(currentStore.id, selected);
+      setKeywordVols(prev => ({ ...prev, ...newVols }));
     } catch (e) {
       console.error('검색량 캐싱 및 가져오기 에러:', e);
     } finally {
@@ -213,12 +304,16 @@ export default function GoldenKeywordsPage() {
 
   useEffect(() => {
     storeApi.getMyStores()
-      .then(list => {
+      .then(async list => {
         if (list.length > 0) {
-          const s = list[0];
+          const s = await storeApi.getStore(list[0].id);
           setStore(s);
           const generated = generatePresets(s);
           setAllPresets(generated);
+          const officialKeywords = (s.keywords || '').split(',').map(k => k.trim()).filter(Boolean).slice(0, 5);
+          fetchKeywordVolumes(s.id, officialKeywords)
+            .then(setOfficialKeywordVols)
+            .catch(err => console.error('대표 키워드 검색량 조회 실패:', err));
           // 비동기로 호출
           refreshPresets(generated, s);
         }
@@ -340,14 +435,20 @@ export default function GoldenKeywordsPage() {
               <div className="flex items-center gap-3 mb-6 flex-wrap">
                 <span className="text-xs font-semibold text-slate-400 whitespace-nowrap">대표 키워드</span>
                 <div className="flex flex-wrap gap-2">
-                  {store.keywords.split(',').map(k => k.trim()).filter(Boolean).slice(0, 5).map((kw, i) => (
+                  {store.keywords.split(',').map(k => k.trim()).filter(Boolean).slice(0, 5).map((kw, i) => {
+                    const vol = officialKeywordVols[kw];
+                    const volDisplay = vol !== undefined
+                      ? (vol >= 10000 ? `${(vol/10000).toFixed(1).replace('.0','')}만` : vol.toLocaleString())
+                      : null;
+                    return (
                     <span
                       key={i}
-                      className="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-medium"
+                      className="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-medium inline-flex items-center gap-1.5"
                     >
-                      {kw}
+                      <span>{kw}</span>
+                      {volDisplay && <span className="font-black text-orange-500">({volDisplay})</span>}
                     </span>
-                  ))}
+                  )})}
                 </div>
               </div>
             )}
@@ -377,20 +478,6 @@ export default function GoldenKeywordsPage() {
                       선택 해제
                     </button>
                   )}
-                  <button
-                    onClick={() => {
-                      const allSelected = displayedPresets.every(p => presetKeywords.includes(p));
-                      if (allSelected) {
-                        setPresetKeywords(prev => prev.filter(p => !displayedPresets.includes(p)));
-                      } else {
-                        const newPresets = new Set([...presetKeywords, ...displayedPresets]);
-                        setPresetKeywords(Array.from(newPresets));
-                      }
-                    }}
-                    className="text-xs text-slate-400 hover:text-orange-500 transition-colors px-2 py-1 rounded-lg hover:bg-orange-50"
-                  >
-                    {displayedPresets.every(p => presetKeywords.includes(p)) ? '화면 해제' : '화면 전체 선택'}
-                  </button>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2">

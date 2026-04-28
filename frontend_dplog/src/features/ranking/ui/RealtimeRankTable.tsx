@@ -6,13 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
   TrendingUp,
-  TrendingDown,
-  Minus,
   MapPin,
   Star,
-  Heart,
-  MessageSquare,
-  BookOpen,
   Crown,
   Loader2,
   ExternalLink,
@@ -43,13 +38,6 @@ interface RealtimeRankTableProps {
   /** 트래킹 추가 진행 상태 여부 */
   isRegistering?: boolean;
 }
-
-/** 지역 선택 옵션 */
-const PROVINCES = [
-  '서울', '경기', '인천', '부산', '대구', '대전',
-  '광주', '울산', '세종', '강원', '충북', '충남',
-  '전북', '전남', '경북', '경남', '제주',
-];
 
 /** 스켈레톤 로우 */
 const SkeletonRow = () => (
@@ -90,16 +78,13 @@ export const RealtimeRankTable = ({
   isRegistering,
 }: RealtimeRankTableProps) => {
   const [keyword, setKeyword] = useState('');
-  const [province, setProvince] = useState('서울');
   const [selectedStore, setSelectedStore] = useState<RealtimeRank | null>(null);
 
   // 로컬 스토리지에서 초기 검색어 복원
   useEffect(() => {
     if (myShopId) {
       const savedKw = localStorage.getItem(`dplog_rt_kw_${myShopId}`);
-      const savedProv = localStorage.getItem(`dplog_rt_prov_${myShopId}`);
       if (savedKw) setKeyword(savedKw);
-      if (savedProv) setProvince(savedProv);
     }
   }, [myShopId]);
 
@@ -108,78 +93,10 @@ export const RealtimeRankTable = ({
     setSelectedStore(null);
   }, [ranks]);
 
-  const [lat, setLat] = useState<number | undefined>();
-  const [lon, setLon] = useState<number | undefined>();
-  const [isLocating, setIsLocating] = useState(false);
-
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!keyword.trim()) return;
-    onSearch(keyword.trim(), province, lat, lon);
-  };
-
-  const findClosestProvince = (lat: number, lon: number): string => {
-    const provinceCoords: Record<string, [number, number]> = {
-      '서울': [37.5665, 126.9780],
-      '경기': [37.2636, 127.0286], // 수원 기준
-      '인천': [37.4563, 126.7052],
-      '부산': [35.1796, 129.0756],
-      '대구': [35.8714, 128.6014],
-      '대전': [36.3504, 127.3845],
-      '광주': [35.1595, 126.8526],
-      '울산': [35.5384, 129.3114],
-      '세종': [36.4800, 127.2890],
-      '강원': [37.8813, 127.7298], // 춘천 기준
-      '충북': [36.6356, 127.4913], // 청주 기준
-      '충남': [36.6588, 126.6728], // 내포 기준
-      '전북': [35.8242, 127.1480], // 전주 기준
-      '전남': [34.8161, 126.4629], // 무안 기준
-      '경북': [36.5760, 128.5056], // 안동 기준
-      '경남': [35.2383, 128.6922], // 창원 기준
-      '제주': [33.4890, 126.4983],
-    };
-
-    let closest = '서울';
-    let minDistance = Infinity;
-
-    for (const [prov, [pLat, pLon]] of Object.entries(provinceCoords)) {
-      // 단순 유클리디안 거리 (정밀 역지오코딩 없이 가장 가까운 도심을 찾음)
-      const dist = Math.pow(lat - pLat, 2) + Math.pow(lon - pLon, 2);
-      if (dist < minDistance) {
-        minDistance = dist;
-        closest = prov;
-      }
-    }
-    return closest;
-  };
-
-  const handleGetLocation = () => {
-    if (!navigator.geolocation) {
-      alert("브라우저가 위치 정보를 지원하지 않습니다.");
-      return;
-    }
-    setIsLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const newLat = pos.coords.latitude;
-        const newLon = pos.coords.longitude;
-        setLat(newLat);
-        setLon(newLon);
-        setIsLocating(false);
-        
-        // GPS 좌표 기반으로 가장 가까운 지역(도/광역시) 자동 매핑
-        const detectedProvince = findClosestProvince(newLat, newLon);
-        setProvince(detectedProvince);
-        
-        alert(`현재 위치 정보(${detectedProvince} 인근)가 반영되었습니다! 이제 검색 버튼을 누르시면 해당 위치 기준 순위가 조회됩니다.`);
-      },
-      (err) => {
-        setIsLocating(false);
-        alert("위치 정보를 가져오는데 실패했습니다: " + err.message);
-      },
-      { timeout: 10000, enableHighAccuracy: true }
-    );
+    onSearch(keyword.trim(), '');
   };
 
   return (
@@ -194,40 +111,13 @@ export const RealtimeRankTable = ({
         </p>
 
         <form onSubmit={handleSearch} className="flex gap-3">
-          {/* 드롭다운 왼쪽(앞쪽)으로 이동 (현재 뷰에서 숨김 처리) */}
-          <div className="hidden gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={handleGetLocation}
-              disabled={isLocating}
-              className={cn(
-                "px-3 py-2.5 rounded-xl border text-sm font-bold flex items-center gap-1.5 transition-all text-slate-700 dark:text-slate-200 border-slate-200 dark:border-white/10 shrink-0",
-                lat ? "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30" : "bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10"
-              )}
-            >
-              {isLocating ? <Loader2 className="size-4 animate-spin" /> : <MapPin className="size-4" />}
-              {lat ? "위치 적용됨" : "내 위치"}
-            </button>
-            <select
-            value={province}
-            onChange={(e) => setProvince(e.target.value)}
-            className="w-[100px] sm:w-28 shrink-0 px-2 sm:px-4 py-2.5 rounded-xl bg-slate-50 font-semibold dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 appearance-none cursor-pointer"
-          >
-            {PROVINCES.map((p) => (
-              <option key={p} value={p}>
-                {p}
-              </option>
-            ))}
-          </select>
-          </div>
-
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-slate-400" />
             <input
               type="text"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              placeholder="검색 키워드 입력 (예: 강남 빵집)"
+              placeholder="검색 키워드 입력 (예: 연산동 한식, 부산 돼지국밥)"
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all"
             />
           </div>
@@ -251,7 +141,7 @@ export const RealtimeRankTable = ({
              <Lightbulb className="size-4" /> 알아두면 좋은 검색 꿀팁
            </h4>
            <ul className="space-y-2 text-[13px] text-blue-600/80 dark:text-blue-400/80 ml-6 list-disc">
-             <li><strong className="font-semibold text-blue-800 dark:text-blue-300">지역명이 포함된 검색어</strong> (예: "강남 맛집", "부산 돼지국밥")를 입력하시면 더욱 정확한 결과를 가져옵니다.</li>
+             <li><strong className="font-semibold text-blue-800 dark:text-blue-300">지역명이 포함된 검색어</strong>를 입력하세요. 네이버 검색 결과의 지역 의도에 맞춰 순위를 확인합니다.</li>
            </ul>
         </div>
 
@@ -267,7 +157,7 @@ export const RealtimeRankTable = ({
               </div>
             </div>
             <button
-              onClick={() => onAddTracking(keyword, province)}
+              onClick={() => onAddTracking(keyword, '')}
               disabled={isRegistering}
               className="w-full sm:w-auto px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-md shadow-indigo-600/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
             >

@@ -89,7 +89,7 @@ export function GoldenKeywords({ storeId, storeName, presetKeywords }: GoldenKey
           setTaskId(null);
           localStorage.setItem(`keyword_cooldown_${storeId}`, Date.now().toString());
           setCooldownRemaining(180);
-          showToast('🔥 데이터 발굴이 완료되었습니다!');
+          showToast('데이터 발굴이 완료되었습니다!');
           if (res.result) {
             processResultData(res.result);
           }
@@ -130,7 +130,7 @@ export function GoldenKeywords({ storeId, storeName, presetKeywords }: GoldenKey
     try {
       const res = await storeApi.discoverKeywords(storeId, seedKeyword.trim());
       setTaskId(res.task_id);
-      showToast('황금키워드 자동 발굴이 시작되었습니다. (최대 3분 소요)');
+      showToast('황금키워드 자동 발굴이 시작되었습니다. 키워드 수와 네이버 응답 상태에 따라 시간이 달라질 수 있습니다.');
     } catch (err) {
       console.error(err);
       setIsDiscovering(false);
@@ -190,7 +190,7 @@ export function GoldenKeywords({ storeId, storeName, presetKeywords }: GoldenKey
           >
             {isDiscovering ? (
               <span className="flex items-center text-xs sm:text-sm">
-                분석 중 (최대 3분 소요)
+                분석 중
                 <Loader2 className="w-4 h-4 ml-2 animate-spin" />
               </span>
             ) : cooldownRemaining > 0 ? (
@@ -208,6 +208,11 @@ export function GoldenKeywords({ storeId, storeName, presetKeywords }: GoldenKey
               <span>⚡</span> 지연 없이 여러 키워드를 연속 발굴하는 기능은 V2(Pro)에서 지원 예정입니다.
             </span>
           </div>
+        )}
+        {isDiscovering && (
+          <p className="mt-2 text-[11px] md:text-xs font-medium text-slate-500">
+            키워드 수, 네이버 응답 속도, 동시 수집 대기열에 따라 완료 시간이 달라질 수 있습니다.
+          </p>
         )}
       </div>
 
@@ -385,4 +390,3 @@ export function GoldenKeywords({ storeId, storeName, presetKeywords }: GoldenKey
     </div>
   );
 }
-

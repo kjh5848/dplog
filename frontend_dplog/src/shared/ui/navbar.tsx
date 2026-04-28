@@ -6,10 +6,11 @@ import { Button, buttonVariants } from '@/shared/ui/button';
 import { cn } from '@/shared/lib/utils';
 import { MenuToggleIcon } from '@/shared/ui/menu-toggle-icon';
 import { useScroll } from '@/shared/lib/use-scroll';
+import { Network } from 'lucide-react';
 
 export const DPlogLogo = () => (
   <Link href="/" className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-extrabold text-xl tracking-tighter">
-    <span className="material-icons-round text-2xl">hub</span>
+    <Network className="size-6" />
     <span>D-PLOG</span>
   </Link>
 );

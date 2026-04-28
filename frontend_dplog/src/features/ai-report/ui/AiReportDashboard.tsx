@@ -5,7 +5,7 @@ import { ImpressionCard } from './ImpressionCard';
 import { ReviewGapCard } from './ReviewGapCard';
 import { CompetitorMatchCard } from './CompetitorMatchCard';
 import { CommunicationCard } from './CommunicationCard';
-import { Sparkles, FileText } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 export const AiReportDashboard = () => {
   return (
@@ -50,18 +50,6 @@ export const AiReportDashboard = () => {
             <Suspense fallback={<div className="h-64 bg-slate-100 animate-pulse rounded-[24px]" />}>
               <CommunicationCard />
             </Suspense>
-            
-            {/* Download/Share Actions */}
-            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 p-6 rounded-[24px] flex flex-col gap-4 shadow-sm animate-slide-in-up stagger-5 enhanced-hover">
-              <h3 className="font-bold text-toss-title dark:text-white text-[17px] tracking-tight text-korean">리포트 보관함</h3>
-              <p className="text-[14px] text-toss-body mb-1 word-break-keep text-korean">
-                직원들이나 동업자와 함께 리포트를 공유하고 개선 방안을 논의해보세요.
-              </p>
-              <button className="w-full py-4 bg-[#F2F4F6] hover:bg-slate-200 active:bg-slate-300 text-toss-body font-bold text-[15px] rounded-[14px] flex items-center justify-center gap-2 transition-colors text-korean">
-                <FileText className="w-5 h-5" />
-                PDF로 다운로드
-              </button>
-            </div>
           </div>
         </div>
 

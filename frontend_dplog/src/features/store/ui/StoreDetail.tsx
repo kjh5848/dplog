@@ -18,7 +18,6 @@ import {
   AlertTriangle,
   Loader2,
   RefreshCw,
-  CameraOff,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
@@ -60,6 +59,14 @@ export function StoreDetail({ storeId, onBack }: StoreDetailProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [lightboxImages, setLightboxImages] = useState<string[]>([]);
+
+  const withImageVersion = useCallback((url: string) => {
+    if (!store?.updatedAt || !url.startsWith('/static/images/stores/')) {
+      return url;
+    }
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}v=${encodeURIComponent(store.updatedAt)}`;
+  }, [store?.updatedAt]);
 
   /** 라이트박스 열기 */
   const openLightbox = useCallback((images: string[], index: number) => {
@@ -398,7 +405,7 @@ export function StoreDetail({ storeId, onBack }: StoreDetailProps) {
       <div>
         {(() => {
           const rawUrls = store.shopImageThumbUrl || store.shopImageUrl || '';
-          const imageUrls = rawUrls.split(',').map(u => u.trim()).filter(Boolean);
+          const imageUrls = rawUrls.split(',').map(u => u.trim()).filter(Boolean).map(withImageVersion);
           
           if (imageUrls.length === 0 && store.scrape_status === 'COMPLETED') {
             return (
@@ -530,7 +537,7 @@ export function StoreDetail({ storeId, onBack }: StoreDetailProps) {
                   ? 'bg-amber-50/70 dark:bg-amber-500/5 border-2 border-amber-300/60 dark:border-amber-500/20 ring-1 ring-amber-200/30' 
                   : 'bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-white/5'
               }`}>
-                {menu.imgUrl ? (
+                {menu.imgUrl && (
                   <div
                     onClick={() => {
                       const sorted = [...(store.menus || [])]
@@ -542,10 +549,6 @@ export function StoreDetail({ storeId, onBack }: StoreDetailProps) {
                     className="size-16 rounded-lg overflow-hidden bg-slate-200 dark:bg-slate-700 shrink-0 cursor-pointer group/img"
                   >
                     <img src={menu.imgUrl} alt={menu.name} className="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-200" />
-                  </div>
-                ) : (
-                  <div className="size-16 rounded-lg flex items-center justify-center bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-200/50 dark:border-white/5 text-slate-400">
-                    <CameraOff className="size-5 opacity-30" />
                   </div>
                 )}
                 <div className="flex flex-col justify-center flex-1 min-w-0">

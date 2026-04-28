@@ -18,6 +18,8 @@ Use this skill before creating or revising `blog_draft.md` for a Naver Blog post
 1. Inspect the store `media_index.md` and use only media whose role matches the paragraph.
 2. Write with Naver-friendly structure: `##` headings, `###` subheadings, `>` quotes, `**bold**`, and `__underline__`.
    - Do not use `---`/dashed separator lines for section breaks. Use a short `>` quote instead.
+   - If `store_info.md` indicates a sponsorship, 체험권, 협찬, 원고료, or other economic relationship, do not insert a long top quote such as `이 글은 업체로부터...작성했습니다.`.
+   - Instead, keep the disclosure concise and explicit in the visible first hashtag line, e.g. start the first hashtag line with `#협찬`. Do not hide or omit the economic relationship marker.
 3. Arrange image/GIF blocks by consecutive count. For live Naver publishing, keep intended media together as consecutive image/GIF lines so the publisher can pass the group to SmartEditor and let Naver's native image alignment handle placement:
    - 1 item: single image
    - 2 or 4 items: 2-column grid

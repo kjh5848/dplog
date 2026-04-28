@@ -56,7 +56,7 @@ export interface TrackInfo {
   shopId: string;
   /** 순위 변동 (양수 = 상승, 음수 = 하락) */
   rankChange: number;
-  /** 현재 노출 순위 (0 = 순위권 밖) */
+  /** 현재 노출 순위 (0 = 이탈) */
   currentRank: number;
   /** 네이버 검색 결과 총 개수 (0 = 오타/검색결과 없음) */
   totalCount: number;

@@ -31,7 +31,7 @@ export default function LicenseAuthPage() {
 
     try {
       // 오프라인 파이썬 백엔드 라이선스 검증 API 호출
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/api/v1/auth/verify-license`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ''}/v1/auth/verify-license`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ license_key: licenseKey.trim() })

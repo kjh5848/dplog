@@ -57,11 +57,11 @@ async def get_keyword_status(store_id: int, service: StoreService = Depends(get_
 
 @router.get("/{store_id}/ranking/realtime")
 async def get_realtime_ranking(
-    store_id: int, 
-    keyword: str, 
-    province: str = "서울", 
-    lat: float = None, 
-    lon: float = None, 
+    store_id: int,
+    keyword: str,
+    province: str = "",
+    lat: float = None,
+    lon: float = None,
     service: StoreService = Depends(get_store_service)
 ):
     return await service.get_realtime_ranking(store_id, keyword, province, lat, lon)

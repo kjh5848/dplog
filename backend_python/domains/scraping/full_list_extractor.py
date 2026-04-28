@@ -6,6 +6,7 @@ import time
 import os
 import random
 import json
+from domains.scraping.browser_launcher import launch_chromium
 
 USER_AGENTS = [
     "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
@@ -256,10 +257,7 @@ async def run_engine(keywords_list, concurrency=8, target_lat=None, target_lon=N
     all_extracted_data = []
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(
-            headless=True,
-            args=['--disable-blink-features=AutomationControlled', '--no-sandbox']
-        )
+        browser = await launch_chromium(p, headless=True)
         
         for i in range(0, len(keywords_list), concurrency):
             chunk = keywords_list[i:i+concurrency]

@@ -13,6 +13,8 @@ class StoreBase(SQLModel):
     address: str = Field(max_length=500)
     placeUrl: Optional[str] = Field(default=None, max_length=2000)
     phone: Optional[str] = Field(default=None, max_length=50)
+    latitude: Optional[float] = Field(default=None)
+    longitude: Optional[float] = Field(default=None)
     shopImageUrl: Optional[str] = Field(default=None, max_length=5000)
     shopImageThumbUrl: Optional[str] = Field(default=None, max_length=5000)
     keywords: Optional[str] = Field(default=None, max_length=2000)
@@ -84,6 +86,8 @@ class StoreUpdateRequest(SQLModel):
     address: Optional[str] = None
     placeUrl: Optional[str] = None
     phone: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
 class StoreDetailResponse(StoreBase):
     id: int

@@ -3,6 +3,7 @@ import json
 import httpx
 import asyncio
 import os
+import shutil
 import traceback
 from datetime import timedelta
 from fastapi import Depends, HTTPException, BackgroundTasks
@@ -17,6 +18,7 @@ from domains.scraping.engine import ScrapingEngine
 from domains.scraping.ranking_engine import fetch_realtime_ranking
 from domains.scraping.place_detail_extractor import scrape_place_details
 from domains.scraping.naver_ads_client import get_keyword_stats
+from core.runtime_paths import get_static_media_dir
 
 # --- Helper Functions ---
 def find_my_rank_info(realtime_data, store):
@@ -55,6 +57,8 @@ async def run_deep_scrape_registration_worker(store_id: int, place_url: str):
         blog_reviews = details.get("blog_reviews", 0)
         saves = details.get("saves", 0)
         rating = details.get("rating", 0.0)
+        latitude = details.get("latitude")
+        longitude = details.get("longitude")
         shopImageUrl_raw = details.get("shopImageUrl")
         keywords = None
         if details.get("suggested_keywords"):
@@ -88,14 +92,19 @@ async def run_deep_scrape_registration_worker(store_id: int, place_url: str):
         if shopImageUrl_raw:
             try:
                 raw_urls = [u for u in shopImageUrl_raw.split(',') if u]
-                save_dir = f"static/images/stores/{store_id}"
+                static_url_dir = f"static/images/stores/{store_id}"
+                save_dir = os.path.join(str(get_static_media_dir()), "images", "stores", str(store_id))
+                if os.path.isdir(save_dir):
+                    shutil.rmtree(save_dir)
                 os.makedirs(save_dir, exist_ok=True)
                 
                 async with httpx.AsyncClient() as client:
                     for idx, url in enumerate(raw_urls):
                         try:
-                            orig_path = f"{save_dir}/orig_{idx}.jpg"
-                            thumb_path = f"{save_dir}/thumb_{idx}.jpg"
+                            orig_path = os.path.join(save_dir, f"orig_{idx}.jpg")
+                            thumb_path = os.path.join(save_dir, f"thumb_{idx}.jpg")
+                            orig_url_path = f"{static_url_dir}/orig_{idx}.jpg"
+                            thumb_url_path = f"{static_url_dir}/thumb_{idx}.jpg"
                             
                             thumb_target_url = url
                             if 'ldb-phinf.pstatic.net' in url:
@@ -112,14 +121,14 @@ async def run_deep_scrape_registration_worker(store_id: int, place_url: str):
                             if orig_resp.status_code == 200:
                                 with open(orig_path, 'wb') as f:
                                     f.write(orig_resp.content)
-                                local_orig_urls.append(f"/{orig_path}")
+                                local_orig_urls.append(f"/{orig_url_path}")
                                 
                             if thumb_resp.status_code == 200:
                                 with open(thumb_path, 'wb') as f:
                                     f.write(thumb_resp.content)
-                                local_thumb_urls.append(f"/{thumb_path}")
+                                local_thumb_urls.append(f"/{thumb_url_path}")
                             elif orig_resp.status_code == 200:
-                                local_thumb_urls.append(f"/{orig_path}")
+                                local_thumb_urls.append(f"/{orig_url_path}")
                                     
                         except Exception as img_e:
                             print(f"Image download failed for {url}: {img_e}")
@@ -134,6 +143,8 @@ async def run_deep_scrape_registration_worker(store_id: int, place_url: str):
                 store.blog_reviews = blog_reviews
                 store.saves = saves
                 store.rating = rating
+                store.latitude = latitude
+                store.longitude = longitude
                 store.keywords = keywords
                 
                 if local_orig_urls:
@@ -191,6 +202,7 @@ async def run_deep_scrape_registration_worker(store_id: int, place_url: str):
                         ))
                 
                 store.scrape_status = "COMPLETED"
+                store.updatedAt = get_utc_now()
                 await session.commit()
                 
     except Exception as e:
@@ -272,6 +284,8 @@ class StoreService:
             address=req.address,
             placeUrl=req.placeUrl,
             phone=req.phone,
+            latitude=req.latitude,
+            longitude=req.longitude,
             shopImageUrl=req.shopImageUrl,
             scrape_status="PENDING" if req.placeUrl else "COMPLETED"
         )
