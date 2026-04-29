@@ -52,7 +52,7 @@ dplog:
     token-uri: ${KAKAO_TOKEN_URI:https://kauth.kakao.com/oauth/token}
     jwk-set-uri: ${KAKAO_JWK_SET_URI:https://kauth.kakao.com/.well-known/jwks.json}
     user-info-uri: ${KAKAO_USER_INFO_URI:https://kapi.kakao.com/v2/user/me}
-    channel-relation-uri: ${KAKAO_CHANNEL_RELATION_URI:https://kapi.kakao.com/v2/api/talk/channel}
+    channel-relation-uri: ${KAKAO_CHANNEL_RELATION_URI:https://kapi.kakao.com/v2/api/talk/channels}
     channel-public-id: ${KAKAO_CHANNEL_PUBLIC_ID:}
     required-scopes:
       - openid
@@ -60,7 +60,6 @@ dplog:
       - profile_image
       - account_email
       - plusfriends
-      - talk_message
   public-data:
     service-key: ${PUBLIC_DATA_SERVICE_KEY:}
     business-validation-uri: ${PUBLIC_DATA_BUSINESS_VALIDATION_URI:https://api.odcloud.kr/api/nts-businessman/v1/validate}

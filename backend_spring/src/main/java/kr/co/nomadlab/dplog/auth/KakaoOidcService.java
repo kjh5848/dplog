@@ -283,8 +283,9 @@ public class KakaoOidcService {
     private ChannelRelationStatus fetchChannelRelation(String accessToken, String channelPublicId) {
         try {
             Map<String, Object> body = restClient.get()
-                    .uri(properties.getKakao().getChannelRelationUri() + "?channel_public_id="
-                            + URLEncoder.encode(channelPublicId, StandardCharsets.UTF_8))
+                    .uri(properties.getKakao().getChannelRelationUri() + "?channel_ids="
+                            + URLEncoder.encode(channelPublicId, StandardCharsets.UTF_8)
+                            + "&channel_id_type=channel_public_id")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .retrieve()
                     .body(Map.class);
@@ -318,7 +319,7 @@ public class KakaoOidcService {
             return false;
         }
         List<String> scopes = List.of(scope.split("\\s+"));
-        return scopes.contains("talk_channel") || scopes.contains("plusfriends") || scopes.contains("talk_message");
+        return scopes.contains("plusfriends");
     }
 
     private OAuth2TokenValidatorResult validateAudience(Jwt jwt) {
