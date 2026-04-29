@@ -19,6 +19,8 @@ import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
 @TestPropertySource(properties = {
+        "spring.datasource.url=jdbc:h2:mem:dplog-license-service-test;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE",
+        "spring.jpa.hibernate.ddl-auto=create-drop",
         "dplog.kakao.client-id=test-client",
         "dplog.kakao.jwk-set-uri=http://localhost/.well-known/jwks.json"
 })

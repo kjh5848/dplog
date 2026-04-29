@@ -135,12 +135,17 @@ public class KakaoOidcService {
             form.add("client_secret", kakao.getClientSecret());
         }
 
-        KakaoTokenResponse response = restClient.post()
-                .uri(URI.create(kakao.getTokenUri()))
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(form)
-                .retrieve()
-                .body(KakaoTokenResponse.class);
+        KakaoTokenResponse response;
+        try {
+            response = restClient.post()
+                    .uri(URI.create(kakao.getTokenUri()))
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(form)
+                    .retrieve()
+                    .body(KakaoTokenResponse.class);
+        } catch (RuntimeException ex) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "KAKAO_TOKEN_EXCHANGE_FAILED", "카카오 인증 코드를 확인할 수 없습니다.");
+        }
 
         if (response == null || isBlank(response.idToken()) || isBlank(response.accessToken())) {
             throw new ApiException(HttpStatus.UNAUTHORIZED, "KAKAO_TOKEN_INVALID", "카카오 토큰 응답이 올바르지 않습니다.");
