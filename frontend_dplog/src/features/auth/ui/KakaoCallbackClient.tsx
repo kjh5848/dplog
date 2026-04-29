@@ -10,9 +10,9 @@ import { Loader2 } from 'lucide-react';
  *
  * 카카오 인가 서버에서 리다이렉트된 후:
  * 1. URL에서 code, state 추출
- * 2. CSRF state 검증
- * 3. 백엔드에 카카오 로그인 API 호출
- * 4. JWT 수신 → 인증 상태 저장 → 대시보드 리다이렉트
+ * 2. 백엔드에 카카오 콜백 API 호출
+ * 3. 백엔드가 OIDC state/nonce 검증 후 HttpOnly 세션 쿠키 발급
+ * 4. 인증 상태 저장 → 대시보드 리다이렉트
  */
 export default function KakaoCallbackClient() {
   const router = useRouter();
@@ -40,16 +40,7 @@ export default function KakaoCallbackClient() {
           throw new Error('카카오 로그인 정보가 올바르지 않습니다.');
         }
 
-        // CSRF state 검증
-        const savedState = localStorage.getItem('kakao_oauth_state');
-        if (state !== savedState) {
-          throw new Error('보안 검증에 실패했습니다. 다시 로그인해 주세요.');
-        }
-
-        // state 사용 후 제거
-        localStorage.removeItem('kakao_oauth_state');
-
-        // 백엔드 카카오 로그인 API 호출 → JWT 수신
+        // 백엔드 카카오 로그인 API 호출 → HttpOnly 세션 쿠키 수신
         await loginWithKakao(code, state);
 
         // 저장된 리다이렉트 경로로 이동 (없으면 대시보드)

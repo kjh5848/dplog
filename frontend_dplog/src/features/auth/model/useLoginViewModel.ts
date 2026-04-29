@@ -5,31 +5,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { loginSchema, LoginFormValues } from "./schemas";
-import { useAuthStore } from "@/entities/auth/model/useAuthStore";
-
-/** 카카오 OIDC 설정 */
-const KAKAO_CLIENT_ID = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID ?? '';
-const KAKAO_REDIRECT_URI =
-  typeof window !== 'undefined'
-    ? `${window.location.origin}/kakao/callback`
-    : '';
-
-/**
- * CSRF 방지용 랜덤 state 생성
- */
-function generateState(): string {
-  const array = new Uint8Array(32);
-  if (typeof window !== 'undefined' && window.crypto) {
-    window.crypto.getRandomValues(array);
-  }
-  return Array.from(array, (b) => b.toString(16).padStart(2, '0')).join('');
-}
+import * as authApi from "@/entities/auth/api/authApi";
 
 export const useLoginViewModel = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const loginWithKakao = useAuthStore((s) => s.loginWithKakao);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -65,29 +46,22 @@ export const useLoginViewModel = () => {
    * 카카오 인가 URL로 리다이렉트합니다.
    * state를 생성하여 localStorage에 저장 (CSRF 방지)
    */
-  const handleKakaoLogin = () => {
-    const state = generateState();
+  const handleKakaoLogin = async () => {
+    setIsLoading(true);
+    setError(null);
 
-    // CSRF state 저장
-    localStorage.setItem('kakao_oauth_state', state);
+    try {
+      const redirectParam = new URLSearchParams(window.location.search).get('redirect');
+      if (redirectParam && redirectParam.startsWith('/')) {
+        localStorage.setItem('login_redirect_path', redirectParam);
+      }
 
-    // 로그인 후 돌아올 경로 저장
-    const currentPath = window.location.pathname;
-    if (currentPath !== '/login') {
-      localStorage.setItem('login_redirect_path', currentPath);
+      const { authorizeUrl } = await authApi.getKakaoAuthorizeUrl();
+      window.location.href = authorizeUrl;
+    } catch {
+      setError('카카오 로그인 주소를 생성하지 못했습니다. 관리자에게 문의해 주세요.');
+      setIsLoading(false);
     }
-
-    // 카카오 인가 URL 구성
-    const params = new URLSearchParams({
-      response_type: 'code',
-      client_id: KAKAO_CLIENT_ID,
-      redirect_uri: KAKAO_REDIRECT_URI,
-      state,
-      scope: 'openid profile_nickname profile_image account_email',
-    });
-
-    const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?${params.toString()}`;
-    window.location.href = kakaoAuthUrl;
   };
 
   /**

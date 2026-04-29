@@ -44,10 +44,10 @@ spring:
   thymeleaf:
     cache: false
   datasource:
-    url: jdbc:mysql://rpa.cj6omyy0cdlc.ap-northeast-2.rds.amazonaws.com:3306/nesoone_dev_v2
+    url: ${DB_URL:jdbc:mysql://localhost:3306/nomadrank_dev}
     driverClassName: com.mysql.cj.jdbc.Driver
-    username: nomadlab
-    password: Shakem!90707
+    username: ${DB_USERNAME:nomadlab}
+    password: ${DB_PASSWORD:}
     # 정적 파일 제거
   web:
     resources:
@@ -97,17 +97,17 @@ spring:
 nomadscrap-server:
   domain: nomadscrap.duckdns.org
   ip: 3.34.167.89
-  api-key: 0c810e3de018434fb2a8c31854131cd7
+  api-key: ${NOMADSCRAP_API_KEY:}
 
 nsearchad:
   domain: "api.searchad.naver.com"
-  customer-id: "3195162"
-  api-key: "0100000000ffcae5bccf4cf8428b07c6866c930cebfaed57a61a9df2c6567d67ac64218d91"
-  secret-key: "AQAAAAD/yuW8z0z4QosHxoZskwzrVPnXBgN7aolMIpyFhC03pw=="
+  customer-id: ${NAVER_SEARCHAD_CUSTOMER_ID:}
+  api-key: ${NAVER_SEARCHAD_API_KEY:}
+  secret-key: ${NAVER_SEARCHAD_SECRET_KEY:}
 
 pumpingstore-server:
   ip: 3.36.175.82
-  api-key: 6f25356bcde24071b19a950a4600f2ea
+  api-key: ${PUMPINGSTORE_API_KEY:}
 
 # google-credentials:
 #   path: /credentials/credentials.json
@@ -117,22 +117,22 @@ pumpingstore-server:
 # 포트원 V2 API 설정 (개발환경)
 portone:
   v2:
-    store-id: store-30cafa46-ac7b-4330-8a03-22393b797ac0
-    api-secret: EiPxSoPxRE9ngxBOGLzlIcQYpCnICk5yYiR3MbRaIJwuCjMEU1XYy9dTnGgomOXup9jPeEge7b3SMCXa
-    channel-key: channel-key-dcee5c49-8927-4c5a-b9df-83dabb01afe1
+    store-id: ${PORTONE_STORE_ID:}
+    api-secret: ${PORTONE_API_SECRET:}
+    channel-key: ${PORTONE_CHANNEL_KEY:}
     api-url: https://api.portone.io
-    webhook-secret: whsec_DHhL9cw446sBm8AEh058I9YTFepGPfoCED5kPLy4l7E=
+    webhook-secret: ${PORTONE_WEBHOOK_SECRET:}
   billing:
-    encryption-key: "12345678901234567890123456789012"
+    encryption-key: ${PORTONE_BILLING_ENCRYPTION_KEY:}
     max-retry-count: 3
     retry-interval-hours: 24
 
 # 카카오 OAuth 2.0 설정 (개발환경)
 kakao:
-  rest-api-key: 480278b0282c7a22b0afc202c72051f8
-  client-secret: fd7aaae5c707f72afab475168f619a82
+  rest-api-key: ${KAKAO_REST_API_KEY:}
+  client-secret: ${KAKAO_CLIENT_SECRET:}
   redirect-uri: http://localhost:3000/kakao/callback
-  channel-public-id: _JNWxin
+  channel-public-id: ${KAKAO_CHANNEL_PUBLIC_ID:}
   authorize-uri: https://kauth.kakao.com/oauth/authorize
   required-scopes: profile_nickname,profile_image,account_email,name,gender,age_range,birthday,birthyear,phone_number,plusfriends,talk_message
 
@@ -144,11 +144,11 @@ membership:
 pg:
   inicis:
     mid: INIBillTst
-    signkey: SU5JTEIURV9UUkIQTEVERVNFs0VZU1RS
+    signkey: ${INICIS_SIGNKEY:}
     api:
-      key: rKnPjRn5m6J9Mzz
-      iv: W2KLNKra6Wxc1P==
-    lite-key: b09LVzhuTGZVaEY1WmJoQnZzdXpRdzO9
+      key: ${INICIS_API_KEY:}
+      iv: ${INICIS_API_IV:}
+    lite-key: ${INICIS_LITE_KEY:}
     # hashkey: (필요 시 추가)
 
 payment:

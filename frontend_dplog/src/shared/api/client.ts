@@ -1,85 +1,39 @@
 import axios, {
   type AxiosInstance,
   type AxiosRequestConfig,
-  type InternalAxiosRequestConfig,
   type AxiosResponse,
   type AxiosError,
 } from 'axios';
 import type { ResDTO } from '@/shared/types';
 import { handleApiError, ApiError } from './error-handler';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL?.trim() || 'http://localhost:8080';
+
 /**
  * Axios 인스턴스 기본 설정
  *
  * - baseURL: NEXT_PUBLIC_API_URL 환경변수에서 가져옴
- * - timeout: 15초
+ * - timeout: 300초
  * - Content-Type: application/json
  */
 const apiClient: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? '',
+  baseURL: API_BASE_URL,
   timeout: 300_000,
+  withCredentials: true,
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// ─── 토큰 갱신 상태 관리 (전역 싱글톤) ──────────────────────
-let isRefreshing = false;
-let failedQueue: Array<{
-  resolve: (token: string) => void;
-  reject: (error: unknown) => void;
-}> = [];
-
-/** 대기 중인 요청 처리 */
-function processQueue(error: unknown, token: string | null = null) {
-  failedQueue.forEach((promise) => {
-    if (token) {
-      promise.resolve(token);
-    } else {
-      promise.reject(error);
-    }
-  });
-  failedQueue = [];
-}
-
-// ─── 요청 인터셉터 ────────────────────────────────────────────
-
-/**
- * 요청 인터셉터: Authorization 헤더 자동 추가
- *
- * useAuthStore에서 accessToken을 가져와 Bearer 헤더에 주입합니다.
- * 순환 의존성 방지를 위해 동적 import를 사용합니다.
- */
-apiClient.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
-    // 토큰 갱신 요청에는 기존 토큰을 추가하지 않음
-    if (config.url?.includes('/v1/auth/refresh')) {
-      return config;
-    }
-
-    try {
-      // 순환 의존성 방지: 동적 import
-      const { useAuthStore } = await import('@/entities/auth/model/useAuthStore');
-      const token = useAuthStore.getState().accessToken;
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    } catch {
-      // 스토어 로딩 실패 시 토큰 없이 진행
-    }
-
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
-
 // ─── 응답 인터셉터 ────────────────────────────────────────────
 
 /**
- * 응답 인터셉터: ResDTO<T> 래퍼 처리 + 401 토큰 갱신
+ * 응답 인터셉터: ResDTO<T> 래퍼 처리
  *
  * 성공 응답: ResDTO<T>의 data 필드를 추출하여 반환
- * 401 응답: 리프레시 토큰으로 갱신 → 성공 시 원래 요청 재시도 → 실패 시 로그아웃
+ * 인증은 HttpOnly 세션 쿠키로 처리하므로 Authorization 헤더와 refresh token을 사용하지 않습니다.
  */
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
@@ -102,60 +56,9 @@ apiClient.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
-
-    // 401 에러이고, 이미 재시도하지 않았으며, 인증 관련 API가 아닌 경우
-    if (
-      error.response?.status === 401 &&
-      !originalRequest._retry &&
-      !originalRequest.url?.includes('/v1/auth/')
-    ) {
-      // 이미 토큰 갱신 중이면 큐에 추가하고 대기
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({
-            resolve: (token: string) => {
-              if (originalRequest.headers) {
-                originalRequest.headers.Authorization = `Bearer ${token}`;
-              }
-              resolve(apiClient(originalRequest));
-            },
-            reject,
-          });
-        });
-      }
-
-      originalRequest._retry = true;
-      isRefreshing = true;
-
-      try {
-        // 순환 의존성 방지: 동적 import
-        const { useAuthStore } = await import('@/entities/auth/model/useAuthStore');
-        const success = await useAuthStore.getState().refreshTokens();
-
-        if (success) {
-          const newToken = useAuthStore.getState().accessToken;
-          if (newToken && originalRequest.headers) {
-            originalRequest.headers.Authorization = `Bearer ${newToken}`;
-          }
-          processQueue(null, newToken);
-          return apiClient(originalRequest);
-        } else {
-          // 갱신 실패 → 로그아웃
-          processQueue(error, null);
-          await useAuthStore.getState().logout();
-          // 브라우저 환경에서 로그인 페이지로 리다이렉트
-          if (typeof window !== 'undefined') {
-            window.location.href = '/login';
-          }
-          return Promise.reject(handleApiError(error));
-        }
-      } catch (refreshError) {
-        processQueue(refreshError, null);
-        return Promise.reject(handleApiError(refreshError));
-      } finally {
-        isRefreshing = false;
-      }
+    if (error.response?.status === 401 && typeof window !== 'undefined') {
+      const { useAuthStore } = await import('@/entities/auth/model/useAuthStore');
+      useAuthStore.getState().clearAuth();
     }
 
     return Promise.reject(handleApiError(error));

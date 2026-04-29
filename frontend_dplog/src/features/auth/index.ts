@@ -19,9 +19,10 @@ export type { LoginFormValues, SignupFormValues } from './model/schemas';
 // 타입
 export type {
   User,
-  TokenPair,
   LoginResponse,
   KakaoLoginRequest,
+  KakaoAuthorizeUrlResponse,
+  KakaoChannelRelation,
   AuthProvider,
 } from '@/entities/auth/model/types';
 

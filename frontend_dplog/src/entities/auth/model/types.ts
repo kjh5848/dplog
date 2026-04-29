@@ -20,6 +20,8 @@ export interface User {
   provider: AuthProvider;
   /** 제공자별 고유 ID */
   providerId?: string;
+  /** 서비스 역할 */
+  role?: 'USER' | 'ADMIN';
   /** 가입일 */
   createdAt: string;
 }
@@ -27,38 +29,32 @@ export interface User {
 /** 인증 제공자 */
 export type AuthProvider = 'KAKAO' | 'LOCAL';
 
-/** JWT 토큰 쌍 */
-export interface TokenPair {
-  /** 액세스 토큰 (API 인증용, 단기) */
-  accessToken: string;
-  /** 리프레시 토큰 (토큰 갱신용, 장기) */
-  refreshToken: string;
-}
-
 /** 카카오 로그인 요청 */
 export interface KakaoLoginRequest {
   /** 카카오 인가 코드 */
   code: string;
   /** CSRF 방지용 state */
   state: string;
+  /** 선택 마케팅 동의 */
+  marketingConsent?: boolean;
+}
+
+export interface KakaoAuthorizeUrlResponse {
+  authorizeUrl: string;
+  state: string;
+}
+
+export interface KakaoChannelRelation {
+  channelPublicId: string;
+  relation: 'ADDED' | 'BLOCKED' | 'NONE' | 'CONSENT_REQUIRED';
+  scopeGranted: boolean;
+  checkedAt: string;
 }
 
 /** 로그인 응답 (백엔드 → 프론트엔드) */
 export interface LoginResponse {
-  /** 토큰 쌍 */
-  tokens: TokenPair;
   /** 유저 정보 */
   user: User;
-}
-
-/** 토큰 갱신 요청 */
-export interface RefreshTokenRequest {
-  /** 리프레시 토큰 */
-  refreshToken: string;
-}
-
-/** 토큰 갱신 응답 */
-export interface RefreshTokenResponse {
-  /** 새 토큰 쌍 */
-  tokens: TokenPair;
+  /** 카카오 채널 관계 */
+  channel?: KakaoChannelRelation | null;
 }

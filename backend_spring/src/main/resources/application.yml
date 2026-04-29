@@ -1,0 +1,71 @@
+server:
+  port: ${PORT:8080}
+  servlet:
+    session:
+      cookie:
+        name: DPL_SESSION
+        http-only: true
+        secure: ${SESSION_COOKIE_SECURE:false}
+        same-site: lax
+
+spring:
+  application:
+    name: dplog-backend
+  datasource:
+    url: ${DB_URL:jdbc:h2:file:./data/dplog-backend;MODE=MySQL;DATABASE_TO_LOWER=TRUE}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+    driver-class-name: ${DB_DRIVER:org.h2.Driver}
+  h2:
+    console:
+      enabled: ${H2_CONSOLE_ENABLED:false}
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+  jackson:
+    default-property-inclusion: non_null
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+dplog:
+  frontend-base-url: ${FRONTEND_BASE_URL:http://localhost:3000}
+  allowed-origins:
+    - ${FRONTEND_BASE_URL:http://localhost:3000}
+    - http://127.0.0.1:3000
+    - http://localhost:45123
+    - http://127.0.0.1:45123
+  admin-emails: ${DPLOG_ADMIN_EMAILS:}
+  kakao:
+    client-id: ${KAKAO_REST_API_KEY:}
+    client-secret: ${KAKAO_CLIENT_SECRET:}
+    redirect-uri: ${KAKAO_REDIRECT_URI:http://localhost:3000/kakao/callback}
+    issuer: ${KAKAO_ISSUER:https://kauth.kakao.com}
+    authorize-uri: ${KAKAO_AUTHORIZE_URI:https://kauth.kakao.com/oauth/authorize}
+    token-uri: ${KAKAO_TOKEN_URI:https://kauth.kakao.com/oauth/token}
+    jwk-set-uri: ${KAKAO_JWK_SET_URI:https://kauth.kakao.com/.well-known/jwks.json}
+    user-info-uri: ${KAKAO_USER_INFO_URI:https://kapi.kakao.com/v2/user/me}
+    channel-relation-uri: ${KAKAO_CHANNEL_RELATION_URI:https://kapi.kakao.com/v2/api/talk/channel}
+    channel-public-id: ${KAKAO_CHANNEL_PUBLIC_ID:}
+    required-scopes:
+      - openid
+      - profile_nickname
+      - profile_image
+      - account_email
+      - plusfriends
+      - talk_message
+  public-data:
+    service-key: ${PUBLIC_DATA_SERVICE_KEY:}
+    business-validation-uri: ${PUBLIC_DATA_BUSINESS_VALIDATION_URI:https://api.odcloud.kr/api/nts-businessman/v1/validate}
+  license:
+    hash-pepper: ${DPLOG_LICENSE_HASH_PEPPER:dev-only-change-before-production}
+    product-key-prefix: ${DPLOG_PRODUCT_KEY_PREFIX:DPL}
+    mac-download-url: ${DPLOG_MAC_DOWNLOAD_URL:https://download.dplog.local/dplog-mac-latest.dmg}
+    windows-download-url: ${DPLOG_WINDOWS_DOWNLOAD_URL:https://download.dplog.local/dplog-windows-latest.exe}

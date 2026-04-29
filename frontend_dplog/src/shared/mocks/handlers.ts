@@ -35,59 +35,52 @@ const MOCK_USER = {
   profileImageUrl: null,
   provider: 'KAKAO' as const,
   providerId: 'kakao-12345',
+  role: 'USER' as const,
   createdAt: '2026-01-15T09:00:00Z',
 };
 
-/** 목 JWT 토큰 */
-const MOCK_TOKENS = {
-  accessToken: 'mock-access-token-xxxxxxxx',
-  refreshToken: 'mock-refresh-token-yyyyyyyy',
-};
-
 const authHandlers: RequestHandler[] = [
-  // 카카오 로그인
-  http.post(`${API_BASE}/v1/auth/kakao/login`, async () => {
+  http.get(`${API_BASE}/v1/auth/csrf`, () => {
+    return HttpResponse.json({
+      success: true,
+      data: { headerName: 'X-XSRF-TOKEN', token: 'mock-csrf-token' },
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  http.get(`${API_BASE}/v1/auth/kakao/authorize-url`, () => {
     return HttpResponse.json({
       success: true,
       data: {
-        tokens: MOCK_TOKENS,
+        authorizeUrl: 'http://localhost:3000/kakao/callback?code=mock-code&state=mock-state',
+        state: 'mock-state',
+      },
+      timestamp: new Date().toISOString(),
+    });
+  }),
+
+  // 카카오 로그인
+  http.post(`${API_BASE}/v1/auth/kakao/callback`, async () => {
+    return HttpResponse.json({
+      success: true,
+      data: {
         user: MOCK_USER,
+        channel: {
+          channelPublicId: '@dplog',
+          relation: 'ADDED',
+          scopeGranted: true,
+          checkedAt: new Date().toISOString(),
+        },
       },
       timestamp: new Date().toISOString(),
     });
   }),
 
   // 현재 유저 정보 조회
-  http.get(`${API_BASE}/v1/auth/me`, ({ request }) => {
-    const authHeader = request.headers.get('Authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return HttpResponse.json(
-        {
-          success: false,
-          error: { code: 'AUTH_001', message: '인증이 필요합니다.' },
-          timestamp: new Date().toISOString(),
-        },
-        { status: 401 },
-      );
-    }
-
+  http.get(`${API_BASE}/v1/auth/me`, () => {
     return HttpResponse.json({
       success: true,
       data: MOCK_USER,
-      timestamp: new Date().toISOString(),
-    });
-  }),
-
-  // 토큰 갱신
-  http.post(`${API_BASE}/v1/auth/refresh`, async () => {
-    return HttpResponse.json({
-      success: true,
-      data: {
-        tokens: {
-          accessToken: `mock-access-token-${Date.now()}`,
-          refreshToken: `mock-refresh-token-${Date.now()}`,
-        },
-      },
       timestamp: new Date().toISOString(),
     });
   }),
