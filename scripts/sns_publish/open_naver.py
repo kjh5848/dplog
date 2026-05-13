@@ -20,7 +20,8 @@ else:
     legacy_stealth = None
 
 try:
-    from naver_editor.context import align_left, dismiss_editor_chrome, focus_body, get_editor_frame
+    from naver_editor import selectors
+    from naver_editor.context import align_left, dismiss_editor_chrome, find_first_visible_with_selector, focus_body, get_editor_frame
     from naver_editor.formatting import insert_quote, set_post_title, write_heading_segment
     from naver_editor.map import insert_map
     from naver_editor.media import upload_media_group
@@ -28,7 +29,8 @@ try:
     from naver_editor.publish import click_publish
     from naver_editor.typing import human_paste, paste_text, type_inline_text
 except ImportError:
-    from .naver_editor.context import align_left, dismiss_editor_chrome, focus_body, get_editor_frame
+    from .naver_editor import selectors
+    from .naver_editor.context import align_left, dismiss_editor_chrome, find_first_visible_with_selector, focus_body, get_editor_frame
     from .naver_editor.formatting import insert_quote, set_post_title, write_heading_segment
     from .naver_editor.map import insert_map
     from .naver_editor.media import upload_media_group
@@ -190,7 +192,10 @@ async def ensure_logged_in(page) -> bool:
     print("🚀 로그인 수행 중...")
     await page.click(".btn_login")
     print("⏳ 에디터 리다이렉트 대기...")
-    await asyncio.sleep(5)
+    try:
+        await page.wait_for_url(lambda url: "postwrite" in url, timeout=15000)
+    except Exception:
+        await asyncio.sleep(2)
 
     if "postwrite" not in page.url:
         print("🔄 에디터 페이지로 재접근합니다...")
@@ -198,7 +203,25 @@ async def ensure_logged_in(page) -> bool:
         await page.wait_for_load_state("networkidle")
         await asyncio.sleep(3)
 
+    if "nid.naver.com" in page.url or "nidlogin.login" in page.url or "postwrite" not in page.url:
+        raise RuntimeError(
+            "네이버 로그인 성공을 확인하지 못했습니다. 원고 입력을 중단합니다."
+        )
+
     return True
+
+
+async def assert_editor_ready(page) -> None:
+    if "nid.naver.com" in page.url or "nidlogin.login" in page.url or "postwrite" not in page.url:
+        raise RuntimeError(
+            "네이버 에디터 페이지가 아닙니다. 로그인/리다이렉트 상태를 확인하고 원고 입력을 중단합니다."
+        )
+
+    title_input, _ = await find_first_visible_with_selector(page, selectors.TITLE_INPUT, timeout_ms=3000)
+    if title_input:
+        return
+
+    raise RuntimeError("SmartEditor 입력 영역을 확인하지 못했습니다. 원고 입력을 중단합니다.")
 
 
 async def launch_chromium(playwright):
@@ -270,14 +293,59 @@ async def write_url_segment(page, segment: dict) -> None:
         await asyncio.sleep(0.5)
 
 
+async def clear_existing_body(page, editor_frame) -> None:
+    await focus_body(editor_frame)
+    await asyncio.sleep(0.5)
+    await page.keyboard.press(f"{MODIFIER}+a")
+    await asyncio.sleep(0.2)
+    await page.keyboard.press("Backspace")
+    await asyncio.sleep(0.5)
+    print("🧹 기존 본문 초기화 완료")
+
+
+async def assert_existing_text(editor_frame, required_text: str | None) -> None:
+    if not required_text:
+        return
+
+    await asyncio.sleep(2)
+    body, _ = await find_first_visible_with_selector(editor_frame, selectors.BODY_CONTAINER, timeout_ms=3000)
+    content = ""
+    if body:
+        content = await body.text_content(timeout=5000) or ""
+    else:
+        try:
+            content = await editor_frame.locator("body").text_content(timeout=5000) or ""
+        except Exception:
+            content = ""
+
+    if required_text not in content:
+        raise RuntimeError(f"기존 본문에서 이어쓰기 기준 문구를 찾지 못했습니다: {required_text}")
+
+    print(f"✅ 이어쓰기 기준 문구 확인: {required_text}")
+
+
+def is_gif_segment(segment: dict) -> bool:
+    return segment.get("filename", "").lower().endswith(".gif")
+
+
 def collect_consecutive_images(segments: list[dict], start_index: int, asset_dir: str) -> tuple[list[dict], list[str], int]:
     image_segments = []
     image_paths = []
     index = start_index
+    first_is_gif = is_gif_segment(segments[start_index])
+
     while index < len(segments) and segments[index]["type"] == "image":
+        current_is_gif = is_gif_segment(segments[index])
+        if image_segments and (first_is_gif or current_is_gif):
+            break
+
         image_segments.append(segments[index])
         image_paths.append(os.path.join(asset_dir, segments[index]["filename"]))
         index += 1
+
+        if first_is_gif:
+            break
+
     return image_segments, image_paths, index
 
 
@@ -391,6 +459,26 @@ def build_arg_parser() -> argparse.ArgumentParser:
         default=600,
         help="초안 검수용 브라우저 유지 시간(초). 기본값: 600",
     )
+    parser.add_argument(
+        "--start-segment",
+        type=int,
+        default=1,
+        help="본문 세그먼트 시작 번호(1부터). 이어쓰기 시 사용합니다.",
+    )
+    parser.add_argument(
+        "--skip-title",
+        action="store_true",
+        help="기존 에디터 제목을 유지하고 제목 입력을 건너뜁니다.",
+    )
+    parser.add_argument(
+        "--clear-body",
+        action="store_true",
+        help="본문 입력 전 기존 본문을 삭제합니다. 기본값은 삭제하지 않습니다.",
+    )
+    parser.add_argument(
+        "--require-existing-text",
+        help="이어쓰기 전 에디터 본문에 반드시 있어야 하는 문구입니다.",
+    )
     return parser
 
 
@@ -401,6 +489,10 @@ async def open_naver_homepage(
     format_check: bool = False,
     probe_editor_dom: bool = False,
     keep_open_seconds: int = 600,
+    start_segment: int = 1,
+    skip_title: bool = False,
+    clear_body: bool = False,
+    require_existing_text: str | None = None,
 ) -> int:
     asset_dir = os.path.join(BASE_DIR, "asset", store_name)
     draft_path = os.path.join(asset_dir, "blog_draft.md")
@@ -451,6 +543,7 @@ async def open_naver_homepage(
             await page.wait_for_load_state("networkidle")
 
             needs_login = await ensure_logged_in(page)
+            await assert_editor_ready(page)
             editor_frame = get_editor_frame(page)
             await dismiss_editor_chrome(page, editor_frame)
 
@@ -462,10 +555,13 @@ async def open_naver_homepage(
                 await print_editor_dom_probe(editor_frame)
                 return 0
 
-            print("🖋️ 제목을 입력합니다...")
             await asyncio.sleep(6)
-            title_result = await set_post_title(page, editor_frame, post_title, MODIFIER)
-            print(f"{'✅' if title_result.ok else '⚠️'} {title_result.message}")
+            if skip_title:
+                print("⏭️ 제목 입력 건너뜀")
+            else:
+                print("🖋️ 제목을 입력합니다...")
+                title_result = await set_post_title(page, editor_frame, post_title, MODIFIER)
+                print(f"{'✅' if title_result.ok else '⚠️'} {title_result.message}")
 
             print("🖋️ 본문을 입력합니다...")
             await page.keyboard.press("Enter")
@@ -473,8 +569,14 @@ async def open_naver_homepage(
             await focus_body(editor_frame)
             await asyncio.sleep(1.0)
             await align_left(editor_frame)
+            await assert_existing_text(editor_frame, require_existing_text)
+            if clear_body:
+                await clear_existing_body(page, editor_frame)
 
-            await write_body_segments(page, editor_frame, segments, asset_dir)
+            start_index = max(0, start_segment - 1)
+            if start_index:
+                print(f"⏭️ 본문 세그먼트 {start_segment}번부터 이어쓰기")
+            await write_body_segments(page, editor_frame, segments[start_index:], asset_dir)
 
             if hashtags:
                 await asyncio.sleep(0.5)
@@ -526,6 +628,10 @@ def main() -> None:
             format_check=args.format_check,
             probe_editor_dom=args.probe_editor_dom,
             keep_open_seconds=args.keep_open_seconds,
+            start_segment=args.start_segment,
+            skip_title=args.skip_title,
+            clear_body=args.clear_body,
+            require_existing_text=args.require_existing_text,
         )
     )
     sys.exit(exit_code or 0)

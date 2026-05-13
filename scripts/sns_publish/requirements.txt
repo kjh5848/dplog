@@ -1,0 +1,4 @@
+playwright
+playwright-stealth
+pyperclip
+python-dotenv

@@ -1,7 +1,10 @@
 TITLE_INPUT = [
+    ".se-title-text",
     ".se-title-input",
+    "textarea[placeholder*='제목']",
     "[placeholder='제목']",
     ".se-placeholder",
+    "[contenteditable='true']",
     "div[contenteditable='true']",
 ]
 
