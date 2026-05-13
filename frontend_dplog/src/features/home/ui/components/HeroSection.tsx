@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/shared/lib/utils';
-import { Rocket } from 'lucide-react';
+import { BookOpen, Rocket } from 'lucide-react';
 import Link from 'next/link';
 
 import { ShinyButton, GradientButton } from '@/shared/ui/custom-buttons';
@@ -128,7 +128,7 @@ export const HeroSection = ({ onComplete }: HeroSectionV13Props) => {
           <div className="flex flex-col sm:flex-row gap-8 justify-center items-end">
             <div className="flex flex-col items-center gap-3">
               <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-full">
-                창업 운영중
+                매장 운영 중
               </span>
               <ShinyButton 
                 className="w-72 h-16"
@@ -137,7 +137,7 @@ export const HeroSection = ({ onComplete }: HeroSectionV13Props) => {
                 }}
               >
                 <Rocket className="w-5 h-5" />
-                무료로 진단 시작하기
+                무료로 매장 진단하기
               </ShinyButton>
             </div>
 
@@ -151,6 +151,7 @@ export const HeroSection = ({ onComplete }: HeroSectionV13Props) => {
                   router.push('/phase1-setup?type=startup');
                 }}
               >
+                <BookOpen className="mr-2 inline h-5 w-5 align-[-3px] text-slate-900 dark:text-white" />
                 창업성공 전자책 받기
               </GradientButton>
             </div>

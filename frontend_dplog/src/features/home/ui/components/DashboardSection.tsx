@@ -2,75 +2,54 @@
 
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Play, Pause } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 /* ─── Slide Data ─── */
-interface VideoSlide {
+interface DashboardSlide {
   id: string;
   title: string;
   description: string;
-  videoSrc: string;
+  imageSrc: string;
   accent: string; // gradient color
 }
 
-const slides: VideoSlide[] = [
+const slides: DashboardSlide[] = [
   {
-    id: 'keyword',
-    title: 'AI 키워드 추천',
-    description: '매장에 최적화된 검색 키워드를 AI가 분석합니다',
-    videoSrc: '/videos/dashboard-demo.mp4',
+    id: 'store',
+    title: '내 가게 확인',
+    description: '대표메뉴, 리뷰수, 평점, 키워드를 한 화면에서 확인합니다',
+    imageSrc: '/landing/dashboard/my-store.png',
     accent: '#3b82f6',
   },
   {
-    id: 'dashboard',
-    title: '실시간 대시보드',
-    description: '네이버 플레이스 순위와 리뷰를 한눈에 확인하세요',
-    videoSrc: '/videos/dashboard-demo.mp4',
+    id: 'keywords',
+    title: '황금 키워드 발굴',
+    description: '지역·업종·검색량을 조합해 실행할 키워드를 추천합니다',
+    imageSrc: '/landing/dashboard/keywords.png',
+    accent: '#f97316',
+  },
+  {
+    id: 'ranking',
+    title: '실시간 조회',
+    description: '키워드를 입력하면 현재 네이버 플레이스 노출 순위를 바로 확인합니다',
+    imageSrc: '/landing/dashboard/ranking.png',
     accent: '#06b6d4',
   },
   {
-    id: 'analytics',
-    title: '경쟁 분석 리포트',
-    description: '주변 경쟁 매장의 전략을 파악하고 차별화하세요',
-    videoSrc: '/videos/dashboard-demo.mp4',
+    id: 'tracking',
+    title: '순위 추적',
+    description: '등록 키워드의 순위 변화를 차트로 추적합니다',
+    imageSrc: '/landing/dashboard/tracking.png',
     accent: '#8b5cf6',
-  },
-  {
-    id: 'mission',
-    title: '주간 미션 가이드',
-    description: '매주 실행 가능한 최적화 미션을 제공합니다',
-    videoSrc: '/videos/dashboard-demo.mp4',
-    accent: '#10b981',
-  },
-  {
-    id: 'alert',
-    title: '알림 & 리포트',
-    description: '순위 변동과 리뷰를 실시간으로 알려드립니다',
-    videoSrc: '/videos/dashboard-demo.mp4',
-    accent: '#f59e0b',
   },
 ];
 
 /* ─── Component ─── */
 export const DashboardSection = () => {
-  const [activeIndex, setActiveIndex] = useState(1); // Start on dashboard (center)
-  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const [activeIndex, setActiveIndex] = useState(1); // Start on keywords (center)
   const trackRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
-
-  // Play only the center video
-  useEffect(() => {
-    videoRefs.current.forEach((video, i) => {
-      if (!video) return;
-      if (i === activeIndex) {
-        video.play().catch(() => {});
-      } else {
-        video.pause();
-        video.currentTime = 0;
-      }
-    });
-  }, [activeIndex]);
 
   const goTo = useCallback((index: number) => {
     if (index < 0 || index >= slides.length) return;
@@ -89,6 +68,7 @@ export const DashboardSection = () => {
   const handlePointerDown = (e: React.PointerEvent) => {
     setIsDragging(true);
     setStartX(e.clientX);
+    e.currentTarget.setPointerCapture?.(e.pointerId);
   };
   const handlePointerMove = (e: React.PointerEvent) => {
     if (!isDragging) return;
@@ -98,7 +78,8 @@ export const DashboardSection = () => {
     if (!isDragging) return;
     setIsDragging(false);
     const diff = e.clientX - startX;
-    if (Math.abs(diff) > 60) {
+    e.currentTarget.releasePointerCapture?.(e.pointerId);
+    if (Math.abs(diff) > 38) {
       if (diff > 0) goPrev();
       else goNext();
     }
@@ -114,11 +95,11 @@ export const DashboardSection = () => {
     return () => window.removeEventListener('keydown', handleKey);
   }, [goPrev, goNext]);
 
-  // slide=60vw, gap=3vw, stride=63vw, half=30vw
-  const SLIDE_VW = 60;
+  // slide=72vw, gap=3vw, stride=75vw, half=36vw
+  const SLIDE_VW = 72;
   const GAP_VW = 3;
-  const STRIDE_VW = SLIDE_VW + GAP_VW; // 63
-  const HALF_VW = SLIDE_VW / 2; // 30
+  const STRIDE_VW = SLIDE_VW + GAP_VW; // 75
+  const HALF_VW = SLIDE_VW / 2; // 36
 
   // ─── Render ───
   return (
@@ -154,13 +135,16 @@ export const DashboardSection = () => {
       </div>
 
       {/* Text tabs */}
-      <div className="dc-tabs">
+      <div className="dc-tabs" role="tablist" aria-label="대시보드 기능 선택">
         {slides.map((slide, i) => (
           <button
+            type="button"
             key={slide.id}
             className={`dc-tab ${i === activeIndex ? 'dc-tab-active' : ''}`}
             onClick={() => goTo(i)}
             style={{ ['--tab-accent' as string]: slide.accent }}
+            role="tab"
+            aria-selected={i === activeIndex}
           >
             {slide.title}
           </button>
@@ -197,45 +181,44 @@ export const DashboardSection = () => {
                 transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
                 onClick={() => goTo(i)}
               >
-                {/* Video Frame */}
+                {/* Product Screenshot Frame */}
                 <div className="dc-video-frame">
-                  <video
-                    ref={(el) => { videoRefs.current[i] = el; }}
-                    src={slide.videoSrc}
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    className="dc-video"
+                  <img
+                    src={slide.imageSrc}
+                    alt={`${slide.title} 화면 예시`}
+                    className="dc-video dc-image"
+                    loading={i === activeIndex ? 'eager' : 'lazy'}
                   />
-                  {/* Play/Pause overlay */}
-                  {isActive && (
-                    <div className="dc-play-badge">
-                      <Play size={10} fill="currentColor" />
-                      <span>재생 중</span>
-                    </div>
-                  )}
-                  {!isActive && (
-                    <div className="dc-paused-overlay">
-                      <Pause size={20} />
-                    </div>
-                  )}
                 </div>
               </motion.div>
             );
           })}
         </div>
+        <button
+          type="button"
+          className="dc-side-btn dc-side-prev"
+          onClick={goPrev}
+          onPointerDown={(event) => event.stopPropagation()}
+          aria-label="이전 대시보드 화면"
+        >
+          <ChevronLeft className="size-5" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          className="dc-side-btn dc-side-next"
+          onClick={goNext}
+          onPointerDown={(event) => event.stopPropagation()}
+          aria-label="다음 대시보드 화면"
+        >
+          <ChevronRight className="size-5" aria-hidden="true" />
+        </button>
       </div>
 
-      {/* Navigation arrows (optional but good for desktop) */}
-      {/* 
       <div className="dc-nav">
-        <button className="dc-nav-btn" onClick={goPrev} aria-label="이전">
-          <ChevronLeft size={20} />
-        </button>
         <div className="dc-dots">
           {slides.map((slide, i) => (
             <button
+              type="button"
               key={slide.id}
               className={`dc-dot ${i === activeIndex ? 'dc-dot-active' : ''}`}
               onClick={() => goTo(i)}
@@ -246,16 +229,12 @@ export const DashboardSection = () => {
             />
           ))}
         </div>
-        <button className="dc-nav-btn" onClick={goNext} aria-label="다음">
-          <ChevronRight size={20} />
-        </button>
       </div>
-      */}
 
       {/* Styles */}
       <style>{`
         .dashboard-carousel-section {
-          padding: clamp(48px, 8vw, 100px) 0 clamp(40px, 6vw, 80px);
+          padding: clamp(48px, 8vw, 100px) 0 clamp(0px, 1.6vw, 18px);
           overflow: hidden;
           position: relative;
         }
@@ -322,6 +301,37 @@ export const DashboardSection = () => {
           padding: 20px 0;
         }
         .dc-carousel-wrap:active { cursor: grabbing; }
+        .dc-side-btn {
+          position: absolute;
+          top: 50%;
+          z-index: 5;
+          display: inline-flex;
+          width: 44px;
+          height: 44px;
+          align-items: center;
+          justify-content: center;
+          border-radius: 999px;
+          border: 1px solid rgba(148,163,184,0.24);
+          background: rgba(255,255,255,0.82);
+          color: #1e3a8a;
+          box-shadow: 0 12px 28px rgba(15,23,42,0.12);
+          backdrop-filter: blur(12px);
+          transform: translateY(-50%);
+          transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+        .dc-side-btn:hover {
+          background: rgba(255,255,255,0.94);
+          box-shadow: 0 16px 34px rgba(15,23,42,0.14);
+        }
+        .dc-side-btn:active {
+          transform: translateY(-50%) scale(0.96);
+        }
+        .dc-side-prev {
+          left: max(18px, 8vw);
+        }
+        .dc-side-next {
+          right: max(18px, 8vw);
+        }
         .dc-track {
           display: flex;
           gap: 3vw;
@@ -330,53 +340,70 @@ export const DashboardSection = () => {
         }
 
         .dc-slide {
+          position: relative;
           flex-shrink: 0;
-          width: 60vw;
+          width: 72vw;
           cursor: pointer;
           transition: filter 0.4s ease;
         }
+        .dc-slide::after {
+          content: '';
+          position: absolute;
+          left: 8%;
+          right: 8%;
+          bottom: -34px;
+          height: 86px;
+          border-radius: 999px;
+          background:
+            radial-gradient(ellipse at center, rgba(37,99,235,0.14) 0%, rgba(37,99,235,0.06) 38%, transparent 72%);
+          filter: blur(18px);
+          opacity: 0.38;
+          pointer-events: none;
+          transition: opacity 0.3s ease, transform 0.3s ease;
+        }
         .dc-slide:not(.dc-slide-active) {
-          filter: brightness(0.6) saturate(0.7);
+          filter: brightness(0.88) saturate(0.92);
         }
         .dc-slide-active {
           filter: brightness(1) saturate(1);
         }
+        .dc-slide-active::after {
+          opacity: 0.64;
+          transform: translateY(-4px);
+        }
 
         .dc-video-frame {
           position: relative;
+          z-index: 1;
           width: 100%;
-          aspect-ratio: 16 / 9;
+          aspect-ratio: 3 / 2;
           border-radius: 16px;
           overflow: hidden;
-          background: #0f172a;
-          border: 1px solid rgba(255,255,255,0.06);
-          box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+          background: #f8fafc;
+          border: 1px solid rgba(148,163,184,0.24);
+          box-shadow:
+            0 12px 28px -24px rgba(37,99,235,0.28),
+            0 4px 12px -10px rgba(15,23,42,0.18),
+            0 1px 0 rgba(255,255,255,0.92) inset;
           transition: box-shadow 0.3s ease;
         }
         .dc-slide-active .dc-video-frame {
-          box-shadow: 0 12px 48px rgba(0,0,0,0.4);
+          box-shadow:
+            0 16px 36px -28px rgba(37,99,235,0.32),
+            0 6px 16px -12px rgba(15,23,42,0.18),
+            0 1px 0 rgba(255,255,255,0.95) inset;
         }
         .dc-video {
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          object-fit: contain;
           display: block;
         }
-
-        .dc-play-badge {
-          position: absolute;
-          bottom: 12px; left: 12px;
-          display: flex; align-items: center; gap: 4px;
-          padding: 4px 10px;
-          border-radius: 999px;
-          background: rgba(0,0,0,0.6);
-          backdrop-filter: blur(8px);
-          color: #86efac;
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.03em;
-          pointer-events: none;
+        .dc-image {
+          object-position: top center;
+          background: #f8fafc;
         }
+
         .dc-paused-overlay {
           position: absolute; inset: 0;
           display: flex; align-items: center; justify-content: center;
@@ -386,7 +413,7 @@ export const DashboardSection = () => {
 
         .dc-nav {
           display: flex; align-items: center; justify-content: center;
-          gap: 16px; margin-top: 24px;
+          gap: 16px; margin-top: 8px;
         }
         .dc-nav-btn {
           width: 40px; height: 40px;
@@ -404,33 +431,181 @@ export const DashboardSection = () => {
           border-color: rgba(255,255,255,0.2);
         }
 
-        .dc-dots { display: flex; gap: 6px; }
+        .dc-dots { display: flex; gap: 8px; }
         .dc-dot {
-          width: 8px; height: 8px;
+          width: 36px; height: 28px;
           border-radius: 999px; border: none;
-          background: rgba(255,255,255,0.15);
+          background: transparent;
           cursor: pointer;
           transition: all 0.3s ease; padding: 0;
+          position: relative;
         }
-        .dc-dot-active {
+        .dc-dot::after {
+          content: '';
+          position: absolute;
+          left: 8px;
+          right: 8px;
+          top: 50%;
+          height: 6px;
+          border-radius: 999px;
+          background: rgba(148,163,184,0.35);
+          transform: translateY(-50%);
+          transition: all 0.3s ease;
+        }
+        .dc-dot-active::after {
+          left: 4px;
+          right: 4px;
           width: 28px;
           background: var(--dot-accent, #3b82f6);
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) and (min-width: 769px) {
+          .dashboard-carousel-section {
+            padding-top: clamp(52px, 7vw, 72px);
+          }
           .dc-tabs {
-            gap: 12px;
-            overflow-x: auto;
-            justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 24px;
+            padding: 0 32px;
+          }
+          .dc-tab {
+            min-height: 44px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.56);
+            border: 1px solid rgba(148,163,184,0.24);
+            padding: 0 18px;
+            box-shadow: 0 6px 18px rgba(15,23,42,0.04);
+          }
+          .dc-tab-active {
+            background: rgba(255,255,255,0.9);
+            border-color: color-mix(in srgb, var(--tab-accent, #3b82f6) 46%, transparent);
+          }
+          .dc-tab-active::after {
+            display: none;
+          }
+          .dc-carousel-wrap {
+            padding: 12px 0 18px;
+          }
+          .dc-slide {
+            width: 82vw;
+          }
+          .dc-track {
+            gap: 2.5vw;
+            transform: translateX(calc(50% - 41vw - ${activeIndex * 84.5}vw)) !important;
+          }
+          .dc-video-frame {
+            border-radius: 14px;
+          }
+          .dc-side-prev {
+            left: 22px;
+          }
+          .dc-side-next {
+            right: 22px;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .dashboard-carousel-section {
+            padding-top: clamp(34px, 10vw, 56px);
+          }
+          .dc-header {
+            margin-bottom: 16px;
+            padding: 0 18px;
+          }
+          .dc-label {
+            font-size: 11px;
+            margin-bottom: 7px;
+          }
+          .dc-title {
+            font-size: clamp(22px, 7vw, 30px);
+            line-height: 1.12;
+          }
+          .dc-subtitle {
+            font-size: 13px;
+            line-height: 1.55;
+          }
+          .dc-tabs {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
             padding: 0 20px;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
+            margin-bottom: 18px;
           }
           .dc-tabs::-webkit-scrollbar { display: none; }
-          .dc-slide { width: 82vw; }
+          .dc-tab {
+            min-width: 0;
+            min-height: 44px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.58);
+            border: 1px solid rgba(148,163,184,0.22);
+            padding: 0 10px;
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 6px 18px rgba(15,23,42,0.035);
+          }
+          .dc-tab-active {
+            background: rgba(255,255,255,0.94);
+            border-color: color-mix(in srgb, var(--tab-accent, #3b82f6) 46%, transparent);
+          }
+          .dc-tab-active::after {
+            display: none;
+          }
+          .dc-carousel-wrap {
+            padding: 8px 0 8px;
+          }
+          .dc-slide { width: 92vw; }
           .dc-track {
             gap: 4vw;
-            transform: translateX(calc(50% - 41vw - ${activeIndex * 86}vw)) !important;
+            transform: translateX(calc(50% - 46vw - ${activeIndex * 96}vw)) !important;
+          }
+          .dc-video-frame {
+            border-radius: 14px;
+            box-shadow:
+              0 12px 28px -24px rgba(37,99,235,0.28),
+              0 4px 12px -10px rgba(15,23,42,0.16),
+              0 1px 0 rgba(255,255,255,0.92) inset;
+          }
+          .dc-slide::after {
+            left: 9%;
+            right: 9%;
+            bottom: -22px;
+            height: 58px;
+            filter: blur(16px);
+            opacity: 0.45;
+          }
+          .dc-slide-active::after {
+            opacity: 0.62;
+            transform: translateY(-2px);
+          }
+          .dc-side-btn {
+            width: 42px;
+            height: 42px;
+            border-color: transparent;
+            background: transparent;
+            color: #2563eb;
+            box-shadow: none;
+            backdrop-filter: none;
+          }
+          .dc-side-btn:hover {
+            background: transparent;
+            box-shadow: none;
+          }
+          .dc-side-prev {
+            left: 14px;
+          }
+          .dc-side-next {
+            right: 14px;
+          }
+          .dc-nav {
+            margin-top: 2px;
+          }
+          .dc-dots {
+            gap: 2px;
+          }
+          .dc-dot {
+            width: 34px;
+            height: 30px;
           }
         }
       `}</style>
