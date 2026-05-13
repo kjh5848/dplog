@@ -5,22 +5,22 @@ description: "프론트 구현" + FSD 아키텍처와 Deep Tech 디자인 시스
 # FSD 아키텍처 기능 구현 워크플로우 (FSD Feature Implementation Workflow)
 
 이 워크플로우는 사용자 요구사항이나 기존 레거시 코드를 `FSD (Feature-Sliced Design)` 기반으로 개발/마이그레이션할 때 따라야 하는 표준 절차입니다.
-작업 시 **Sequential Thinking MCP 서버** 도구를 활용하여 단계별로 검증하며 진행하십시오.
-💡 **필수 스킬 연동**: 이 워크플로우를 진행할 때는 반드시 Vercel 권장 성능 최적화 가이드인 `.agents/skills/vercel-react-best-practices/SKILL.md`를 함께 참조(Fetch)하여 개발하십시오.
+작업 시 Codex의 기본 도구(`rg`, `sed`, `apply_patch`, `exec_command`, 브라우저 검증 도구)를 사용하여 단계별로 검증하며 진행하십시오.
+💡 **필수 스킬 연동**: 이 워크플로우를 진행할 때는 Vercel 권장 성능 최적화 가이드인 `.agents/skills/vercel-react-best-practices/SKILL.md`를 함께 읽고 React/Next.js 성능 패턴을 반영하십시오.
 
 ## 0. 로드맵 및 상태 점검 (사전 필수 단계)
 
-가장 먼저 `docs/planning/ROADMAP.md`, `docs/planning/ROADMAP_FRONTEND.md` 그리고 `docs/planning/roadmap_status.json`을 `view_file` 도구로 확인하십시오.
+가장 먼저 `docs/planning/ROADMAP.md`, `docs/planning/ROADMAP_FRONTEND.md` 그리고 `docs/planning/roadmap_status.json`을 `rg`/`sed`로 확인하십시오.
 사용자가 요청한 기능 구현 프롬프트가 현재 로드맵 진행 상황과 일치하는지 판단합니다.
-- 요구사항 중 **새로 추가된 것**이나 **로드맵에서 누락된 부분**이 있다면, 분석 결과를 정리하고 `notify_user`를 통해 사용자에게 컨펌을 받으십시오.
+- 요구사항 중 **새로 추가된 것**이나 **로드맵에서 누락된 부분**이 있다면, 분석 결과를 짧게 공유하고 필요한 경우 사용자에게 확인을 받으십시오.
 - 불일치 사항이 없거나 사용자의 승인이 떨어진 경우에만 다음 단계의 구현을 시작합니다.
 
-## 1. 요구사항 및 아키텍처 구조 기획 (Sequential Thinking - Thought 1)
+## 1. 요구사항 및 아키텍처 구조 기획
 - 변경 대상(새로운 기능 혹은 `legacy` 마이그레이션 대상)을 분석합니다.
-- `<appDataDir>/knowledge` 혹은 기존 레퍼런스(예: `.agents/skills/implement-fsd-feature/references`) 리소스를 `view_file`로 먼저 읽어들입니다.
-- FSD 계층에 따른 구조체 설계(`entities`, `features`, `widgets`, `shared`)를 먼저 기획하고, 이 논리를 Sequential Thinking의 Thought 단위로 검증합니다.
+- `<appDataDir>/knowledge` 혹은 기존 레퍼런스(예: `.agents/skills/implement-fsd-feature/references`) 리소스를 필요한 범위만 읽습니다.
+- FSD 계층에 따른 구조체 설계(`entities`, `features`, `widgets`, `shared`)를 먼저 기획하고, 현재 코드의 기존 패턴과 충돌하지 않는지 확인합니다.
 
-## 2. 순수 시각 도메인(Entities) 구축 (Sequential Thinking - Thought 2)
+## 2. 순수 시각 도메인(Entities) 구축
 - API 통신이나 전역 상태 등 외부 부수 효과(Side-effect)가 없는 **Dumb Component**를 `entities/[domain]/ui` 로 분리하여 구현합니다.
 - 조건부 렌더링 작성 시 **`&&` 대신 `? : null` 삼항 연산자**를 우선 사용합니다 (ex: `value ? <Component /> : null`). 이를 통해 `0`이나 `NaN` 등의 Falsy 값이 화면에 노출되는 UI 렌더링 버그를 차단합니다.
 - 백엔드 명세와 1:1 대응되는 DTO 타입 가이드를 `entities/[domain]/model/types.ts` 에 정의합니다. `any` 타입의 사용을 완전히 배제합니다.
@@ -55,7 +55,7 @@ description: "프론트 구현" + FSD 아키텍처와 Deep Tech 디자인 시스
 1. **[SKILL 발동: `polish` & `harden`]**
    - 1픽셀 단위의 엇나감, 불쾌한 뚝딱거림, 에러/오버플로우 방어선을 검수하여 타협 없는 퀄리티를 완성하십시오.
 
-## 4. 비즈니스 액션 로직(Features) 분리 (Sequential Thinking - Thought 3)
+## 4. 비즈니스 액션 로직(Features) 분리
 - 분리된 View가 동작하기 위해 필요한 상태 선언 및 백엔드 통신(API Hook) 로직을 `features/[feature]/model/use[Feature]ViewModel.ts` 형태로 작성합니다.
 - **데이터 페칭 패턴 (Vercel Best Practice):** 클라이언트 측 데이터 페칭이 필요한 경우 중복 요청 방지(Deduplication) 및 뛰어난 캐싱 능력을 갖춘 **SWR (`useSWR`) 라이브러리**를 기본으로 사용합니다. `useState` + `useEffect` 콤보를 이용한 수동 페칭은 Race Condition을 유발할 수 있으므로 지양합니다.
 - 복잡한 전역 상태 공유가 필요한 경우 프로젝트에 구성된 **Zustand**를 활용하거나, 개별 컴포넌트 단위 로컬 상태 매니지먼트를 진행합니다. 
@@ -75,4 +75,5 @@ description: "프론트 구현" + FSD 아키텍처와 Deep Tech 디자인 시스
 
 ## 6. 검증 및 테스트 진행
 - 구현된 FSD 코드를 라우트(`app/[page]/page.tsx`)에 임포트 후 `npm run dev` 서버 상에서 렌더링이 문제 없는지 점검합니다. 
-- Sequential Thinking 도구에 `needsMoreThoughts: false` 및 최종 솔루션을 회신하며 워크플로우를 완수합니다.
+- `tsc --noEmit`, 필요한 경우 `npm run build`, 브라우저 스크린샷/DOM 확인으로 완료 여부를 증명합니다.
+- 임시 서버나 캡쳐용 프로세스를 띄웠다면 마지막에 정리하고, 기존 사용자가 켜둔 서버는 요청이 없는 한 유지합니다.
